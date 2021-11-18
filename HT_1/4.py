@@ -20,6 +20,7 @@ if number_of_string_from_user.isdigit():
             # joining the strings
             concatenated_strings = concatenated_strings + new_string_from_user
 
+        # output results
         print(concatenated_strings)
     
     else:

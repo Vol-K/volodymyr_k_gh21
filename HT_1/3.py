@@ -9,4 +9,4 @@ if number_from_user.isnumeric():
     print(sum_of_integers)
 
 else:
-    print("Sorry, script accept one positive numbers only")
+    print("Sorry, script accept one positive integer only")

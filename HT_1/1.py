@@ -1,6 +1,9 @@
 # data from user
 numbers_from_user = input("Please, input a few integer, use coma as a separator:")
 
+# transform string to the list (for including negative number)
+numbers_from_user = numbers_from_user.split(",")
+
 # empty element, for subsequent operations
 list_from_user_data = []
 
@@ -8,7 +11,7 @@ list_from_user_data = []
 for i in range(len(numbers_from_user)):
 
     # accept numbers only
-    if numbers_from_user[i].isdigit():
+    if numbers_from_user[i].isdigit() or numbers_from_user[i][0] == "-":
 
         list_from_user_data.append(numbers_from_user[i])
 
