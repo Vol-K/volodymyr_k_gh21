@@ -14,11 +14,22 @@
     [(10, 20, '100'), (40, 50, 60, '100'), (80, '100'), ('100',)]
 """
 
-# data from user
-data_from_user = input("Please, input value (numbers, letters, etc) for replace it inside tuples:")
+# Data from user
+data_from_user = input("Please, input value (numbers, letters, etc) for replace it inside tuples: ")
 
-# tuples with test data
-first_test_tuple = ()
-second_test_tuple = ()
-first_test_tuple = ()
-first_test_tuple = ()
+# Tuples with test data
+test_list_with_tuples = [("banana",), (12, "Foo", "Bar", -40), ("red", "car", "gg"),\
+                         ("testdata", 3410, "milan", "art", 22), ("112", "1xA")]
+
+# Check all elements(tuples) in the list and changing 
+# (through transformation to list) last item inside element(tuple) 
+# to the user input data.
+for i in range(len(test_list_with_tuples)):
+    
+    number_of_items = len(test_list_with_tuples[i])
+    list_from_tuple = list(test_list_with_tuples[i])
+    list_from_tuple[number_of_items-1] = data_from_user
+    test_list_with_tuples[i] = tuple(list_from_tuple)
+
+# Output results
+print(test_list_with_tuples)
