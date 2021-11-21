@@ -19,6 +19,7 @@ temp_list = []
 # Checking whole list (item by item) 
 # and copy (to the 'temp_list') non empty elements only.
 for i in range(len(test_list)):
+#for i in test_list:                            ### Correction by GH lector, doesn't work with my logic(((
 
     if len(test_list[i]) > 0:
 

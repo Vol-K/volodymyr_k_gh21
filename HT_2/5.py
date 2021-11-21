@@ -30,3 +30,7 @@ for i in range(len(test_dict)):
 
 # Output results
 print(new_dict)
+
+### Correction by GH lector
+# простіше рішення - 
+# https://stackoverflow.com/questions/8749158/removing-duplicates-from-dictionary

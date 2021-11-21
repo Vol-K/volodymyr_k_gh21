@@ -26,9 +26,10 @@ test_list_with_tuples = [("banana",), (12, "Foo", "Bar", -40), ("red", "car", "g
 # to the user input data.
 for i in range(len(test_list_with_tuples)):
     
-    number_of_items = len(test_list_with_tuples[i])
+    #number_of_items = len(test_list_with_tuples[i])        ### Correction by GH lector
     list_from_tuple = list(test_list_with_tuples[i])
-    list_from_tuple[number_of_items-1] = data_from_user
+    #list_from_tuple[number_of_items-1] = data_from_user    ### Correction by GH lector
+    list_from_tuple[-1] = data_from_user                    ### Correction by GH lector
     test_list_with_tuples[i] = tuple(list_from_tuple)
 
 # Output results
