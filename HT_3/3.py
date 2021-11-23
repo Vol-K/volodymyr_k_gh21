@@ -7,10 +7,6 @@
 # Used data
 month_number = input("Please, input number of month: ")
 
-# Check input data (is it number only)
-if not month_number.isnumeric():
-    print("Sorry, script accept posotove digit only (from 1 to 12)")
-
 # Function for connect number by user to the year season 
 def season(number):
     x = int(month_number)
@@ -26,8 +22,13 @@ def season(number):
         function_result = "Sorry, script accept digit only (from 1 to 12)"
     return function_result
 
-# Function results
-f_result = season(month_number)
+# Check input data (is it number only)
+if not month_number.isnumeric():
+    print("Sorry, script accept posotove digit only (from 1 to 12)")
 
-# Output results
-print(f_result)
+else:
+    # Function results
+    f_result = season(month_number)
+
+    # Output results
+    print(f_result)

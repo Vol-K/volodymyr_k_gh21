@@ -44,9 +44,9 @@ def f_symbols_by_user(symbols_by_user):
                 f_letters += 1
             if item.isdigit():
                 f_numbers += 1
-        print("Довжина рядка - ", len(symbols_by_user),\
-              "Кількість букв в рядку - ", f_letters,\
-              "Кількість цифр в рядку - ", f_numbers)        
+        print("Довжина рядка - ", len(symbols_by_user))
+        print("Кількість букв в рядку - ", f_letters)
+        print("Кількість цифр в рядку - ", f_numbers)        
     
     # Shift ASCII code of input letters inside 'str'
     # step of shifting will be five(5)
@@ -59,7 +59,11 @@ def f_symbols_by_user(symbols_by_user):
             if item.isalpha():
                 if ord(item) > 96 and ord(item) < 123:
                     item = chr(ord(item) + step)
-                    shifted_str += item
+                    if ord(item) > 122:
+                        item = chr(ord(item) + step - 26)
+                        shifted_str += item
+                    else:
+                        shifted_str += item
             if item.isdigit():
                 shifted_str += item
 

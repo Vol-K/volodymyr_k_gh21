@@ -14,20 +14,17 @@
 first_user_number = input("Please, input first number: ")
 second_user_number = input("Please, input second number: ")
 
-# Check input data (is it number only)
-if not first_user_number.isnumeric() or not second_user_number.isnumeric():
-    print("Sorry, script accept digit only, your first number: ")
-
 # Function for calculation of difference two numbers
 def compare(x, y):
+        
     if int(x) == int(y):
-        function_result = "X дорівнює Y"
+        function_result = f"{x} дорівнює {y}"
     elif int(x) > int(y):
         z = int(x) - int(y)
-        function_result = f"X бiльше нiж Y на {z}" 
+        function_result = f"{x} бiльше нiж {y} на {z}" 
     elif int(x) < int(y):
         z = int(y) - int(x)
-        function_result = f"Y бiльше нiж X на {z}"
+        function_result = f"{y} бiльше нiж {x} на {z}"
     return function_result
 
 # Output results
