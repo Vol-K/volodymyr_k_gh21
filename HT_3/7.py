@@ -90,12 +90,13 @@ def calculator(x, y, operator):
         if check_operator == False or check_emp_y == False:
             print(output_message_op)
     
-    # Mathematical operation
+    # Mathematical operation (finaly)
     else: 
         # Convert input data
         x = int(x)
         y = int(y)
-        
+
+        # And calculation
         if operator == "*":
             print(x * y)
         if operator == "-":
