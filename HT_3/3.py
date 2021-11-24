@@ -9,7 +9,8 @@ month_number = input("Please, input number of month: ")
 
 # Function for connect number by user to the year season 
 def season(number):
-    x = int(month_number)
+    # x = int(month_number)                 ### Correction by GH lector
+    x = int(number)                         ### Correction by GH lector
     if  x == 1 or x == 2 or x == 12:
         function_result = "Зима"
     elif x in range(3, 6, 1):
