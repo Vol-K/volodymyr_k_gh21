@@ -104,6 +104,9 @@ def calculator(x, y, operator):
         if operator == "+":
             print(x + y)
         if operator == "/":
-            print(x / y)
+            if y == 0:
+                print("Soory, division by zero is impossible")
+            else:
+                print(x / y)
 
 calculator(first_numbers, second_numbers, input_operator) 
