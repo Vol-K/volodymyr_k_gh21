@@ -109,4 +109,5 @@ def calculator(x, y, operator):
             else:
                 print(x / y)
 
+# Function implementation
 calculator(first_numbers, second_numbers, input_operator) 
