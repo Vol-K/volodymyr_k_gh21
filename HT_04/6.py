@@ -15,5 +15,23 @@ def isfloat(num_to_check):
     except ValueError:
         return False
 
-def morph_numb():
-    pass
+# Function for calculation by 'user_number' a 3 option:
+# 1) number square; 2) plus 100; and 3) dont tuch zero
+def number_func(inp_numb):
+    
+    # Checking is it numbers or no
+    if isfloat(inp_numb) == False:
+        func_result = "Sorry, script accept digits only"
+    
+    # Main part ot calculation
+    elif float(inp_numb) > 0:
+        func_result = float(inp_numb) ** 2
+    elif float(inp_numb) == 0:
+        func_result = 0
+    else:
+        func_result = float(inp_numb) + 100
+
+    return func_result
+
+# Function implementation
+print(number_func(user_number))
