@@ -44,6 +44,19 @@ def isfloat(num_to_check):
 # Reorder elements inside 'inp_lists'
 def list_reorder(inp_lists, shift_step):
     
+    # Corection shift step, if its bigger than length of test data
+    if float(shift_step) > 0:
+        if float(shift_step) > len(inp_lists):
+            while float(shift_step) > len(inp_lists):
+                new_shift_step = float(shift_step) - len(inp_lists)
+                shift_step = new_shift_step
+    
+    elif float(shift_step) < 0:
+        if abs(float(shift_step)) > len(inp_lists):
+            while abs(float(shift_step)) > len(inp_lists):
+                new_shift_step = float(shift_step) + len(inp_lists)
+                shift_step = new_shift_step
+
     # Checking is it numbers or no
     if isfloat(shift_step) == False:
         func_result = "Sorry, script accept digits only"
