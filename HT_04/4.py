@@ -27,6 +27,7 @@ def prime_list(start_range, end_range):
         prime_number_check = "Sorry, script accept digits only"
     elif float(end_range) < 0:
         prime_number_check = "Sorry, end of range must be bigger than 0"
+        
     else:
         for item in range(int(start_range), int(end_range)):
             # Cut simple option 

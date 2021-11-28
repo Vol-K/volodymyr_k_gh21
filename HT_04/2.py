@@ -9,37 +9,23 @@
 """
 
 # User data
-money_sum = input("Please, input money sum (ex. 124.8 or 124890): ")
+money_sum = input("Please, input money sum (ex. 124 or 124890): ")
 depo_duration = input("Please, input years of duration (ex. 1 or 100): ")
-depo_percentage = input("Please, input percentage of deposit (ex. 5 or 5.5): ")
-
-# Checking is input data are numbers only
-def isfloat(num_to_check):
-    try:
-        float(num_to_check)
-        return True
-    except ValueError:
-        return False
+depo_percentage = input("Please, input percentage of deposit (ex. 5 or 9): ")
 
 # Calculation of compound percentage
-def bank(a, years, percents=10):
+def bank(a, years, percents='10'):
 
-    # Checking is all our data are numbers 
-    if isfloat(a) == True and isfloat(years) and isfloat(percents):
-
-        # Mathematics
+    # Checking is all our data are numbers, and all athematics
+    if a.isnumeric() and years.isnumeric() and percents.isnumeric():
         final_sum = float(a) * (1 + (float(percents)/100)) ** float(years)
-
-        # Output results
-        print(round(final_sum, 2))
-        
+        print(round(final_sum, 2))  
     else:
         print("Sorry, script accept digits only")
 
-# First option: using all parameters 
+# Function implementation: using all parameters 
 if depo_percentage:
     bank(money_sum, depo_duration, depo_percentage)
-
-# Second option: using only two parameters (if user forgot about percentages) 
+# Using only two parameters (if user forgot about percentages) 
 else:
     bank(money_sum, depo_duration)    
