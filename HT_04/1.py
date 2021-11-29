@@ -5,19 +5,19 @@
 """
 
 # Data from user
-user_number = input("Please, input one positive number: ")
+user_number = float(input("Please, input one positive number: "))
 
 # Calculation of the shape options: perimeter (square), square, and diagonal
 def square(number):
 
-    if number.isnumeric():
-        number = int(number)
+    if user_number > 0:
         shape_perimeter = number * 4
         shape_square = number * number
         shape_diagonal = (number ** 2 + number ** 2) ** (0.5)
-        func_result = (shape_perimeter, shape_square, round(shape_diagonal, 2))
+        func_result = (round(shape_perimeter, 2), round(shape_square, 2), 
+                       round(shape_diagonal, 2))
     else:
-        func_result = "Sorry, script accept positive number only"
+        func_result = "Sorry, put number bigger zero"
 
     return func_result
 

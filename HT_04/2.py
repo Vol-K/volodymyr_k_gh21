@@ -9,19 +9,15 @@
 """
 
 # User data
-money_sum = input("Please, input money sum (ex. 124 or 124890): ")
-depo_duration = input("Please, input years of duration (ex. 1 or 100): ")
+money_sum = float(input("Please, input money sum (ex. 124 or 124890): "))
+depo_duration = float(input("Please, input years of duration (ex. 1 or 100): "))
 depo_percentage = input("Please, input percentage of deposit (ex. 5 or 9): ")
 
 # Calculation of compound percentage
 def bank(a, years, percents='10'):
-
-    # Checking is all our data are numbers, and all athematics
-    if a.isnumeric() and years.isnumeric() and percents.isnumeric():
-        final_sum = float(a) * (1 + (float(percents)/100)) ** float(years)
-        print(round(final_sum, 2))  
-    else:
-        print("Sorry, script accept digits only")
+    
+    final_sum = a * (1 + (float(percents)/100)) ** years
+    print(round(final_sum, 2))  
 
 # Function implementation: using all parameters 
 if depo_percentage:
