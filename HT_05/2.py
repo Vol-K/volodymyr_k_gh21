@@ -10,29 +10,35 @@
 input_user_name = input("Create your user-name: ")
 input_user_password = input("Input your password: ")
 
+# Our own exception
+class MyException(Exception):
+    pass
+
+# Validation of username & password by user
 def login_validation(user_name, user_pass):
     
+    # Calculation digits inside password
     password_digit_counter = 0
     for item in user_pass:
         if item.isdigit():
             password_digit_counter += 1
 
+    # Calculation CAPITAL letters inside password
     upper_letter_counter = 0
     for letter in user_pass:
-
         if letter.isupper():   
             upper_letter_counter += 1
 
     if len(user_name) < 3:
-        func_result = "Length of user-name must be bigger than 3 symbols"
+       raise MyException("Length of user-name must be bigger than 3 symbols")
     elif len(user_name) > 50:
-        func_result = "Length of user-name must be less than 50 symbols"
+        raise MyException("Length of user-name must be less than 50 symbols")
     elif len(user_pass) < 8:
-        func_result = "Length of user-password must be bigger than 7 symbols"
+       raise MyException("Length of user-password must be bigger than 7 symbols")
     elif password_digit_counter < 1:
-        func_result = "User-password must contain min 1 digit"
+        raise MyException("User-password must contain min 1 digit")
     elif upper_letter_counter < 1:
-        func_result = "User-password must contain min CAPITAL letter"
+        raise MyException("User-password must contain min CAPITAL letter")
     else:
         func_result = "Yours user-name and password are valid"
 
