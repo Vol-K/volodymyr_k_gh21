@@ -6,5 +6,23 @@
    https://docs.python.org/3/library/stdtypes.html#range
 """
 
-def range():
-    pass
+
+def my_range(my_start=0, my_stop, my_step=1):
+
+    while my_start < my_stop:
+        my_start += my_step
+        yield my_start
+        print(my_start)
+
+#
+def my_range(input_item):
+    i = 0
+    while i < input_item:
+        i += 1
+        yield i
+        print(i)
+
+
+xx = my_range(7)
+next(xx)
+next(xx)

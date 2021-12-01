@@ -14,3 +14,10 @@
    1
    .......
 """
+
+def my_generator(input_element):
+   pass
+
+
+for elem in generator([1, 2, 3]):
+   print(elem)

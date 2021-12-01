@@ -41,9 +41,9 @@ def user_pass_check(username, password, silent = False):
     if valid == True:
         func_result = True
     elif silent_check == True and valid == False:
-        raise LoginException("func_result = False")
-    else:
         func_result = False
+    else:
+        raise LoginException("func_result = False")
 
     return func_result
 
