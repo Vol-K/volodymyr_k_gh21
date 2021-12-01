@@ -37,6 +37,7 @@ def my_generator(input_element):
                 my_counter = 0 
                 input_element = backup_input_element.copy()
                 my_iterator = iter(input_element)
+                
             # Next step (element) inside data
             else:
                 input_element = next(my_iterator)
