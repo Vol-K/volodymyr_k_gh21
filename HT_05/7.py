@@ -27,17 +27,17 @@ def my_generator(input_element):
     backup_input_element = input_element.copy()
     my_iterator = iter(input_element)
     my_counter = 0
-    lennnn = len(input_element)
+    len_input_element = len(input_element)
 
-    while my_counter <= lennnn:
+    while my_counter <= len_input_element:
         try:
             # Reset all parameters when we iterable element
-            if my_counter == lennnn:
+            if my_counter == len_input_element:
                 my_iterator = 0
                 my_counter = 0 
                 input_element = backup_input_element.copy()
                 my_iterator = iter(input_element)
-                
+
             # Next step (element) inside data
             else:
                 input_element = next(my_iterator)
@@ -51,6 +51,5 @@ def my_generator(input_element):
 inf_loop = my_generator(test_element)
 
 # Infinite loop condition
-my_condition = 0
-while my_condition < 1:
+while True:
    print(next(inf_loop))

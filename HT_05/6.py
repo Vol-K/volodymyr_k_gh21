@@ -6,21 +6,38 @@
    https://docs.python.org/3/library/stdtypes.html#range
 """
 
+def empty():
+    return
+    yield 
 
-def my_range(my_start=0, my_stop, my_step=1):
+# 
+def my_range(my_stop, my_start=0, my_step=1):
 
-    while my_start < my_stop:
-        my_start += my_step
-        yield my_start
-        print(my_start)
+    if my_step == 0:
+        raise ValueError
+    elif my_stop == 0:
+        yield from empty()
+    #my_step = my_start + my_step 
+    else:
+        # positive 'step'
+        if my_step > 0:
+            while my_start < my_stop:
+                yield my_start
+                my_start += my_step
+            
+        # negative 'step" 
+        if my_step < 0:
+            while abs(my_start) < my_stop:
+                yield my_start
+                my_start += my_step
 
-#
-def my_range(input_item):
-    i = 0
-    while i < input_item:
-        i += 1
-        yield i
-        print(i)
-
-
-xx = my_range(7)
+# Function implementation
+test = my_range(5, 0)
+print(tuple(my_range(5, 0)))
+print(list(my_range(5, 0)))
+print(str(my_range(5, 0)))
+try:
+    while True:
+        print(next(test))
+except StopIteration:
+    pass
