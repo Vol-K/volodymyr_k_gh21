@@ -15,9 +15,29 @@
    .......
 """
 
+# Test iterable data
+test_element = ["jj", 12, "fhfgh", ("ff", 55), "test"]
+
+# Printing items from 'test_data' in a circle (as infinite loop)
 def my_generator(input_element):
-   pass
+
+   my_iterator = iter(input_element)
+   my_counter = 0
+
+   while my_counter <= len(input_element):
+      
+      # Reset all parameters when we iterable element
+      if my_counter == len(input_element):
+         my_iterator = 0
+         my_counter = 0 
+         my_iterator = iter(input_element)
+      
+      # Next step (element) inside data
+      else:
+         print(next(my_iterator))
+         my_counter +=1
+
+# Function implementation
+print(my_generator(test_element))
 
 
-for elem in generator([1, 2, 3]):
-   print(elem)

@@ -24,5 +24,3 @@ def my_range(input_item):
 
 
 xx = my_range(7)
-next(xx)
-next(xx)
