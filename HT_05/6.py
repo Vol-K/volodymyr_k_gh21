@@ -7,10 +7,11 @@
 """
 
 def empty():
-    return
-    yield 
+    #return
+    #yield
+    pass 
 
-# 
+# My custom range function
 def my_range(*args):
 
     # Check amount of input arguments, and define of values
@@ -33,7 +34,9 @@ def my_range(*args):
     if my_step == 0:
         raise ValueError
     elif my_stop == 0:
-        yield from empty()
+        #yield from empty()
+        empty()
+
     else:
         # positive 'step'
         if my_step > 0:
@@ -47,9 +50,9 @@ def my_range(*args):
                 my_stop += my_step
 
 # Function implementation
-test = my_range(20)
-print(tuple(my_range(6)))
-print(list(my_range(20)))
+test = my_range(0)
+print(tuple(my_range(0)))
+print(list(my_range(0)))
 
 try:
     while True:
