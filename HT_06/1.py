@@ -32,5 +32,5 @@ x = time.sleep(n)
 print(n)
 print("Printing after {} seconds".format(n))
 
-# 
+# логіка
 list of tuples
