@@ -27,15 +27,15 @@ def my_range(my_stop, my_start=0, my_step=1):
             
         # negative 'step" 
         if my_step < 0:
-            while abs(my_start) < my_stop:
-                yield my_start
-                my_start += my_step
+            while my_stop > my_start:
+                yield my_stop
+                my_stop += my_step
 
 # Function implementation
-test = my_range(5, 0)
-print(tuple(my_range(5, 0)))
-print(list(my_range(5, 0)))
-print(str(my_range(5, 0)))
+test = my_range(20, 1, 2)
+print(tuple(my_range(20, 1, 2)))
+print(list(my_range(20, 1, 2)))
+
 try:
     while True:
         print(next(test))
