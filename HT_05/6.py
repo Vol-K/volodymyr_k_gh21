@@ -11,20 +11,35 @@ def empty():
     yield 
 
 # 
-def my_range(my_stop, my_start=0, my_step=1):
+def my_range(*args):
 
+    # Check amount of input arguments, and define of values
+    if len(args) == 1:
+        my_start = 0
+        my_stop = args[0]
+        my_step = 1
+    elif len(args) == 2:
+        my_start = args[0]
+        my_stop = args[1]
+        my_step = 1
+    elif len(args) == 3:
+        my_start = args[0]
+        my_stop = args[1]
+        my_step = args[2]
+    else:
+        raise OverflowError 
+
+    # Logic of 'my_range' function
     if my_step == 0:
         raise ValueError
     elif my_stop == 0:
         yield from empty()
-    #my_step = my_start + my_step 
     else:
         # positive 'step'
         if my_step > 0:
             while my_start < my_stop:
                 yield my_start
-                my_start += my_step
-            
+                my_start += my_step  
         # negative 'step" 
         if my_step < 0:
             while my_stop > my_start:
@@ -32,9 +47,9 @@ def my_range(my_stop, my_start=0, my_step=1):
                 my_stop += my_step
 
 # Function implementation
-test = my_range(20, 1, 2)
-print(tuple(my_range(20, 1, 2)))
-print(list(my_range(20, 1, 2)))
+test = my_range(20)
+print(tuple(my_range(6)))
+print(list(my_range(20)))
 
 try:
     while True:

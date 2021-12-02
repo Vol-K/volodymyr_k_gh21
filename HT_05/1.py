@@ -35,8 +35,10 @@ def user_pass_check(username, password, silent = False):
     for i in range(len(username_and_pass_dict)):
 
         if username == username_and_pass_dict[i][0]:
-            password == username_and_pass_dict[i][1]
-            valid = True
+            if password == username_and_pass_dict[i][1]:
+                valid = True
+            else:
+                valid = False
 
     if valid == True:
         func_result = True
