@@ -7,8 +7,6 @@
 """
 
 def empty():
-    #return
-    #yield
     pass 
 
 # My custom range function
@@ -34,8 +32,7 @@ def my_range(*args):
     if my_step == 0:
         raise ValueError
     elif my_stop == 0:
-        #yield from empty()
-        empty()
+        empty()                     
 
     else:
         # positive 'step'
@@ -45,12 +42,14 @@ def my_range(*args):
                 my_start += my_step  
         # negative 'step" 
         if my_step < 0:
-            while my_stop > my_start:
-                yield my_stop
-                my_stop += my_step
+            while my_stop < my_start:
+                yield my_start
+                my_start += my_step  
 
 # Function implementation
-test = my_range(0)
+test = my_range(5)
+print(tuple(my_range(0, 20, 3)))
+print(list(my_range(0, -20,-3)))
 print(tuple(my_range(0)))
 print(list(my_range(0)))
 
