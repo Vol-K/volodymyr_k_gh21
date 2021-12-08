@@ -94,9 +94,8 @@ def update_balance(ub_name):
     
         trans_type = "plus"
         new_trans_item = f"{trans_time},{trans_type},{int(input_sum[1])}"
-        new_trans_item = json.dumps(new_trans_item)
         with open(transactions_file_path, "a", encoding="utf-8") as file_trans:
-            file_trans.write(new_trans_item + '\n')
+            json.dump(new_trans_item, file_trans)
         print(f"###Your actual balance now: {view_balance(ub_name)} parrots ;)")
 
     elif input_sum[0] == "-":
@@ -109,9 +108,8 @@ def update_balance(ub_name):
             
             trans_type = "minus"
             new_trans_item = f"{trans_time},{trans_type},{int(input_sum[1])}"
-            new_trans_item = json.dumps(new_trans_item)
             with open(transactions_file_path, "a", encoding="utf-8") as file_trans:
-                file_trans.write(new_trans_item + '\n')
+                json.dump(new_trans_item, file_trans)
             print(f"###Your actual balance now: {view_balance(ub_name)} parrots ;)")
 
 
