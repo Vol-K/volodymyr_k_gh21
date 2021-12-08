@@ -92,6 +92,7 @@ def get_symbols(*args):
                         end_file = end_file.replace('\n', '\\n')
 
                         # Middle block, 3 option by length of file & input number ()
+                        # First - all numbers are pair
                         if (file_len % 2) == 0 and (input_numb_of_symbols % 2) == 0:
                             position_of_mid_read = (file_len - input_numb_of_symbols) / 2
                             file.seek(position_of_mid_read)
@@ -99,6 +100,7 @@ def get_symbols(*args):
                             file.seek(0)
                             mid_file = mid_file.replace('\n', '\\n')
 
+                        # Second - all numbers are odd
                         elif (file_len % 2) > 0 and (input_numb_of_symbols % 2) > 0:
                             position_of_mid_read = (file_len - (input_numb_of_symbols)) / 2
                             file.seek(position_of_mid_read)
@@ -106,6 +108,7 @@ def get_symbols(*args):
                             file.seek(0)
                             mid_file = mid_file.replace('\n', '\\n')
                         
+                        # THird - numbers are mixed
                         # Expand middle range for correct output
                         else:
                             position_of_mid_read = (file_len - (input_numb_of_symbols + 1)) / 2
