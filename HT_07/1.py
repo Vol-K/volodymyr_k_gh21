@@ -46,15 +46,19 @@ def login(user_name, passwod):
     file_path = Path(pathlib.Path.cwd(), "1_files", "users.csv")
     try:
         with open(file_path, "r", encoding="utf-8") as file:
+            
             list_of_users = file.readlines()
             counter = 0
             f_result = False
+
             for lines in list_of_users:
                 lines = lines.split(",")
                 counter += 1
+
                 if counter == len(list_of_users):
                     if lines[0] == user_name and lines[1] == passwod:
                         f_result = True
+
                 else:
                     if lines[0] == user_name and str(lines[1])[:-1] == passwod:
                         f_result = True
@@ -75,14 +79,16 @@ def view_balance(vb_name):
     
 # Updayting user balanse (write to the file)
 def update_balance(ub_name):
+    
     input_sum = input("Please, input money sum (ex. '+;10' or '-;10'): ")
     input_sum = input_sum.split(";")
-    balance_sum = view_balance(ub_name)
 
+    balance_sum = view_balance(ub_name)
     balance_file_path = Path(pathlib.Path.cwd(), "1_files",
                              f"{ub_name}_balance.csv")
     transactions_file_path = Path(pathlib.Path.cwd(), "1_files",
                                   f"{ub_name}_transaction.csv")
+
     time_in_seconds = time.time()
     trans_time = time.ctime(time_in_seconds)
 
@@ -94,13 +100,17 @@ def update_balance(ub_name):
     
         trans_type = "plus"
         new_trans_item = f"{trans_time},{trans_type},{int(input_sum[1])}"
+
         with open(transactions_file_path, "a", encoding="utf-8") as file_trans:
             json.dump(new_trans_item, file_trans)
+
         print(f"###Your actual balance now: {view_balance(ub_name)} parrots ;)")
 
     elif input_sum[0] == "-":
+
         if int(input_sum[1]) > int(balance_sum):
             print("Inputed to big number")
+
         else:
             new_balance = int(balance_sum) - int(input_sum[1])
             with open(balance_file_path, "w", encoding="utf-8") as file:
@@ -108,23 +118,29 @@ def update_balance(ub_name):
             
             trans_type = "minus"
             new_trans_item = f"{trans_time},{trans_type},{int(input_sum[1])}"
+
             with open(transactions_file_path, "a", encoding="utf-8") as file_trans:
                 json.dump(new_trans_item, file_trans)
+
             print(f"###Your actual balance now: {view_balance(ub_name)} parrots ;)")
 
 
 # ATM menu
 def atm_main_manu():
+    
     print("Please choose operation")
     time.sleep(0.2)
     oparions = [[1, "Check balance"], [2, "Money operation"], [3, "Exit"]]
+    
     for item in oparions:
         print(f"{item[0]} - {item[1]}")
         time.sleep(0.5)
+
     try:
         user_option = int(input("Select 1, 2 or 3: "))
     except ValueError:
         raise WrongParameter("Wrong input operation")
+
     return user_option
 
 # ATM workflow   
@@ -141,24 +157,30 @@ def start():
         print(":::::::::::::::::::::::::::::::::")
         print("Soory, wrong username or password")
         print("Try again::::::::::::::::::::::::")
+
     else:
         time.sleep(0.2)
         print(".......................")
         print("## You are logged in ##")
-        # Atm menu
-        user_option = atm_main_manu()
         
+        # Atm menu & choosen options
+        user_option = atm_main_manu()
         menu_flag = True    
         while menu_flag == True:
             
+            # Balance
             if user_option == 1:
                 print(f"Your balance: {view_balance(user_name)} parrots ;)")
                 menu_flag == True
                 user_option = atm_main_manu()
+
+            # Money operation
             elif user_option == 2:
                 update_balance(user_name)
                 menu_flag == True
                 user_option = atm_main_manu()
+
+            # Exit
             if user_option == 3:
                 menu_flag = False
                 print("You came out, Good luck...")

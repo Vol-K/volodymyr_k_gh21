@@ -48,24 +48,26 @@ def get_symbols(*args):
         func_result = "Something went wrong, please, input parameters correctly"
     elif not args[1]:
         func_result = "Wrong, please, input number correctly" 
-   
     # If all is good, read the file and select our goals
     else:
+
         input_file_name = args[0]
         input_numb_of_symbols = int(args[1])
+
         if input_numb_of_symbols == 0:
             func_result = "Wrong, please, input number bigger than zero"
+
         else:
             # Read the file and find our symbols for each blocks
             try:
                 path = Path(pathlib.Path.cwd(), "2_files", input_file_name)
                 with open(path, "r", encoding="utf-8") as file:
+                    
                     # Calculate real length of file
                     file_symbols = len(file.read())
                     file.seek(0)
                     file_lines = file.readlines()
                     file.seek(0)
-
                     if len(file_lines) > 1:
                         file_len = file_symbols + (len(file_lines) - 1)
                     elif len(file_lines) == 1:
@@ -108,7 +110,7 @@ def get_symbols(*args):
                             file.seek(0)
                             mid_file = mid_file.replace('\n', '\\n')
                         
-                        # THird - numbers are mixed
+                        # Third - numbers are mixed
                         # Expand middle range for correct output
                         else:
                             position_of_mid_read = (file_len - (input_numb_of_symbols + 1)) / 2
