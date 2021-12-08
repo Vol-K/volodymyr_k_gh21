@@ -22,8 +22,11 @@
    █ █ █ ░ ░ ░ ░ ░ ░ █ █ █ ░ ░ ░ ░ █ █ █    - неправильно
                      ⏫ центр
 """
+## For checking wright path of files
+import pathlib
+from pathlib import Path
 
-# Output mistake that input number bigger than number of symbols in file
+## Output mistake that input number bigger than number of symbols in file
 class WrongNumber(Exception):
     pass
 
@@ -32,7 +35,7 @@ class WrongNumber(Exception):
 # file_name = input("Please, input file name: ")
 # number_of_symbols = input("Please, input number of symbols: ")
 
-# Test input parameters to the function
+"""" Test input parameters to the function """
 file_name = "symbols.txt"
 number_of_symbols = "3"
 
@@ -55,7 +58,8 @@ def get_symbols(*args):
         else:
             # Read the file and find our symbols for each blocks
             try:
-                with open(input_file_name, "r", encoding="utf-8") as file:
+                path = Path(pathlib.Path.cwd(), "2_files", input_file_name)
+                with open(path, "r", encoding="utf-8") as file:
                     # Calculate real length of file
                     file_symbols = len(file.read())
                     file.seek(0)
@@ -110,7 +114,7 @@ def get_symbols(*args):
                             file.seek(0)
                             mid_file = mid_file.replace('\n', '\\n')
 
-                func_result = f"Star of file:: '{start_file}', Middle:: '{mid_file}', End:: '{end_file}'".format(r'')
+                func_result = f"Star of file:: '{start_file}', Middle:: '{mid_file}', End:: '{end_file}'"
 
             except FileNotFoundError:
                 func_result = "File doesn't exist, please input correct file name"
