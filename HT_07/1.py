@@ -59,7 +59,7 @@ def login(user_name, passwod):
                     if lines[0] == user_name and lines[1] == passwod:
                         f_result = True
 
-                else:
+                elif counter > 1:
                     if lines[0] == user_name and str(lines[1])[:-1] == passwod:
                         f_result = True
 
@@ -94,25 +94,30 @@ def update_balance(ub_name):
 
     # Update user balance in a file & added a new transaction to the file
     if input_sum[0] == "+":
-        new_balance = int(balance_sum) + int(input_sum[1])
-        with open(balance_file_path, "w", encoding="utf-8") as file_bal:
-            file_bal.write(str(new_balance))
-    
-        trans_type = "plus"
-        new_trans_item = f"{trans_time},{trans_type},{int(input_sum[1])}"
 
-        with open(transactions_file_path, "a", encoding="utf-8") as file_trans:
-            json.dump(new_trans_item, file_trans)
+        if int(input_sum[1]) < 0:
+            print("#####_Inputed wrong value_#####")
+        else:
+            new_balance = int(balance_sum) + int(input_sum[1])
+            with open(balance_file_path, "w", encoding="utf-8") as file_bal:
+                file_bal.write(str(new_balance))
+        
+            trans_type = "plus"
+            new_trans_item = f"{trans_time},{trans_type},{int(input_sum[1])}"
 
-        print(f"###Your actual balance now: {view_balance(ub_name)} parrots ;)")
+            with open(transactions_file_path, "a", encoding="utf-8") as file_trans:
+                json.dump(new_trans_item, file_trans)
+
+            print(f"###Your actual balance now: {view_balance(ub_name)} parrots ;)")
 
     elif input_sum[0] == "-":
 
-        if int(input_sum[1]) > int(balance_sum):
+        if abs(int(input_sum[1])) > int(balance_sum):
             print("Inputed to big number")
-
+        elif int(input_sum[1]) > 0:    
+            print("#####_Inputed wrong value_#####")
         else:
-            new_balance = int(balance_sum) - int(input_sum[1])
+            new_balance = int(balance_sum) - abs(int(input_sum[1]))
             with open(balance_file_path, "w", encoding="utf-8") as file:
                 file.write(str(new_balance))
             
@@ -146,12 +151,12 @@ def atm_main_manu():
 # ATM workflow   
 def start():
     
-    user_name = input("Input your name: ")
-    user_pass = input("Input your password: ")
+    # user_name = input("Input your name: ")
+    # user_pass = input("Input your password: ")
     
     """" Test input parameters to the function """
-    # user_name = "Bob"
-    # user_pass = "1234"
+    user_name = "Bob"
+    user_pass = "1234"
 
     if not login(user_name, user_pass):
         print(":::::::::::::::::::::::::::::::::")
