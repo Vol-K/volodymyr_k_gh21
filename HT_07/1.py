@@ -151,13 +151,9 @@ def atm_main_manu():
 # ATM workflow   
 def start():
     
-    # user_name = input("Input your name: ")
-    # user_pass = input("Input your password: ")
+    user_name = input("Input your name: ")
+    user_pass = input("Input your password: ")
     
-    """" Test input parameters to the function """
-    user_name = "Bob"
-    user_pass = "1234"
-
     if not login(user_name, user_pass):
         print(":::::::::::::::::::::::::::::::::")
         print("Soory, wrong username or password")

@@ -32,12 +32,8 @@ class WrongNumber(Exception):
 
 
 # # Data from user, file name & number of characters by this file
-# file_name = input("Please, input file name: ")
-# number_of_symbols = input("Please, input number of symbols: ")
-
-"""" Test input parameters to the function """
-file_name = "symbols.txt"
-number_of_symbols = "3"
+file_name = input("Please, input file name: ")
+number_of_symbols = input("Please, input number of symbols: ")
 
 # Find and get symbols from file (by 3 places).
 # From Start of file, Middle and End. 
