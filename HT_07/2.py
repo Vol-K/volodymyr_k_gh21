@@ -113,9 +113,9 @@ def get_symbols(*args):
                         # Third - numbers are mixed
                         # Expand middle range for correct output
                         else:
-                            position_of_mid_read = (file_len - (input_numb_of_symbols + 1)) / 2
+                            position_of_mid_read = int((file_len - (input_numb_of_symbols + 1)) / 2)
                             file.seek(position_of_mid_read)
-                            mid_file = file.read(input_numb_of_symbols + 1)
+                            mid_file = file.read(input_numb_of_symbols)
                             file.seek(0)
                             mid_file = mid_file.replace('\n', '\\n')
 
