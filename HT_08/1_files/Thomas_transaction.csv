@@ -1,1 +1,5 @@
 "transact_time,transact_type,transact_sum"
+"Sun Dec 12 21:55:06 2021,plus,3"
+"Sun Dec 12 21:56:00 2021,minus,40"
+"Sun Dec 12 21:56:08 2021,plus,6"
+"Sun Dec 12 21:56:21 2021,minus,10"
