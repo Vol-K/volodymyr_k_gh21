@@ -133,7 +133,6 @@ def check_atm_option(inp_option):
 # Operation by user balance (adding & withdrawing money)
 def user_balance_operation(ub_name):
 
-    #input_sum = "+100"
     input_sum = input("Please, input money sum (ex. '+;10' or '-;10'): ")
     input_sum = input_sum.split(";")
 
@@ -169,7 +168,7 @@ def user_balance_operation(ub_name):
     elif input_sum[0] == "-":
 
         if abs(int(input_sum[1])) > int(balance_sum):
-            print("Inputed to big number")
+            print("Inputed less than you have, ")
         elif int(input_sum[1]) < 0:    
             print("#####_Inputed wrong value_#####")
         elif (int(input_sum[1]) % 10) > 0:
@@ -178,7 +177,8 @@ def user_balance_operation(ub_name):
              
             ckecking_banknots = output_banknot_algorithm(input_sum[1])
             if not ckecking_banknots[1]:
-                print("Please, input number divided by 10")
+                print("ATM can not withdraw this sum")
+                print("Please, input smoller number")
             
             else:
                 new_balance = int(balance_sum) - abs(int(input_sum[1]))
@@ -215,13 +215,14 @@ def output_banknot_algorithm(inp_value):
 
         banknots = list(banknots_status.items())
         list_for_algorithm = []
+        total_atm_money = 0
 
         # Quantity of banknots available for withdrawal
         # find a start position
         for item in banknots:
             if int(item[0]) <= inp_value and item[1] > 0:
                 list_for_algorithm.append(item)
-
+                total_atm_money += (int(item[0]) * item[1])
         list_for_algorithm.reverse()
 
         #backup = list_for_algorithm.copy()
@@ -234,7 +235,7 @@ def output_banknot_algorithm(inp_value):
         end_algorithm_flag = False
         while not end_algorithm_flag:
             
-            if len(list_for_algorithm) < 1:
+            if len(list_for_algorithm) < 1 or total_atm_money < inp_value:
                 end_algorithm_flag = True
                 banknots_for_withdrawal = {"10": 0, 
                                             "20": 0, 
@@ -243,7 +244,6 @@ def output_banknot_algorithm(inp_value):
                                             "200": 0, 
                                             "500": 0, 
                                             "1000": 0}
-                #print(banknots_for_withdrawal)
 
             else:    
                 for element in list_for_algorithm:
@@ -289,7 +289,6 @@ def output_banknot_algorithm(inp_value):
                 elif nickelback == 0:
                     end_algorithm_flag = True
                     banknots_for_withdrawal = dict(temp_listt)
-                    #print(banknots_for_withdrawal)
                     status_of_operation = True
 
     return banknots_for_withdrawal, status_of_operation
@@ -318,7 +317,6 @@ def cash_in_operation():
 
     print("...................................................")
     print("#### Cash-in (CVIT) operations ####")
-    #inp_nominal_quantity = "10;11"
     inp_nominal_quantity = input("Please, input banknot nomial & quantity for added to ATM (ex. '10';21): ")
     inp_nominal_quantity = inp_nominal_quantity.split(";")
 
@@ -363,68 +361,76 @@ def atm_workflow():
     user_pass = input("Input your password: ")
 
     user_check_result = login(user_name, user_pass)
-    
-    if not user_check_result[0]:
+    enter_flag = False
+
+    while not enter_flag:
         print(":::::::::::::::::::::::::::::::::")
         print("Soory, wrong username or password")
         print("Try again::::::::::::::::::::::::")
-    #
-    else:
-        #time.sleep(0.2)
-        print("...................................................")
-        print(f"## Hello, '{user_name}' You are logged in. ##")
 
-        # 'Incasator' side of ATM menu
-        if user_check_result[1] == "incasator":
+        user_name = input("Input your name: ")
+        user_pass = input("Input your password: ")
+        user_check_result = login(user_name, user_pass)
 
-            admin_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
-            exit_flag = False 
+        if user_check_result[0]:
+            enter_flag = True
 
-            while exit_flag == False:
-                if not admin_atm_menu[2]:
-                    print("Soory, inputed wrong symbols")
-                    admin_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
-                    
-                elif int(admin_atm_menu[1]) == 1:
-                    check_banknots()
-                    admin_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
+  
+    time.sleep(0.2)
+    print("...................................................")
+    print(f"## Hello, '{user_name}' You are logged in. ##")
 
-                elif int(admin_atm_menu[1]) == 2:
-                    cash_in_operation()
-                    admin_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
+    # 'Incasator' side of ATM menu
+    if user_check_result[1] == "incasator":
 
-                elif int(admin_atm_menu[1]) == 3:
-                    exit_flag = True
-                    print("...................................................")
-                    print("..............You came out, Good luck..............")
-                    print("...................................................")
+        admin_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
+        exit_flag = False 
 
-        # 'User' side of ATM menu
-        elif user_check_result[1] == "user":
-            
-            user_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
-            exit_flag = False    
+        while exit_flag == False:
+            if not admin_atm_menu[2]:
+                print("Soory, inputed wrong symbols")
+                admin_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
+                
+            elif int(admin_atm_menu[1]) == 1:
+                check_banknots()
+                admin_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
 
-            while exit_flag == False:
-                if not user_atm_menu[2]:
-                    print("Soory, inputed wrong symbols")
-                    user_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
+            elif int(admin_atm_menu[1]) == 2:
+                cash_in_operation()
+                admin_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
 
-                elif int(user_atm_menu[1]) == 1:
-                    print("...................................................")
-                    print(f"Your balance: {view_balance_of_user(user_name)} USD")
-                    user_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
-                    
-                elif int(user_atm_menu[1]) == 2:
-                    user_balance_operation(user_name)
+            elif int(admin_atm_menu[1]) == 3:
+                exit_flag = True
+                print("...................................................")
+                print("..............You came out, Good luck..............")
+                print("...................................................")
 
-                    user_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
+    # 'User' side of ATM menu
+    elif user_check_result[1] == "user":
+        
+        user_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
+        exit_flag = False    
 
-                elif int(user_atm_menu[1]) == 3:
-                    exit_flag = True
-                    print("...................................................")
-                    print("..............You came out, Good luck..............")
-                    print("...................................................")
+        while exit_flag == False:
+            if not user_atm_menu[2]:
+                print("Soory, inputed wrong symbols")
+                user_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
+
+            elif int(user_atm_menu[1]) == 1:
+                print("...................................................")
+                print(f"Your balance: {view_balance_of_user(user_name)} USD")
+                user_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
+                
+            elif int(user_atm_menu[1]) == 2:
+                user_balance_operation(user_name)
+
+                user_atm_menu = atm_menu(user_check_result[0], user_check_result[1])
+
+            elif int(user_atm_menu[1]) == 3:
+                exit_flag = True
+                print("...................................................")
+                print("..............You came out, Good luck..............")
+                print("...................................................")
     
     return
 
