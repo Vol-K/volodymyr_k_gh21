@@ -177,8 +177,11 @@ def user_balance_operation(ub_name):
              
             ckecking_banknots = output_banknot_algorithm(input_sum[1])
             if not ckecking_banknots[1]:
-                print("ATM can not withdraw this sum")
-                print("Please, input smoller number")
+                print("...................................................")
+                print("")
+                print("### Please, ATM can not withdraw this sum ###")
+                print("### Please, input smoller number")
+                print("")
             
             else:
                 new_balance = int(balance_sum) - abs(int(input_sum[1]))
@@ -255,8 +258,7 @@ def output_banknot_algorithm(inp_value):
                             nickelback = inp_value % int(element[0])
                             temp_listt.append([element[0], quant_for_insert])
                         else:
-                            while quant_for_insert != element[1]:
-                                quant_for_insert = quant_for_insert - element[1]
+                            quant_for_insert = element[1]
                             nickelback = (inp_value % int(element[0])) + int(element[0])
                             temp_listt.append([element[0], quant_for_insert])
 
@@ -269,8 +271,7 @@ def output_banknot_algorithm(inp_value):
                             nickelback = nickelback % int(element[0])
                             temp_listt.append([element[0], quant_for_insert])
                         else:
-                            while quant_for_insert != element[1]:
-                                quant_for_insert = quant_for_insert - element[1]
+                            quant_for_insert = element[1]
                             nickelback = (inp_value % int(element[0])) + int(element[0])
                             temp_listt.append([element[0], quant_for_insert])
 
@@ -292,7 +293,6 @@ def output_banknot_algorithm(inp_value):
                     end_algorithm_flag = True
                     banknots_for_withdrawal = dict(temp_listt)
                     status_of_operation = True
-    print("ggggggggg", banknots_for_withdrawal) 
 
     return banknots_for_withdrawal, status_of_operation
 
@@ -381,7 +381,6 @@ def atm_workflow():
         if user_check_result[0]:
             enter_flag = True
 
-  
     time.sleep(0.2)
     print("...................................................")
     print(f"## Hello, '{user_name}' You are logged in. ##")
