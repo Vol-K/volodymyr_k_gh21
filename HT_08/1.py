@@ -168,7 +168,7 @@ def user_balance_operation(ub_name):
     elif input_sum[0] == "-":
 
         if abs(int(input_sum[1])) > int(balance_sum):
-            print("Inputed less than you have, ")
+            print("Inputed less than you have")
         elif int(input_sum[1]) < 0:    
             print("#####_Inputed wrong value_#####")
         elif (int(input_sum[1]) % 10) > 0:
@@ -279,17 +279,20 @@ def output_banknot_algorithm(inp_value):
                         list_for_algorithm.pop(1)
                         nickelback = 0
                         temp_listt.clear()
+                        start_flag = False
                     elif len(list_for_algorithm) == 1:
                         nickelback = 0
                         temp_listt.clear()
                         list_for_algorithm = etalon.copy()
                         list_for_algorithm.pop(0)
                         etalon.pop(0)
+                        start_flag = False
                             
                 elif nickelback == 0:
                     end_algorithm_flag = True
                     banknots_for_withdrawal = dict(temp_listt)
                     status_of_operation = True
+    print("ggggggggg", banknots_for_withdrawal) 
 
     return banknots_for_withdrawal, status_of_operation
 
@@ -362,6 +365,9 @@ def atm_workflow():
 
     user_check_result = login(user_name, user_pass)
     enter_flag = False
+
+    if user_check_result[0]:
+            enter_flag = True
 
     while not enter_flag:
         print(":::::::::::::::::::::::::::::::::")
