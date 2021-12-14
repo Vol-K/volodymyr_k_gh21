@@ -20,7 +20,6 @@ import sqlite3
 
 # Connect for database
 database_file_path = Path(pathlib.Path.cwd(), "atm_database.db")
-# database_file_path = Path(pathlib.Path.cwd(), "volodymyr_k_gh21", "HT_09", "atm_database.db")
 database = sqlite3.connect(database_file_path, check_same_thread=False)
 db_cur = database.cursor()
 
@@ -72,8 +71,6 @@ def output_banknot_algorithm(inp_value):
     # Total sum of money inside ATM
     for item in banknots_status:
         total_atm_money += (int(item[0]) * item[1])
-
-    #etalon = banknots_status.copy()
 
     while not end_algorithm_flag:
         
@@ -131,10 +128,8 @@ def output_banknot_algorithm(inp_value):
             elif nickelback == 0:
                 end_algorithm_flag = True
                 banknots_for_withdrawal = dict(temp_listt)
-                status_of_operation = True
-               
+                status_of_operation = True      
 
-    #print(banknots_for_withdrawal)
     return banknots_for_withdrawal, status_of_operation
 
 
@@ -142,6 +137,7 @@ def output_banknot_algorithm(inp_value):
 def update_banknots_by_user_operation(banknots_dict):
 
     old_banknots_status = dict(db_cur.execute("SELECT * FROM banknots").fetchall())
+
     # Calculation new quantity
     list_banknots_for_withdrawal = banknots_dict.keys()
     for item in list_banknots_for_withdrawal:
@@ -159,9 +155,6 @@ def user_balance_operation(ub_name):
     if len(input_sum) != 2:
         print("...................................................")
         print("#####_Inputed not all parameters_#####")
-    # elif not input_sum[0] or not input_sum[1]:
-    #     print("...................................................")
-    #     print("#####_Inputed empty parameter/s_#####")
     elif not input_sum[1].isnumeric():
         print("...................................................")
         print("#####_Inputed uncorrect parameter_#####")
@@ -179,9 +172,6 @@ def user_balance_operation(ub_name):
         # Update user balance in a file & added a new transaction to the file
         if input_sum[0] == "+":
 
-            # if int(input_sum[1]) < 0:
-            #     print("#####_Inputed wnegative number_#####")
-            # else:
             new_balance = int(balance_sum[0]) + int(input_sum[1])
             db_cur.execute("UPDATE balances SET user_balance=? WHERE user_name=?", (new_balance, ub_name))
             database.commit()
@@ -238,6 +228,7 @@ def user_balance_operation(ub_name):
         else:
             print("...................................................")
             print("###_Inputed wrong first parameter_###")
+
 
 # ATM menu for both account type (user & incasator)
 def atm_menu(user_status):
@@ -345,8 +336,6 @@ def atm_workflow():
 
     user_name = input("Input your name: ")
     user_pass = input("Input your password: ")
-    # user_name = "user2"
-    # user_pass = "user2"
 
     user_check_result = login(user_name, user_pass)
     enter_flag = False
