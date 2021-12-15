@@ -1,4 +1,7 @@
 # не вигружать файли домашніх завдань
 *.txt
+!lines.txt
+!symbols.txt
+!banknots.txt
 *.jpeg
 *.png
