@@ -243,7 +243,7 @@ def main_workflow():
 
     print("..........................................")
     for item in user_db:
-        print(f"User ID: {item['id']}")
+        print(f"User ID & name: {item['id']} - {item['name']}")
         time.sleep(0.2)
     print("..........................................")
     choose_user_id = input("Please select user from this ist: ")
