@@ -13,6 +13,7 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 import sqlite3
+import csv
 
 
 # Connect for database
@@ -72,22 +73,17 @@ while not end_flag:
             birth_location.pop(-1)
             author_city = ', '.join(birth_location)
             author_city = author_city[3:]
-            author_city_csv = '-'.join(birth_location)
-            author_city_csv = author_city_csv[3:]
 
         # Tags block
         tags_soup = element.select(".tag")
         tags_for_insert = ""
-        tags_for_csv = ""
 
         for item in tags_soup:
             get_tag = item.get_text()
             if len(tags_for_insert) < 1:
                 tags_for_insert += (get_tag)
-                tags_for_csv += (get_tag)
             else:
                 tags_for_insert += (", " + get_tag)
-                tags_for_csv += (":" + get_tag)
 
         # Quote-body block
         quote = element.select_one(".text")
@@ -104,24 +100,18 @@ while not end_flag:
         # CSV vlock
         csv_counter += 1
         quote_info_list.insert(0, str(csv_counter))
-
-        new_bitrh_date = quote_info_list[2]
-        new_bitrh_date_list = new_bitrh_date.split(", ")
-        new_bitrh_date = "-".join(new_bitrh_date_list)
-        quote_info_list[2] = new_bitrh_date
-
-        if quote_info_list[3] and "," in quote_info_list[3]:
-            quote_info_list[3] = author_city_csv
-
-        quote_info_list[5] = tags_for_csv
-        
+       
         if not author_city:
             quote_info_list[3] = ""
            
-        new_quote_line = ','.join(quote_info_list)
-
-        with open(quotes_details_path, "a", encoding="utf-8") as quotes_details:
-            quotes_details.write("\n" + new_quote_line)
+        new_row = []
+        new_row.append(quote_info_list) 
+        with open(quotes_details_path, "a", encoding="utf-8", newline="") as quotes_details:
+            writer = csv.writer(quotes_details)
+            if csv_counter == 1:
+                writer.writerow(["id", "author", "birth_date", "birth_city",
+                                    "birth_country", "quote_tags", "qoute_body"])
+            writer.writerows(new_row)
         
     print(f"## Find & added element #{csv_counter} into DB ##")
 
