@@ -1,6 +1,6 @@
 """ Завдання_4
 
-4. Видозмініть програму так, щоб метод __init__ мався в класі «геометричні фігури» 
+Видозмініть програму так, щоб метод __init__ мався в класі «геометричні фігури» 
 та приймав кольор фігури при створенні екземпляру, а методи __init__ підкласів 
 доповнювали його та додавали початкові розміри.
 """
@@ -8,8 +8,6 @@
 
 class Figure(object):
     """ This class creating with one attribute and method to changint it"""
-
-    figure_color = ""
 
     # Initialization of the new class instance
     def __init__(self, figure_color):

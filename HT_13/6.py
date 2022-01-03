@@ -1,6 +1,7 @@
 """ Завдання_6
 
-6. Створіть клас в якому буде атребут який буде рахувати кількість створених екземплярів класів.
+Створіть клас в якому буде атребут який буде рахувати 
+кількість створених екземплярів класів.
 """
 
 class MyClass(object):
@@ -13,6 +14,7 @@ class MyClass(object):
         print(f"{MyClass.instanse_counter} instanses of class was created")
 
 
+# Implementation
 test1 = MyClass()
 test2 = MyClass()
 test3 = MyClass()

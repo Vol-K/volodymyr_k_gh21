@@ -1,11 +1,11 @@
 """ Завдання_2
 
-2. Створити клас Person, в якому буде присутнім метод __init__ 
-    який буде приймати * аргументів, які зберігатиме в відповідні змінні. 
-    Методи, які повинні бути в класі Person - show_age, print_name, та
-    show_all_information.
-    - Створіть 2 екземпляри класу Person та в кожному з екземплярів 
-    створіть атребут profession.
+Створити клас Person, в якому буде присутнім метод __init__ 
+який буде приймати *аргументів, які зберігатиме в відповідні змінні. 
+Методи, які повинні бути в класі Person - show_age, print_name, та
+show_all_information.
+- Створіть 2 екземпляри класу Person та в кожному з екземплярів 
+створіть атребут profession.
 """
 
 
@@ -45,14 +45,14 @@ class Person(object):
 
 # First test person
 person_1 = Person("Jon", "Dou", 12, "12.12.2009")
-person_1.print_name()
-person_1.show_age()
+# person_1.print_name()
+# person_1.show_age()
 person_1.profession = "Driver"
 person_1.show_all_information()
 
 # Second test person
 person_2 = Person("William", "Figo", 51, "08.07.1970")
-person_2.print_name()
-person_2.show_age()
+# person_2.print_name()
+# person_2.show_age()
 person_2.profession = "Policeman"
 person_2.show_all_information()
