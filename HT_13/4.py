@@ -20,10 +20,11 @@ class Figure(object):
 class Oval(Figure):
     """It`s subclass by 'Figure' and 
     describe the geometry figure with one parameter - diameter"""
-
+    
     # Initialization of the new class instance
-    def __init__(self, diameter_size):
+    def __init__(self, figure_color, diameter_size):
         self.diameter_size = diameter_size
+        super().__init__(figure_color)
 
 
 class Square(Figure):
@@ -31,9 +32,10 @@ class Square(Figure):
     describe the geometry figure with two parameters - width & height"""
 
     # Initialization of the new class instance
-    def __init__(self, width, height):
+    def __init__(self, figure_color, width, height):
         self.width = width
         self.height = height
+        super().__init__(figure_color)
 
 
 # Get default color from Class
@@ -45,10 +47,12 @@ test_figure.change_color("deep-blue")
 print(test_figure.figure_color)
 
 # Set up a new type of figure "Oval" with special parameter (diamater)
-oval_1 = Oval(12)
+oval_1 = Oval("white", 12)
 print(oval_1.diameter_size)
+print(oval_1.figure_color)
 
 # Set up a new type of figure "Oval" with special parameters (x, y)
-square_1 = Square(3, 7)
+square_1 = Square("gray", 3, 7)
 print(square_1.width)
 print(square_1.height)
+print(oval_1.figure_color)

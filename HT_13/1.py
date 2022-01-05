@@ -18,35 +18,45 @@ class Calc(object):
     last_result = None
 
     def addition(self, x, y):
-        print(f"Sum of {x} and {y} = {x+y}")
         self.last_result = x+y
+        method_result = f"Sum of {x} and {y} = {x+y}"
+        return method_result
 
     def subtraction(self, x, y):  
-        print(f"Difference of {x} and {y} = {x-y}")
         self.last_result = x-y
+        method_result = f"Difference of {x} and {y} = {x-y}"
+        return method_result
 
     def multiplication(self, x, y):  
-        print(f"Multiplication of {x} and {y} = {x*y}")
         self.last_result = x*y
+        method_result = f"Multiplication of {x} and {y} = {x*y}"
+        return method_result
 
-    def division(self, x, y):  
-        print(f"Division of {x} by {y} = {round(x/y, 4)}")
-        self.last_result = round(x/y, 4)
-
+    def division(self, x, y):
+        if y != 0:  
+            self.last_result = round(x/y, 4)
+            method_result = f"Division of {x} by {y} = {round(x/y, 4)}"
+        else:
+            method_result = "You can't divide to by zero"
+        return method_result
 
 # Test instatnse of class
 test_calculation = Calc()
 print(test_calculation.last_result)
 
 # Result of calculations
-test_calculation.addition(2, 3)
+numbers_addition = test_calculation.addition(2, 3)
+print(numbers_addition)
 print(test_calculation.last_result)
 
-test_calculation.subtraction(2, 3)
+numbers_subtraction = test_calculation.subtraction(2, 3)
+print(numbers_subtraction)
 print(test_calculation.last_result)
 
-test_calculation.multiplication(2, 3)
+numbers_multiplication = test_calculation.multiplication(2, 3)
+print(numbers_multiplication)
 print(test_calculation.last_result)
 
-test_calculation.division(2, 3)
+numbers_divided = test_calculation.division(2, 0)
+print(numbers_divided)
 print(test_calculation.last_result)
