@@ -60,6 +60,16 @@ class CheckWrongSymbols(object):
 
         return check
 
+
+# Writing data to the "CSV" file
+class WrightData():
+
+    def my_wright(self, file_path, data):
+        with open(file_path, "a", encoding="utf-8", newline="") as news:
+            writer = csv.writer(news)
+            writer.writerows([data])
+
+
 # Getting from User right date
 class GetRightDate(object):
     """
@@ -94,6 +104,7 @@ class GetRightDate(object):
 
         return exit_date_check_cicle
 
+
 class VikkaSpider(scrapy.Spider):
     
     name = 'vikka'
@@ -103,8 +114,7 @@ class VikkaSpider(scrapy.Spider):
     print("...........................................................")
     print("Hello, You can get newsline by one days from Vikka website.")
     print("Please, use correct format of date, for example: 2013/12/31")
-    # date_by_user = input("Please input date: ")
-    date_by_user = "2021/01/02"
+    date_by_user = input("Please input date: ")
 
     # Getting from User right date (not to old and not from the future)
     get_date = GetRightDate()
@@ -126,8 +136,16 @@ class VikkaSpider(scrapy.Spider):
     def parse(self, response):
         for element in response.css(".cat-post-info"):
             VikkaSpider.link_counter += 1
+            print(VikkaSpider.link_counter)
             news_link = element.css("h2.title-cat-post a::attr(href)").get()
             yield response.follow(news_link, callback=self.parse_news)
+
+        # Checking of pagination    
+        pagination = response.css("div.nav-links")
+        if pagination:
+            next_page = pagination.css("a.next::attr(href)").get()
+            if next_page:
+                yield response.follow(next_page, callback=self.parse)
             
     # Processing of news links from 'parse' method
     # Get info what we need (title, test, tags, link)
@@ -135,9 +153,16 @@ class VikkaSpider(scrapy.Spider):
         VikkaSpider.news_counter += 1
 
         news_title = response.css("h1.post-title::text").get()
-
-        news_body = response.css("div.entry-content p::text").getall()
-        news_body = " ".join(news_body).strip()
+        
+        news_body = []        
+        for elem in response.css("div.entry-content"):
+            news_body = elem.css("div.entry-content p strong::text, \
+                div.entry-content p::text, div.entry-content p em::text, \
+                div.entry-content p em a::text, \
+                div.entry-content p a::text").extract()
+            news_body = list(map(str.strip, news_body))      
+        news_body = " ".join(news_body)
+        news_body = news_body.replace(" .", ".")
 
         news_tags = response.css("a.post-tag::text").getall()
         # Modifying tags (added to him "#")
@@ -153,9 +178,8 @@ class VikkaSpider(scrapy.Spider):
         news_details = [news_title, news_body, news_tags, news_url]
 
         # Append data to the 'CSV' file
-        with open(self.news_csv_file_path, "a", encoding="utf-8", newline="") as news:
-            writer = csv.writer(news)
-            writer.writerows([news_details])
+        data_wrighter = WrightData()
+        data_wrighter.my_wright(self.news_csv_file_path, news_details)
 
         # End message, that proccess finished
         if (VikkaSpider.link_counter != 0) and (VikkaSpider.news_counter != 0):
