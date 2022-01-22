@@ -14,14 +14,14 @@ from ..items import VikkaNewsItem
 
 
 # Check date fromat from User 
-class CheckWrongSymbols(object):
+class CheckDate(object):
     """
     This class has one goal, check date gotten from User 
     for the correct date format or no.
     """
 
     @staticmethod
-    def check_symbols(date):
+    def check_wrong_symbols(date):
             
         false_counter = 0
         for elem in date:
@@ -36,21 +36,36 @@ class CheckWrongSymbols(object):
 
         return check
 
+    # Checking it is real date or this 'str' included mixed 
+    # permitted symbols only.
+    def is_it_date(self, user_date):
+        
+        try:
+            datetime.datetime.strptime(user_date, "%Y/%m/%d")
+            check_result = True
+        except ValueError:
+            check_result = False
+        
+        return check_result
+
 
 # Getting from User right date
 class GetRightDate(object):
     """
     Getting from User right date (not to old and not from the future).
     """
-
     def is_right_date(sef, date_by_user):
         exit_date_check_cicle = False
         while not exit_date_check_cicle:
 
-            check = CheckWrongSymbols
-            if not check.check_symbols(date_by_user):
+            check = CheckDate()
+            if not check.check_wrong_symbols(date_by_user):
                 print("...........................................................")
                 print("You input date in wrong format, try as example (2013/12/31)")
+                date_by_user = input("Please input date: ")
+            elif not check.is_it_date(date_by_user):
+                print("..............................................................")
+                print("Sorry, you inputed not date, try again as example (2013/12/31)")
                 date_by_user = input("Please input date: ")
             else:
                 date_now = datetime.datetime.now()
@@ -58,8 +73,8 @@ class GetRightDate(object):
                 oldest_date_in_archive = datetime.datetime.strptime("2010/01/11", "%Y/%m/%d")
         
                 if ransform_date_by_user > date_now:
-                    print(".......................................")
-                    print("Sorry, you input future date, try again")
+                    print("..................................................")
+                    print("###  Sorry, you input future date, try again.  ###")
                     date_by_user = input("Please input date: ")
                 elif ransform_date_by_user < oldest_date_in_archive:
                     print("....................................................................")

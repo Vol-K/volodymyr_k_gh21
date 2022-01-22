@@ -21,12 +21,12 @@ class VikkaNewsPipeline:
     def create_conn(self):
         self.database = sqlite3.connect("vikka_news.db")
         self.db_cur = self.database.cursor()
-   
+
     # Create table
     def create_table(self):
         self.db_cur.execute("DROP TABLE IF EXISTS news")
         self.db_cur.execute("CREATE TABLE news (date TEXT, title TEXT, \
-                             body TEXT, tags TEXT, url TEXT)") 
+                             body TEXT, tags TEXT, url TEXT)")
 
     def process_item(self, item, spider):
         self.write_news(item)
