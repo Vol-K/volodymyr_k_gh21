@@ -4,11 +4,8 @@
 """
 
 
-import re
 import scrapy
-from pathlib import Path
 import datetime
-import csv
 from ..items import VikkaNewsItem
 
 
@@ -94,7 +91,7 @@ class GetRightDate(object):
 
 class VikkaSpider(scrapy.Spider):
 
-    name = 'vikka'
+    name = 'vikka2'
     allowed_domains = ['vikka.ua']
 
     # Introducing block for User
