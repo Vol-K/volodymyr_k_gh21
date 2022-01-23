@@ -30,7 +30,6 @@
 """
 
 
-# import re
 import scrapy
 from pathlib import Path
 import datetime
@@ -60,7 +59,7 @@ class CheckDate(object):
 
         return check
 
-    # Checking it is real date or this 'str' included mixed 
+    # Checking it is real date or this 'str' included mixed
     # permitted symbols only.
     def is_it_date(self, user_date):
         
@@ -135,7 +134,6 @@ class VikkaSpider(scrapy.Spider):
     # Getting from User right date (not to old and not from the future)
     get_date = GetRightDate()
     date_by_user = get_date.is_right_date(date_by_user)
-
 
     # Link for our start parsing
     basic_url = "https://www.vikka.ua/"
