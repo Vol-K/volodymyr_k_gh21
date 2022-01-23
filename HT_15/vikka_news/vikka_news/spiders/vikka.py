@@ -118,7 +118,7 @@ class GetRightDate(object):
                     print("You input correct date")
                     exit_date_check_cicle = True
 
-        return exit_date_check_cicle
+        return date_by_user
 
 
 class VikkaSpider(scrapy.Spider):
@@ -134,7 +134,8 @@ class VikkaSpider(scrapy.Spider):
 
     # Getting from User right date (not to old and not from the future)
     get_date = GetRightDate()
-    get_date.is_right_date(date_by_user)
+    date_by_user = get_date.is_right_date(date_by_user)
+
 
     # Link for our start parsing
     basic_url = "https://www.vikka.ua/"
