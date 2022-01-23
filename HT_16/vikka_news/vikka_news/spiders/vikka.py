@@ -12,8 +12,7 @@ import csv
 from ..items import VikkaNewsItem
 
 
-
-# Check date fromat from User 
+# Check date fromat from User
 class CheckDate(object):
     """
     This class has one goal, check date gotten from User 
@@ -22,7 +21,7 @@ class CheckDate(object):
 
     @staticmethod
     def check_wrong_symbols(date):
-            
+
         false_counter = 0
         for elem in date:
             if not elem.isdigit():
@@ -36,16 +35,16 @@ class CheckDate(object):
 
         return check
 
-    # Checking it is real date or this 'str' included mixed 
+    # Checking it is real date or this 'str' included mixed
     # permitted symbols only.
     def is_it_date(self, user_date):
-        
+
         try:
             datetime.datetime.strptime(user_date, "%Y/%m/%d")
             check_result = True
         except ValueError:
             check_result = False
-        
+
         return check_result
 
 
@@ -54,6 +53,7 @@ class GetRightDate(object):
     """
     Getting from User right date (not to old and not from the future).
     """
+    
     def is_right_date(sef, date_by_user):
         exit_date_check_cicle = False
         while not exit_date_check_cicle:
@@ -69,16 +69,20 @@ class GetRightDate(object):
                 date_by_user = input("Please input date: ")
             else:
                 date_now = datetime.datetime.now()
-                ransform_date_by_user = datetime.datetime.strptime(date_by_user, "%Y/%m/%d")
-                oldest_date_in_archive = datetime.datetime.strptime("2010/01/11", "%Y/%m/%d")
-        
+                ransform_date_by_user = datetime.datetime.strptime(
+                    date_by_user, "%Y/%m/%d")
+                oldest_date_in_archive = datetime.datetime.strptime(
+                    "2010/01/11", "%Y/%m/%d")
+
                 if ransform_date_by_user > date_now:
                     print("..................................................")
                     print("###  Sorry, you input future date, try again.  ###")
                     date_by_user = input("Please input date: ")
                 elif ransform_date_by_user < oldest_date_in_archive:
-                    print("....................................................................")
-                    print("Sorry, you input to old date, oldest date in archive is - 2010/01/11")
+                    print(
+                        "....................................................................")
+                    print(
+                        "Sorry, you input to old date, oldest date in archive is - 2010/01/11")
                     date_by_user = input("Please input date: ")
                 else:
                     print("......................")
@@ -89,7 +93,7 @@ class GetRightDate(object):
 
 
 class VikkaSpider(scrapy.Spider):
-    
+
     name = 'vikka'
     allowed_domains = ['vikka.ua']
 
@@ -98,7 +102,6 @@ class VikkaSpider(scrapy.Spider):
     print("Hello, You can get newsline by one days from Vikka website.")
     print("Please, use correct format of date, for example: 2013/12/31")
     date_by_user = input("Please input date: ")
-
 
     # Getting from User right date (not to old and not from the future)
     get_date = GetRightDate()
@@ -119,26 +122,26 @@ class VikkaSpider(scrapy.Spider):
             news_link = element.css("h2.title-cat-post a::attr(href)").get()
             yield response.follow(news_link, callback=self.parse_news)
 
-        # Checking of pagination    
+        # Checking of pagination
         pagination = response.css("div.nav-links")
         if pagination:
             next_page = pagination.css("a.next::attr(href)").get()
             yield response.follow(next_page, callback=self.parse)
-            
+
     # Processing of news links from 'parse' method
     # Get info what we need (title, test, tags, link)
     def parse_news(self, response):
         VikkaSpider.news_counter += 1
 
         news_title = response.css("h1.post-title::text").get()
-        
-        news_body = []        
+
+        news_body = []
         for elem in response.css("div.entry-content"):
             news_body = elem.css("div.entry-content p strong::text, \
                 div.entry-content p::text, div.entry-content p em::text, \
                 div.entry-content p em a::text, \
                 div.entry-content p a::text").extract()
-            news_body = list(map(str.strip, news_body))      
+            news_body = list(map(str.strip, news_body))
         news_body = " ".join(news_body)
         news_body = news_body.replace(" .", ".")
 
@@ -148,13 +151,13 @@ class VikkaSpider(scrapy.Spider):
         for item in news_tags:
             item = "#" + item
             tags_modifyed.append(item)
-        news_tags = ", ".join(tags_modifyed).strip() 
+        news_tags = ", ".join(tags_modifyed).strip()
 
         news_url = response.url
 
-        # Forming a dict with all scraped information about each news and 
+        # Forming a dict with all scraped information about each news and
         # sent it to the 'pipeline' for writing into SQL databse.
-        item = {"date": self.date_by_user, "title": news_title, \
+        item = {"date": self.date_by_user, "title": news_title,
                 "body": news_body, "tags": news_tags, "url": news_url}
         yield item
 
