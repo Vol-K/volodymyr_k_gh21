@@ -15,7 +15,7 @@ askstories, showstories, newstories, jobstories.
 Зверніть увагу - інстанси різних типів мають різний набір полів.
 
 Код повинен притримуватися стандарту pep8.
-Перевірити свій код можна з допомогою ресурсу http://pep8online.com/.
+Перевірити свій код можна з допомогою ресурсу: http://pep8online.com/.
 
 Для тих, кому хочеться зробити щось "додаткове" - можете зробити наступне: 
 другим параметром cкрипт може приймати назву HTML тега і за допомогою регулярного 
@@ -67,10 +67,12 @@ class UserInputArgumentCheck(object):
 
     # Check is input one argument only.
     def is_valid_argument(self, argument):
-        if len(argument) != 1:
-            valid_result = False
-        else:
+        if len(argument) == 0:
+            valid_result = 'default'
+        elif len(argument) == 1:
             valid_result = True
+        else:
+            valid_result = False
 
         return valid_result
 
@@ -108,6 +110,28 @@ class PrintCounterOfWrittenElement(object):
             print(f"Element #{counter} was write to the file.")
 
 
+# Create empty element to write.
+class EmptyElement(object):
+
+    def create_empty_element(self, category, id):
+        if category == "newstories" or category == "showstories":
+            element = {
+                "by": "", "descendants": "", "id": id, "kids": "",
+                "text": "", "score": "", "time": "", "title": "",
+                "type": "", "url": ""}
+        elif category == "askstories":
+            element = {
+                "by": "", "descendants": "", "id": id, "kids": "",
+                "text": "", "score": "", "time": "", "title": "",
+                "type": ""}
+        elif category == "jobstories":
+            element = {
+                "by": "", "id": id, "text": "", "score": "", "time": "",
+                "title": "", "type": "", "url": ""}
+
+        return element
+
+
 class GetElements(object):
     """
     Class initialize 'data_writer' & 'counter_printer' instanses, and also
@@ -118,6 +142,7 @@ class GetElements(object):
 
     data_writer = WrightData()
     counter_printer = PrintCounterOfWrittenElement()
+    empty_element = EmptyElement()
     item_header = False
     file_path = None
     counter = 0
@@ -146,9 +171,13 @@ class GetElements(object):
                 f"/v0/item/{item}.json?print=pretty")
             item_request = json.loads(item_request.text)
 
+            # Create empty 'item' is script find item without data.
+            if not item_request:
+                item_request = self.empty_element.create_empty_element(
+                    argument, item)
+
             # Creating file header, and adding a new elements,
             # because some elements has different header (align to one etalon).
-
             if not self.item_header:
                 self.item_header = list(item_request.keys())
                 header_change = HeaderModify()
@@ -175,8 +204,13 @@ if __name__ == '__main__':
     # Checking and validation of got argument from user.
     check = UserInputArgumentCheck()
     argument_valid = check.is_valid_argument(comand_line_arguments[1:])
-    if argument_valid:
+    if argument_valid is True:
         argument_check = check.is_category_in_list(comand_line_arguments[1])
+    elif argument_valid == 'default':
+        argument_check = [True, 'newstories']
+        print("..........................................................")
+        print("You didn't choose any categories.")
+        print("Script will select the 'new stories' as a default category.")
 
     # Printing 'mistake' message, if argument wasn`t chaked.
     if not argument_valid:
