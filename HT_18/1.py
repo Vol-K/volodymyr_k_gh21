@@ -23,7 +23,7 @@ askstories, showstories, newstories, jobstories.
 (якщо він існує) отриманого запису.
 """
 
-
+import sys
 import json
 import csv
 from pathlib import Path
@@ -31,54 +31,164 @@ from pathlib import Path
 import requests
 
 
-class UseInputCategoryCheck(object):
+# Wright cleaned data to the 'CSV' file database.
+class WrightData(object):
+    """
+    Class include one method, its writing data to the file
+    using integrated 'CSV' module in python.
+    """
+
+    def wright_header(self, file_path, header):
+        with open(file_path, "a", encoding="utf-8", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerows([header])
+
+    def wright_body(self, file_path, field_names, data):
+        with open(file_path, "a", encoding="utf-8", newline="") as file:
+            writer = csv.DictWriter(file, fieldnames=field_names)
+            writer.writerows([data])
+
+
+# Checking inputed argument by user.
+class UserInputArgumentCheck(object):
 
     arpoved_categories = ["askstories", "showstories",
                           "newstories", "jobstories"]
 
-    def is_category_in_list(self, inp_category):
-
-        if inp_category[0] not in self.arpoved_categories:
+    # Check is input right argument
+    # (compare with list of aproved arguments).
+    def is_category_in_list(self, category):
+        if category not in self.arpoved_categories:
             check_result = False
         else:
             check_result = True
 
-        return check_result, inp_category
+        return check_result, category
+
+    # Check is input one argument only.
+    def is_valid_argument(self, argument):
+        if len(argument) != 1:
+            valid_result = False
+        else:
+            valid_result = True
+
+        return valid_result
 
 
-class WelcomeMessage(object):
+# Adding a new element to the header.
+class HeaderModify(object):
+    """
+    Adding a new elements to the file header, because some elements
+    inside one category has different headers (align to one etalon).
+    """
 
-    def message(self, categories):
-        print(".........................................................")
-        print("###   Hello, available 4 categories for the script.   ###")
+    def add_new_header_element(self, header, argument):
 
-        for item in categories:
-            print(F"Category name: '{item}'")
-        user_input = input(
-            "Please, select one categories (its name) from this list: ").split()
-            
-        return user_input
+        if argument == "jobstories":
+            header.insert(3, "text")
+        elif argument == "newstories":
+            if "kids" not in header:
+                header.insert(3, "kids")
+            if "text" not in header:
+                header.insert(4, "text")
+        elif argument == "showstories":
+            if "text" not in header:
+                header.insert(3, "text")
+
+        return header
 
 
-# Script workflow logic
-if __name__ == '__main__':
-    check = UseInputCategoryCheck()
-    welcome = WelcomeMessage()
-    ddd = welcome.message(check.arpoved_categories)
+# Keep in touch with user on element writing process.
+class PrintCounterOfWrittenElement(object):
 
-    xxx = check.is_category_in_list(ddd)
+    def print_counter(self, counter):
+        if counter == 1:
+            print(f"Element #{counter} was write to the file.")
+        elif (counter % 10) == 0:
+            print(f"Element #{counter} was write to the file.")
 
-    if not xxx[0]:
-        print("LOL")
-    else:
-        requests_t = requests.get(
-            f"https://hacker-news.firebaseio.com/v0/{xxx[1][0]}.json?print=pretty")
-        requests_t = json.loads(requests_t.text)
 
-        for item in requests_t:
+class GetElements(object):
+    """
+    Class initialize 'data_writer' & 'counter_printer' instanses, and also
+    create variable: 'file_path', 'item_header', and 'counter'.
+    Class method 'request_clean_elements' - getting list of all elements iside
+    requster category, and cleaning and modifying header of each element.
+    """
+
+    data_writer = WrightData()
+    counter_printer = PrintCounterOfWrittenElement()
+    item_header = False
+    file_path = None
+    counter = 0
+
+    # Getting list of elements, and modify them.
+    def request_clean_elements(self, argument):
+        self.file_path = Path(Path.cwd(), f"{argument}_db.csv")
+
+        # Get list of elements inside inputed category.
+        requests_all_elements = requests.get(
+            "https://hacker-news.firebaseio.com"
+            f"/v0/{argument}.json?print=pretty")
+        requests_all_elements = json.loads(requests_all_elements.text)
+
+        print("..........................................................")
+        print(
+            f"Congratulation, script found {len(requests_all_elements)} "
+            "elements by yours request.")
+        print("..........................................................")
+
+        # Getting each element from the list, modifying and writing them
+        # one by one.
+        for item in requests_all_elements:
             item_request = requests.get(
-                f"https://hacker-news.firebaseio.com/v0/item/{item}.json?print=pretty")
+                "https://hacker-news.firebaseio.com"
+                f"/v0/item/{item}.json?print=pretty")
             item_request = json.loads(item_request.text)
-            print(item_request)
 
-    # print("HHHH")
+            # Creating file header, and adding a new elements,
+            # because some elements has different header (align to one etalon).
+
+            if not self.item_header:
+                self.item_header = list(item_request.keys())
+                header_change = HeaderModify()
+                self.item_header = header_change.add_new_header_element(
+                    self.item_header, argument)
+                self.data_writer.wright_header(self.file_path,
+                                               self.item_header)
+
+            self.data_writer.wright_body(self.file_path, self.item_header,
+                                         item_request)
+
+            # Printing to the console number of element (only dozens)
+            # which was written (keeping in touch of user).
+            self.counter += 1
+            self.counter_printer.print_counter(self.counter)
+
+
+# Script workflow.
+if __name__ == '__main__':
+
+    # Get all argumets by User from command line.
+    comand_line_arguments = sys.argv
+
+    # Checking and validation of got argument from user.
+    check = UserInputArgumentCheck()
+    argument_valid = check.is_valid_argument(comand_line_arguments[1:])
+    if argument_valid:
+        argument_check = check.is_category_in_list(comand_line_arguments[1])
+
+    # Printing 'mistake' message, if argument wasn`t chaked.
+    if not argument_valid:
+        print("Sorry, you made mistake in arguments. Script will be stopped.")
+    elif not argument_check[0]:
+        print("Sorry, category doesn`t correct. Script will be stopped.")
+    else:
+        find_element = GetElements()
+        find_element.request_clean_elements(argument_check[1])
+
+        # Final message for user, with path to the DB file.
+        print("..........................................................")
+        print("You can find all saved elements in the 'CSV' database file.")
+        print(find_element.file_path)
+        print("..........................................................")
