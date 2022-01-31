@@ -1,29 +1,29 @@
 from django.contrib import admin
 from .models import Askstories, Showstories, Newstories, Jobstories
 
-# Register your models here.
+
+# Customizing of models output: what and how will be shown on 'Admin' side.
 class AskstoriesAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "by", "id_item")
+    list_display = (
+        "id", "id_item", "by", "title", "descendants", "score", "time")
     list_display_links = ("title", "id_item",)
-    list_filter = ("title", "id_item", )
 
 
 class ShowstoriesAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "by", "id_item")
-    list_display_links = ("title", "id_item", )
-    ist_filter = ("title", "id_item", )
+    list_display = (
+        "id", "id_item", "by", "title", "descendants", "score", "time")
+    list_display_links = ("title", "id_item",)
 
 
 class NewstoriesAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "by", "id_item")
-    list_display_links = ("title", "id_item", )
-    ist_filter = ("title", "id_item", )
+    list_display = (
+        "id", "id_item", "by", "title", "descendants", "score", "time")
+    list_display_links = ("title", "id_item",)
 
 
 class JobstoriesAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "by", "id_item")
+    list_display = ("id", "id_item", "by", "title", "score", "time")
     list_display_links = ("title", "id_item",)
-    ist_filter = ("title", "id_item", )
 
 
 admin.site.register(Askstories, AskstoriesAdmin)
