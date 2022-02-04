@@ -1,6 +1,25 @@
 {% extends "shop/layout.html"%}
 
-{% block popup %}{% endblock %}
+{% block popup %}
+{% for message in messages %}
+<div class="container-fluid p-0">
+    <div class="alert alert-danger" role="alert">
+        <div class="navbar-brand">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <H1>ЗАГЛУШКА</H1>
+                    <span>
+                        <b>
+                            <p>{{ message }} </p>
+                        </b>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
 
 {% block main %}
 <h1>Log in</h1>

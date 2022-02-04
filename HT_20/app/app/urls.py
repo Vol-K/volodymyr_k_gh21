@@ -20,10 +20,14 @@ from django.views.generic.base import RedirectView
 from django.contrib import admin
 from django.urls import include, path
 
+from . import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("shop.urls")),
+    path("index.html", views.index, name="main2"),
+    path("login/", views.log_in, name="login"),
+    path("shop/", include("shop.urls")),
+    path("", views.index, name="main"),
     path(
         "favicon.ico",
         RedirectView.as_view(url=staticfiles_storage.url("favicon.ico")),

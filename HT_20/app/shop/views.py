@@ -3,33 +3,16 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 
-from .forms import LogInForm
-# from .my_helper import processing_logic
+
+# from volodymyr_k_gh21/HT_20/app/shop/forms import LogInForm
+
+def phone(request):
+    return render(request, "shop/phone.html")
 
 
-# Pgae with users 'login' form, and outhput messages.
-def log_in(request):
-    if request.method == "POST":
-        form = LogInForm(request.POST)
+def computers(request):
+    return render(request, "shop/computers.html")
 
-        # Checking is form valid.
-        if form.is_valid():
-            form_data = form.cleaned_data
-            user = authenticate(
-                username=form_data["username"],
-                password=form_data["password"]
-            )
-            if user:
-                if user.is_active:
-                    login(request, user)
-                    return redirect("index.html")
-                    # return HttpResponse()
-                else:
-                    return HttpResponse("Your account is not active")
 
-            else:
-                return HttpResponse("Invalid username or password.")
-    else:
-        form = LogInForm()
-    context = {"form": form}
-    return render(request, "shop/login.html", context)
+def television(request):
+    return render(request, "shop/television.html")
