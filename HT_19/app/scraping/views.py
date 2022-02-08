@@ -1,9 +1,6 @@
 from django.shortcuts import render
 from django.contrib import messages
 
-# import requests
-# import json
-
 from .forms import CategoryForm
 from .my_helper import processing_logic
 
