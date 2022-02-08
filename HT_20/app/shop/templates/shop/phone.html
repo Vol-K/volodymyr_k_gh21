@@ -1,7 +1,61 @@
 {% extends "shop/layout.html"%}
 
 {% block main %}
-<h1>Log in</h1>
-<p>Заглушка</p>
-<p>СМАРТИ</p>
+<div class="text-center">
+	<h2>Phones from our e-shop</h2><br>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+	{% for element in products %}
+	<div class="col">
+
+		<div class="card">
+			<img src="/static/shop/{{ element.brand }}-{{ element.model }}.png" class="card-img-top" alt="..." />
+			<div class="card-body">
+				<label for="brand">
+					<h5 class="card-title">{{ element.brand }}</h5>
+				</label>
+				<label for="brand">
+					<p class="card-text">{{ element.model }}</p>
+				</label>
+				<p class="card-text">{{ element.description }}</p>
+				<div class="btn-group me-2" role="group">
+					{% if username %}
+					<form method="post" action="cart.html">
+						{% csrf_token %}
+						<input style="display: none;" name="brand" value="{{ element.brand }}">
+						<input style="display: none;" name="model" value="{{ element.model }}">
+						<input style="display: none;" name="category" value="{{ category }}">
+						<input style="display: none;" name="amount" type="number" value="1">
+						{% if element.available == "Yes" %}
+							<button class="btn btn-primary" type="submit" id="cart_add">Add to cart</button>
+						{% else %}
+							<button class="btn btn-secondary disabled" type="submit" id="cart_add">Add to cart</button>
+						{% endif %}
+					</form>
+					{% endif %}
+				</div>
+				<div class="btn-group me-2" role="group">
+					{% if user_tupe %}
+					<form method="post" action="editproduct.html">
+						{% csrf_token %}
+						<input style="display: none;" name="brand" value="{{ element.brand }}">
+						<input style="display: none;" name="model" value="{{ element.model }}">
+						<input style="display: none;" name="category" value="{{ category }}">
+						<button class="btn btn-outline-warning" type="submit" id="edit_product">Edit...</button>
+					</form>
+					{% endif %}
+				</div>
+			</div>
+			<div class="card-footer">
+				{% if element.available == "Yes" %}
+				<small class="text-muted"><b>Product is available</b></small>
+				{% else %}
+				<small class="text-muted">Sold out</small>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	{% endfor %}
+</div>
 {% endblock %}

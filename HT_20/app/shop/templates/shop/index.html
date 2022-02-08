@@ -1,20 +1,15 @@
 {% extends "shop/layout.html"%}
 
 {% block popup %}
-
 {% for message in messages %}
-<div class="container-fluid p-0">
+<div class="container">
 	<div class="alert {{ message.tags }} alert-dismissible" role="alert">
 		<div class="navbar-brand">
 			<ul class="nav nav-pills">
 				<li class="nav-item">
-					<H1>ЗАГЛУШКА</H1>
-					<span>
-						<b>
-							<p>{{ message }} </p>
-						</b>
-					</span>
-					<H1>ЗАГЛУШКА</H1>
+					<span><b>
+							<h3>{{ message }}</h3>
+						</b></span>
 				</li>
 			</ul>
 		</div>
@@ -24,70 +19,141 @@
 {% endblock %}
 
 {% block main %}
-<h1 class="text-secondary align-middle">Scraping news categories <br>from "https://"news.ycombinator.com" <br>website.
-</h1><br>
+<br>
 <div class="jumbotron align-middle"">
-	<!-- <div class=" card-group">
-	<div class="card style=" width: 18rem;">
-		<img src="..." class="card-img-top" alt="...">
-		<div class="card-body">
-			<h5 class="card-title">Card title</h5>
-			<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-				content.</p>
-			<a href="#" class="btn btn-primary">Go somewhere</a>
+	<div class=" text-center">
+	<h2>Phones</h2><br>
+</div>
+<div class=" row row-cols-1 row-cols-md-3 g-4">
+	{% for element in phone %}
+	<div class="col">
+		<div class="card">
+			<img src="/static/shop/{{ element.brand }}-{{ element.model }}.png" class="card-img-top" alt="..." />
+			<div class="card-body">
+				<label for="brand">
+					<h5 class="card-title">{{ element.brand }}</h5>
+				</label>
+				<label for="brand">
+					<p class="card-text">{{ element.model }}</p>
+				</label>
+				<p class="card-text">{{ element.description }}</p>
+				<div class="btn-group me-2" role="group">
+					{% if username %}
+					<form method="post" action="shop/cart.html">
+						{% csrf_token %}
+						<input style="display: none;" name="brand" value="{{ element.brand }}">
+						<input style="display: none;" name="model" value="{{ element.model }}">
+						<input style="display: none;" name="category" value="mobile">
+						<input style="display: none;" name="amount" type="number" value="1">
+						{% if element.available == "Yes" %}
+						<button class="btn btn-primary" type="submit" id="cart_add">Add to cart</button>
+						{% else %}
+						<button class="btn btn-secondary disabled" type="submit" id="cart_add">Add to cart</button>
+						{% endif %}
+					</form>
+					{% endif %}
+				</div>
+			</div>
+			<div class="card-footer">
+				{% if element.available == "Yes" %}
+				<small class="text-muted"><b>Product is available</b></small>
+				{% else %}
+				<small class="text-muted">Sold out</small>
+				{% endif %}
+			</div>
 		</div>
 	</div>
-	<div class="card">
-		<img src="..." class="card-img-top" alt="...">
-		<div class="card-body">
-			<h5 class="card-title">Card title</h5>
-			<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-				content.</p>
-			<a href="#" class="btn btn-primary">Go somewhere</a>
-		</div>
-	</div>
-	<div class="card">
-		<img src="..." class="card-img-top" alt="...">
-		<div class="card-body">
-			<h5 class="card-title">Card title</h5>
-			<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-				content.</p>
-			<a href="#" class="btn btn-primary">Go somewhere</a>
-		</div>
-	</div>
+	{% endfor %}
 </div>
 <br>
-<div class="card-group">
-	<div class="card style=" width: 18rem;">
-		<img src="..." class="card-img-top" alt="...">
-		<div class="card-body">
-			<h5 class="card-title">Card title</h5>
-			<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-				content.</p>
-			<a href="#" class="btn btn-primary">Go somewhere</a>
+<div class="text-center">
+	<h2>Laptops</h2><br>
+</div>
+<div class=" row row-cols-1 row-cols-md-3 g-4">
+	{% for element in computers %}
+	<div class="col">
+		<div class="card">
+			<img src="/static/shop/{{ element.brand }}-{{ element.model }}.png" class="card-img-top" alt="..." />
+			<div class="card-body">
+				<label for="brand">
+					<h5 class="card-title">{{ element.brand }}</h5>
+				</label>
+				<label for="brand">
+					<p class="card-text">{{ element.model }}</p>
+				</label>
+				<p class="card-text">{{ element.description }}</p>
+				<div class="btn-group me-2" role="group">
+					{% if username %}
+					<form method="post" action="shop/cart.html">
+						{% csrf_token %}
+						<input style="display: none;" name="brand" value="{{ element.brand }}">
+						<input style="display: none;" name="model" value="{{ element.model }}">
+						<input style="display: none;" name="category" value="pc">
+						<input style="display: none;" name="amount" type="number" value="1">
+						{% if element.available == "Yes" %}
+						<button class="btn btn-primary" type="submit" id="cart_add">Add to cart</button>
+						{% else %}
+						<button class="btn btn-secondary disabled" type="submit" id="cart_add">Add to cart</button>
+						{% endif %}
+					</form>
+					{% endif %}
+				</div>
+			</div>
+			<div class="card-footer">
+				{% if element.available == "Yes" %}
+				<small class="text-muted"><b>Product is available</b></small>
+				{% else %}
+				<small class="text-muted">Sold out</small>
+				{% endif %}
+			</div>
 		</div>
 	</div>
-	<div class="card">
-		<img src="..." class="card-img-top" alt="...">
-		<div class="card-body">
-			<h5 class="card-title">Card title</h5>
-			<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-				content.</p>
-			<a href="#" class="btn btn-primary">Go somewhere</a>
+	{% endfor %}
+</div>
+<br>
+<div class="text-center">
+	<h2>TV's</h2><br>
+</div>
+<div class=" row row-cols-1 row-cols-md-3 g-4">
+	{% for element in television %}
+	<div class="col">
+		<div class="card">
+			<img src="/static/shop/{{ element.brand }}-{{ element.model }}.png" class="card-img-top" alt="..." />
+			<div class="card-body">
+				<label for="brand">
+					<h5 class="card-title">{{ element.brand }}</h5>
+				</label>
+				<label for="brand">
+					<p class="card-text">{{ element.model }}</p>
+				</label>
+				<p class="card-text">{{ element.description }}</p>
+				<div class="btn-group me-2" role="group">
+					{% if username %}
+					<form method="post" action="shop/cart.html">
+						{% csrf_token %}
+						<input style="display: none;" name="brand" value="{{ element.brand }}">
+						<input style="display: none;" name="model" value="{{ element.model }}">
+						<input style="display: none;" name="category" value="tv">
+						<input style="display: none;" name="amount" type="number" value="1">
+						{% if element.available == "Yes" %}
+						<button class="btn btn-primary" type="submit" id="cart_add">Add to cart</button>
+						{% else %}
+						<button class="btn btn-secondary disabled" type="submit" id="cart_add">Add to cart</button>
+						{% endif %}
+					</form>
+					{% endif %}
+				</div>
+			</div>
+			<div class="card-footer">
+				{% if element.available == "Yes" %}
+				<small class="text-muted"><b>Product is available</b></small>
+				{% else %}
+				<small class="text-muted">Sold out</small>
+				{% endif %}
+			</div>
 		</div>
 	</div>
-	<div class="card">
-		<img src="..." class="card-img-top" alt="...">
-		<div class="card-body">
-			<h5 class="card-title">Card title</h5>
-			<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-				content.</p>
-			<a href="#" class="btn btn-primary">Go somewhere</a>
-		</div>
-	</div>
-</div> -->
-{% block phone %}{% endblock %}
-{% block tv %}{% endblock %}
-{% block pc %}{% endblock %}
+	{% endfor %}
+</div>
 </div>
 {% endblock %}
