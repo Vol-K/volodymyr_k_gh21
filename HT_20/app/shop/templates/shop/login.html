@@ -2,21 +2,18 @@
 
 {% block popup %}
 {% for message in messages %}
-<div class="container-fluid p-0">
-    <div class="alert alert-danger" role="alert">
-        <div class="navbar-brand">
-            <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <H1>ЗАГЛУШКА</H1>
-                    <span>
-                        <b>
-                            <p>{{ message }} </p>
-                        </b>
-                    </span>
-                </li>
-            </ul>
-        </div>
-    </div>
+<div class="container">
+	<div class="alert {{ message.tags }} alert-dismissible" role="alert">
+		<div class="navbar-brand">
+			<ul class="nav nav-pills">
+				<li class="nav-item">
+					<span><b>
+							<h3>{{ message }}</h3>
+						</b></span>
+				</li>
+			</ul>
+		</div>
+	</div>
 </div>
 {% endfor %}
 {% endblock %}
@@ -24,14 +21,12 @@
 {% block main %}
 <h1>Log in</h1>
 <p>Please, fill the form</p>
-<!-- <span class="input-group-text">Please select category to start:</span> -->
-
 <form method="post">
-    {% csrf_token %}
-    <div class="input-group input-group-lg">
-        {{ form.username }}
-        {{ form.password }}
-        <button class="btn btn-outline-primary" type="submit" id="login">GO</button>
-    </div>
+	{% csrf_token %}
+	<div class="input-group input-group-lg">
+		{{ form.username }}
+		{{ form.password }}
+		<button class="btn btn-outline-primary" type="submit" id="login">GO</button>
+	</div>
 </form>
 {% endblock %}

@@ -1,0 +1,61 @@
+{% extends "shop/layout.html"%}
+
+{% block popup %}
+{% for message in messages %}
+<div class="container">
+	<div class="alert {{ message.tags }} alert-dismissible" role="alert">
+		<div class="navbar-brand">
+			<ul class="nav nav-pills">
+				<li class="nav-item">
+					<span><b><h3>{{ message }}</h3></b></span>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block main %}
+<div class="jumbotron align-middle">
+	<table class="table table-borderless table-sm table-responsive-sm" style="width: 600px;">
+		<th>
+			<tr class="align-middle" style="background-color: #eee; height: 50px;">
+				<th>Category</th>
+				<th>Brand</th>
+				<th style="width: 250px;">Model</th>
+				<th>Countity</th>
+				<th>Price</th>
+			</tr>
+		</th>
+		<tbody>
+			<div class="input-group mb-3">
+				{% for item in all_products %}
+					<tr>
+						<td>{{ item.category }}</td>
+						<td>{{ item.brand }}</td>
+						<td>{{ item.model }}</td>
+						<td>{{ item.amount }}</td>
+						<td>{{ item.price }}</td>
+					</tr>
+				{% endfor %}
+					<tr>
+						<td style="background-color: #eee; height: 50px;"></td>
+						<td style="background-color: #eee; height: 50px;"></td>
+						<td style="background-color: #eee; height: 50px;"></td>
+						<td ><b>Total sum</b></td>
+						<td><b>{{ total_sum }}</b></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td colspan="2">
+							<button class="btn btn-secondary disabled" type="submit" id="payment" style="width: 100px;">Pay</button>
+						</td>
+					</tr>
+			</div>
+		</tbody>
+	</table>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "shop/layout.html"%}
+
+{% block main %}
+<div class="jumbotron align-middle"">
+	<div class=" text-center">
+	<H2>Edit chousen product</H2><br>
+</div>
+</div>
+<div class="jumbotron align-middle">
+	<form method="post" action="edited" class="jumbotron align-middle">
+		{% csrf_token %}
+		<table class="table table-borderless table-sm table-responsive-sm" style="width: 600px;">
+			<th>
+				<tr>
+					<th></th>
+					<th style="width: 250px;">Old product parameters</th>
+					<th>Fill new parameters</th>
+				</tr>
+			</th>
+			<tbody>
+				<div class="input-group mb-3">
+					<tr>
+						<th>Brand</th>
+						<td>{{ brand }}</td>
+						<td><input autocomplete="off" autofocus class="form-control" name="brand" placeholder="..." type="text"
+								max="20"></td>
+					</tr>
+					<tr>
+						<th>Model</th>
+						<td>{{ model }}</td>
+						<td><input autocomplete="off" autofocus class="form-control" name="model" placeholder="..." type="text"
+								max="100"></td>
+					</tr>
+					<tr>
+						<th>Description</th>
+						<td>{{ description }}</td>
+						<td><input autocomplete="off" autofocus class="form-control" name="description" placeholder="..."
+								type="text">
+						</td>
+					</tr>
+					<tr>
+						<th>Price</th>
+						<td>{{ price }}</td>
+						<td><input autocomplete="off" autofocus class="form-control" name="price" placeholder="..." type="number">
+						</td>
+					</tr>
+					<tr>
+						<th>Available</th>
+						<td>{{ available }}</td>
+						<td><input autocomplete="off" autofocus class="form-control" name="available" placeholder="..." type="text"
+								max="3"></td>
+					</tr>
+				</div>
+			</tbody>
+		</table>
+		<input style="display: none;" name="old_brand" value="{{ brand }}">
+		<input style="display: none;" name="old_model" value="{{ model }}">
+		<input style="display: none;" name="category" value="{{ category }}">
+		<input style="display: none;" name="amount" type="number" value="1">
+		<button class="btn btn-outline-warning" type="submit">Apply changes</button>
+	</form>
+</div>
+{% endblock %}
