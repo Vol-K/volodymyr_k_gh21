@@ -165,7 +165,9 @@ def new_add_to_cart(request):
     # return redirect("phone.html")
     check_items_in_cart = request.session.get("user_cart")
     products_quantity = check_items_in_cart.get("item_quantity")
-    return JsonResponse({"quantity": added, "amount": products_quantity})
+    # return JsonResponse({"quantity": added, "amount": products_quantity})
+    print(prod_id)
+    return JsonResponse({"quantity": added})
 
 
 def user_cart(request):

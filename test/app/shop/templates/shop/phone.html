@@ -22,17 +22,18 @@
 				<div class="btn-group me-2" role="group">
 					{% if username %}
 					<!-- <form method="post" action="cart.html"> -->
-					<form method="post" action="add_to_cart">
-						{% csrf_token %}
-						<input style="display: none;" name="id" value="{{ element.id }}">
-						<input style="display: none;" name="category" value="{{ category }}">
-						{% if element.available == "Yes" %}
-						<!-- <button class="btn btn-primary" type="submit" id="cart_add">Add to cart</button> -->
-						<button class="btn btn-primary" type="submit" id="cart_add">NEW cart</button>
-						{% else %}
-						<button class="btn btn-secondary disabled" type="submit">Add to cart</button>
-						{% endif %}
-					</form>
+					<!-- <form method="post" action="add_to_cart">
+						{% csrf_token %} -->
+					<input style="display: none;" name="id" value="{{ element.id }}">
+					<input style="display: none;" name="category" value="{{ category }}">
+					{% if element.available == "Yes" %}
+					<!-- <button class="btn btn-primary" type="submit" id="cart_add">Add to cart</button> -->
+					<button class="btn btn-primary" type="submit" id="cart_add" data-item="{{ element.id }}"
+						onclick="count({{ element.id }}, 'mobile')">NEW cart</button>
+					{% else %}
+					<button class=" btn btn-secondary disabled" type="submit">Add to cart</button>
+					{% endif %}
+					<!-- </form> -->
 					{% endif %}
 				</div>
 				<div class="btn-group me-2" role="group">
@@ -49,7 +50,8 @@
 			</div>
 			<div class="card-footer">
 				{% if element.available == "Yes" %}
-				<small class="text-muted"><b>Product quantity: {{ element.quantity }}</b></small>
+				<small class="text-muted" id="quantity-{{ element.id }}" data-name="quantity"><b>
+						Product quantity: {{ element.quantity }}</b></small>
 				{% else %}
 				<small class="text-muted">Sold out</small>
 				{% endif %}
@@ -58,34 +60,37 @@
 	</div>
 	{% endfor %}
 </div>
+<!-- <script>
+	let counter = 0;
+	function count(id, categoty) {
+		counter++;
+		// console.log(id)
+		// console.log(categoty)
+		// document.querySelector('#quantity-' + id).innerHTML = id + categoty;
+		document.querySelector('#cart_badge').innerHTML = counter;
+	}
+</script> -->
 
 <script>
-	(function () {
-		var httpRequest;
-		document.getElementById("cart_add").addEventListener('click', makeRequest);
-		function makeRequest() {
-			httpRequest = new XMLHttpRequest();
-			if (!httpRequest) {
-				alert('Giving up :( Cannot create an XMLHTTP instance');
-				return false;
-			}
-			httpRequest.onreadystatechange = alertContents;
-			httpRequest.open('POST', 'add_to_cart');
-			httpRequest.send();
-		}
-		function alertContents() {
-			if (httpRequest.readyState === XMLHttpRequest.DONE) {
-				if (httpRequest.status === 200) {
-					console.log(this.responseText)
-					var response = JSON.parse(this.responseText);
-					// 	alert(response.computedString);
-					// } else {
-					// 	alert('There was a problem with the request.');
-					// }
+	function count(id, categoty) {
+		const url = 'new_add_to_cart';
+		const data = {
+			"id": id,
+			"category": category,
+		};
+		try {
+			const response = await fetch(url, {
+				method: 'POST', // или 'PUT'
+				body: JSON.stringify(data), // данные могут быть 'строкой' или {объектом}!
+				headers: {
+					'Content-Type': 'application/json'
 				}
-				xmlhttp.send(JSON.stringify({ "quantity": added, "amount": products_quantity }));
-			}
+			});
+			const json = await response.json();
+			console.log('Успех:', JSON.stringify(json));
+		} catch (error) {
+			console.error('Ошибка:', error);
 		}
-	});
+	}
 </script>
 {% endblock %}

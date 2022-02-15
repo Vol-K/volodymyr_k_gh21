@@ -38,13 +38,14 @@
 				{% if username %}
 				<ul class="navbar-nav ml-auto mt-2">
 					<li class="nav-item"><a class="nav-link position-relative" href="/shop/cart.html">
-						{% load static %}
-						<img src="{% static 'shop/cart.png' %}" alt="" width="30" height="30"
-							class="d-inline-block align-text-top">
-							<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+							{% load static %}
+							<img src="{% static 'shop/cart.png' %}" alt="" width="30" height="30"
+								class="d-inline-block align-text-top">
+							<span
+								class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart_badge">
 								{{ amount }}
 								<span class="visually-hidden">unread messages</span>
-							  </span>
+							</span>
 						</a></li>
 					<li class="nav-item"><a class="nav-link"><b class="fs-6">{{ username }}</b></a></li>
 					<li class="nav-item"><a class="nav-link" href="/logout"><b class="fs-6 text-black-30">LogOut</b></a>
@@ -62,7 +63,7 @@
 	<main class="container p-5">
 		{% block main %}{% endblock %}
 	</main>
-	
+
 	<!-- Separate Popper and Bootstrap JS -->
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
 		integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
