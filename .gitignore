@@ -6,5 +6,6 @@
 !requirements.txt
 *.jpeg
 *.png
+!/home/volkar/My_Coding/GeekHub/volodymyr_k_gh21/HT_21/app/shop/static/shop/*.png
 local_settings.py
-db.sqlite3
+# db.sqlite3
