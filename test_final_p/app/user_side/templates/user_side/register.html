@@ -1,0 +1,91 @@
+{% extends "user_side/layout.html" %}
+
+<!-- Page subtitle -->
+{% block title %}
+  Реєстрація
+{% endblock %}
+
+<!-- Place/block for system messages -->
+{% block popup %}
+{% for message in messages %}
+<div class="container">
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+    <div class="navbar-brand">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <span><b>
+              {%if "username" in message.tags %}
+                <h3>{{ message }}</h3>
+              {%endif%}
+              {%if "password" in message.tags %}
+                <h3>{{ message }}</h3>
+              {%endif%}
+              {%if "email" in message.tags %}
+                <h3>{{ message }}</h3>
+              {%endif%}
+            </b></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+<!-- Block for main information on the page. -->
+{% block main %}
+<form method="post" id="RegisterNewUserForm_page">
+  {% csrf_token %}
+  {% load widget_tweaks %}
+  <H2>Для продовження реєстрації, внесіть дані у форму.</H2>
+  <p style="font-size:20px">Всі поля є обов'язковими</p>
+  <div class="form-group">
+    {% render_field form.username class="form-control" name="username" placeholder="Придумайте свій Login" type="text" id="new_user_register_field" %}
+    <p style="font-size:15px">150 characters or fewer. Letters, digits and @/./+/-/_ only.</p>
+  </div>
+  <div class="form-group">
+    {% render_field form.password1 class="form-control" name="userpassword1" placeholder="Створіть пароль" type="password" id="new_password_field" %}
+    <p style="font-size:15px">
+      <li>Your password can’t be too similar to your other personal information.</li>
+      <li>Your password must contain at least 8 characters.</li>
+      <li>Your password can’t be a commonly used password.</li>
+      <li>Your password can’t be entirely numeric.</li>
+    </p>
+  </div>
+  <div class="form-group">
+    {% render_field form.password2 class="form-control" name="userpassword2" placeholder="Повторіть пароль" type="password" id="repeat_password_field" %}
+    <p style="font-size:15px">Enter the same password as before, for verification.</p>
+  </div>
+  <div class="form-group">
+    {% render_field form.user_email class="form-control" name="useremail" placeholder="Електронна пошта" type="text" id="useremail" %}
+    <p>Email домени дозволені для реєстрації:
+      <li>@gmail.com</li>
+      <li>localhost</li>
+      <li>...</li>
+    </p>
+  </div>
+  <button class="btn btn-primary" type="submit" id="register_new_user" onclick="myFun()">Зареєструватися</button>
+  
+<!-- поп пооводу функції '/check' -->
+<!-- https://www.reddit.com/r/cs50/comments/amlwzy/pset_8_finance_struggling_with_check/ -->
+<!--
+<script>
+    var username = document.querySelector('input.username');
+    var register = document.querySelector('form');
+    register.onsubmit = function(success) {
+        $.get('/check?username=' + username, function() {
+            if (success == true) {
+                register.submit();
+            }
+
+            else {
+                alert('Sorry this Username was occupied before');
+                document.getElement('form').addEventListener("submit", function(event){
+                event.preventDefault();
+                    });
+            }
+        });
+    };
+</script>
+-->
+{% endblock %}

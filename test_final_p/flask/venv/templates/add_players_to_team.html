@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+
+<!-- Підзаголовок сторінки -->
+{% block title %}
+	Новий гравець+
+{% endblock %}
+
+{% block main %}
+<h1 class="text-muted">Поки Заглушка</h1>
+<form action="/add_players_to_team" method="post">
+	<table class="table table-borderless" style="width:auto" align="center" id="add_players_to_team">
+
+		<thead style="font-size:16px" align="center">
+			<tr>
+				<th scope="col" style="width:auto">Команди</th>
+				<th scope="col" style="width:auto">Учасник клуба</th>
+				<th scope="col" style="width:auto"></th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<div class="input-group mb-3">
+				<tr>
+					<td><select autocomplete="off" autofocus class="custom-select" name="team_name" type="text" min="1" required>
+						<option selected disabled value="">...</option>
+							{% for row in rows %}
+								<option>{{ row[1] }}</option> <!-- row["team_name"] -->
+							{% endfor %}
+						</select></td>
+					<td><select autocomplete="off" autofocus class="custom-select" name="user_name" type="text" min="1" required>
+						<option selected disabled value="">...</option>
+							{% for row in rows2 %}
+								<option>{{ row[1] }}</option> <!-- row["user_name"] -->
+							{% endfor %}
+						</select></td>
+					<td><button class="btn btn-primary" align="center" type="submit" id="add_comandu_button" style="width:100px">Додати</button></td>
+				</tr>
+			</div>
+		</tbody>
+	</table>
+</form>
+<h2 class="text-muted">Місце для команд та їх учасників<br></h2>
+<table
+	class="table table-striped table-borderless a"
+	style="width:auto"
+	align="center">
+
+	<thead style="font-size:17px" align="center">
+		<th scope="col" style="width:auto">Команда</th>
+		<th scope="col" style="width:auto">Член команди</th>
+	</thead>
+
+	<tbody style="font-size:18px">
+		<div class="input-group mb-3">
+			{% for row in rows3 %}
+				<tr>
+					<td>{{ row[1] }}</td> <!-- row["team"] -->
+					<td>{{ row[0] }}</td> <!-- row["user_name"] -->
+				</tr>
+			{% endfor %}
+		</div>
+	</tbody>
+</table>
+<a href="del_player_from_team"><button class="btn btn-outline-danger" type="submit" style="width:160px">Видалити гравця</button></a>
+{% endblock %}

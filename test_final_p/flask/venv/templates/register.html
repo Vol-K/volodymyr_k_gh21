@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+<!-- Підзаголовок сторінки -->
+{% block title %}
+  Реєстрація
+{% endblock %}
+
+{% block main %}
+
+<form action="/register" method="post" id="myForm">
+  <div class="form-group">
+    <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Ім'я користувача" type="text" id="test" required>
+  </div>
+  <div class="form-group">
+    <input class="form-control" name="password" placeholder="Пароль, не менше 5 символів" type="password" required>
+  </div>
+  <div class="form-group">
+    <input class="form-control" name="confirmation" placeholder="Підтвердження пароля" type="password" required>
+  </div>
+<!--  <div class="form-group">
+      <input type="checkbox" id="admin" name="admin" value="yes"><br><label for="admin">Адмін</label>
+  </div> -->
+  <button class="btn btn-primary" type="submit" id="submittion" onclick="myFun()">Зареєструватися</button>
+</form>
+
+<!-- поп пооводу функції '/check' -->
+<!-- https://www.reddit.com/r/cs50/comments/amlwzy/pset_8_finance_struggling_with_check/ -->
+<!--
+<script>
+    var username = document.querySelector('input.username');
+    var register = document.querySelector('form');
+    register.onsubmit = function(success) {
+        $.get('/check?username=' + username, function() {
+            if (success == true) {
+                register.submit();
+            }
+
+            else {
+                alert('Sorry this Username was occupied before');
+                document.getElement('form').addEventListener("submit", function(event){
+                event.preventDefault();
+                    });
+            }
+        });
+    };
+</script>
+-->
+{% endblock %}

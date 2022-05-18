@@ -1,0 +1,35 @@
+{% extends "user_side/layout.html" %}
+
+<!-- Підзаголовок сторінки -->
+{% block title %}
+Прогноз
+{% endblock %}
+
+<!-- Place/block for system messages. -->
+{% block popup %}
+{% for message in messages %}
+<div class="container">
+    <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+        <div class="navbar-brand">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <span><b>
+                            <h3>{{ message }}</h3>
+                        </b></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block main %}
+<h1 class="text-muted" align="center">Заглушка для account.html</h1>
+<br>
+<P><b>п. 2.2 <a href="https://www.facebook.com/groups/pany.experty/permalink/225634028226979/">Правил</a> (щодо
+        Експрес-прогноза)</b></P>
+<P>- Мінімальна кількість матчів в експрес-прогнозі - 3 матчі.</P>
+<P>- Учасник МОЖЕ дати АБО експрес-прогноз, АБО звичайний <i>(нововведення від 23.06.2018).</i></P>
+<P>- Більше деталей в правилах Клубу.</P>
+{% endblock %}

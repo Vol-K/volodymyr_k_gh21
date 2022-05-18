@@ -1,0 +1,172 @@
+{% extends "user_side/layout.html" %}
+
+<!-- Підзаголовок сторінки -->
+{% block title %}
+  Табличка
+{% endblock %}
+
+{% block main %}
+<!-- Адмін частина -->
+{% if session.admin_name %}
+<h1 class="text-muted" align="center">Адмін операції</h1>
+<table 
+  style="width:auto" 
+  id="admin_fintable"
+  align="center">
+
+  <tbody>
+    <td class="pr-3">
+      <form action="/rozrahunky" method="post">
+        <button 
+          class="btn btn-primary" 
+          style="width:210px" 
+          align="center" 
+          type="submit" 
+          id="calculate">Порахувати бали (за тур)</button>
+      </form>
+    </td>
+    <td class="pr-3">
+      <form action="/zbros" method="post">
+        <button 
+          class="btn btn-danger" 
+          style="width:170px" 
+          align="center" 
+          type="submit" 
+          id="zbros">Очистити все</button>
+      </form>
+    </td>
+
+    <form action="/vidkryty_tur" method="post">
+    <td>
+      <select autocomplete="off" autofocus class="custom-select" style="width:auto" name="tur_nomer" type="number" min="1" required>
+        <option selected disabled value="">...</option>
+     
+        </select>
+    </td>
+    <td class="pr-3">
+      <button class="btn btn-outline-success" style="width:160px" align="center" type="submit" id="tur">Відкрити тур</button>
+    </td>
+    </form>
+
+    <form action="/guru" method="post">
+    <td>
+      <select autocomplete="off" autofocus class="custom-select" style="width:100px" name="guru" type="number" min="1" required>
+        <option selected disabled value="">...</option>
+
+        </select>
+    </td>
+    <td>
+      <button class="btn btn-outline-success" style="width:160px" align="center" type="submit" id="guru">Назначить гуру)</button>
+    </td>
+    </form>
+
+  </tbody>
+</table>
+<br>
+{% endif %}
+<!-- Кінець адмін частини, далі для звичайного юзера -->
+<!-- для позначення активного тура -->
+
+<br>
+<br>
+<h2 class="text-muted" align="center">Підсумкова ТАБЛИЧКА</h2>
+<table 
+  class="table table-striped table-borderless a" 
+  style="width:1090px" 
+  id="fintable">
+
+  <thead style="font-size:16px">
+    <tr>
+      <th class="align-middle" data-field="place" >#</th>
+      <th class="align-middle" align="left" data-field="user_name"><div><span>Учасники</span></div></th>
+      <th class="align-middle" style="width:90px" data-field="total_points"><div><span>Бали</span></div></th>
+      <th class="align-middle" style="width:100px" data-field="total_matchi_prognoz"><div><span>Матчі у яких був прогноз</span></div></th>
+      <th class="align-middle" data-field="vgad_rah"><div><span>Вгадані<br> рахунки</span></div></th>
+      <th class="align-middle" data-field="vgad_resultat"><div><span>Вгадані рузельтати</span></div></th>
+      <th class="align-middle" data-field="aver_bal_za_match"><div><span>Сер бал за матч</span></div></th>
+      <th class="align-middle" data-field="potential_points"><div><span>Потенційні бали</span></div></th>
+      <th class="align-middle" data-field="vgad_expresy"><div><span>Вгадані експреси</span></div></th>
+      <th class="align-middle" data-field="nevgad_expres"><div><span>Невгадані експреси</span></div></th>
+      <th class="align-middle" data-field="guru_turu"><div>Гуру туру</span></div></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for element in fintable %}
+      <tr>
+        {% if element.user_position == 1 %}
+          <td class="table-success"><b>{{ element.user_position }}</b></td>
+          <td class="table-success" align="left">
+            {{ element.user_name }}
+          </td>
+          <td class="table-success"><b>{{ element.user_points}}</b></td>
+          <td class="table-success">
+            {{ element.user_all_predicted_matches }}
+          </td>
+          <td class="table-success">
+            {{ element.user_predicted_match_score }}
+          </td>
+          <td class="table-success">
+            {{ element.user_predicted_match_result }}
+          </td>
+          <td class="table-success">
+            {{ element.user_average_point_per_match }}
+          </td>
+          <td class="table-success">{{ element.user_potential_points }}</td>
+          <td class="table-success">{{ element.user_predicted_express }}</td> 
+          <td class="table-success">
+            {{ element.user_not_predicted_express }}
+          </td>
+          <td class="table-success">{{ element.user_achive_guru_turu }}</td>
+        {% else %}
+          <td><b>{{ element.user_position }}</b></td>
+          <td align="left">{{ element.user_name }}</td>
+          <td><b>{{ element.user_points }}</b></td>
+          <td>{{ element.user_all_predicted_matches }}</td>
+          <td>{{ element.user_predicted_match_score }}</td>
+          <td>{{ element.user_predicted_match_result }}</td>
+          <td>{{ element.user_average_point_per_match }}</td>
+          <td>{{ element.user_potential_points }}</td>
+          <td>{{ element.user_predicted_express }}</td>
+          <td>{{ element.user_not_predicted_express }}</td>
+          <td>{{ element.user_achive_guru_turu }}</td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br>
+<h2 class="text-muted" align="center">Командний залік</h2>
+<table
+  class="table table-striped table-borderless a table-hover"
+  style="width:auto"
+  id="team_zalik"
+  align="center">
+
+  <thead style="font-size:16px">
+    <tr>
+      <th scope="col" data-field="place">#</th>
+      <th scope="col" data-field="team_name">Команда</th>
+      <th scope="col" data-field="team_points">Бали</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for element in teams_rank %}
+      <tr>
+        {% if element.team_position == 1 %}
+          <td class="table-success"><b>{{ element.team_position }}</b></td>
+          <td 
+            class="table-success" 
+            align="left"><b>{{ element.team_name }}<b></td>
+          <td class="table-success"><b>{{ element.team_points }}<b></td>
+        {% else %}
+          <td>{{ element.team_position }}</td>
+          <td align="left">{{ element.team_name }}</td>
+          <td>{{ element.team_points }}</td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

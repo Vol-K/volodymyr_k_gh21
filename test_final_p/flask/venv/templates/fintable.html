@@ -1,0 +1,170 @@
+{% extends "layout.html" %}
+
+<!-- Підзаголовок сторінки -->
+{% block title %}
+    Табличка
+{% endblock %}
+
+{% block main %}
+<!-- Адмін частина -->
+{% if session.admin_name %}
+<h1 class="text-muted" align="center">Адмін операції</h1>
+<table 
+  style="width:auto" 
+  id="admin_fintable"
+  align="center">
+
+  <tbody>
+    <td class="pr-3">
+      <form action="/rozrahunky" method="post">
+        <button class="btn btn-primary" style="width:210px" align="center" type="submit" id="calculate">Порахувати бали (за тур)</button>
+      </form>
+    </td>
+    <td class="pr-3">
+      <form action="/zbros" method="post">
+        <button class="btn btn-danger" style="width:170px" align="center" type="submit" id="zbros">Очистити все</button>
+      </form>
+    </td>
+
+    <form action="/vidkryty_tur" method="post">
+    <td>
+      <select autocomplete="off" autofocus class="custom-select" style="width:auto" name="tur_nomer" type="number" min="1" required>
+        <option selected disabled value="">...</option>
+          {% for row in rows2 %}
+            <option data-field="round">{{ row[0] }}</option>
+          {% endfor %}
+        </select>
+    </td>
+    <td class="pr-3">
+      <button class="btn btn-outline-success" style="width:160px" align="center" type="submit" id="tur">Відкрити тур</button>
+    </td>
+    </form>
+
+    <form action="/guru" method="post">
+    <td>
+      <select autocomplete="off" autofocus class="custom-select" style="width:100px" name="guru" type="number" min="1" required>
+        <option selected disabled value="">...</option>
+          {% for row in rows3 %}
+            <option data-field="user_name">{{ row[0] }}</option>
+          {% endfor %}
+        </select>
+    </td>
+    <td>
+      <button class="btn btn-outline-success" style="width:160px" align="center" type="submit" id="guru">Назначить гуру)</button>
+    </td>
+    </form>
+
+  </tbody>
+</table>
+<br>
+{% endif %}
+<!-- Кінець адмін частини, далі для звичайного юзера -->
+<!-- для позначення активного тура -->
+<div align="center">
+  {% for row in rows4 %}
+    <div class="btn-group" role="toolbar" aria-label="Toolbar with button groups" >
+      {% if row[1] == 'buv' %} <!-- row["availability"] -->
+        <div class="btn-group mr-2" role="group">
+          <button type="button" class="btn btn-success" style="width:100px" disabled>{{ row[0] }}</button> <!-- row["round"] -->
+        </div>
+      {% elif row[1] == 'yes' %} <!-- row["availability"] -->
+        <div class="btn-group mr-2" role="group">
+          <button type="button" class="btn btn-success" style="width:120px"><b>Тур #{{ row[0] }}</b></button> <!-- row["round"] -->
+        </div>
+      {% else %}
+        <div class="btn-group mr-2" role="group">
+          <button type="button" class="btn btn-outline-secondary" style="width:100px">{{ row[0] }}</button> <!-- row["round"] -->
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+<br>
+<br>
+<h2 class="text-muted" align="center">Підсумкова ТАБЛИЧКА</h2>
+<table 
+  class="table table-striped table-borderless a" 
+  style="width:1090px" 
+  id="fintable">
+
+  <thead style="font-size:16px">
+    <tr>
+      <th class="align-middle" data-field="place" >#</th>
+      <th class="align-middle" align="left" data-field="user_name"><div><span>Учасники</span></div></th>
+      <th class="align-middle" style="width:90px" data-field="total_points"><div><span>Бали</span></div></th>
+      <th class="align-middle" style="width:100px" data-field="total_matchi_prognoz"><div><span>Матчі у яких був прогноз</span></div></th>
+      <th class="align-middle" data-field="vgad_rah"><div><span>Вгадані<br> рахунки</span></div></th>
+      <th class="align-middle" data-field="vgad_resultat"><div><span>Вгадані рузельтати</span></div></th>
+      <th class="align-middle" data-field="aver_bal_za_match"><div><span>Сер бал за матч</span></div></th>
+      <th class="align-middle" data-field="potential_points"><div><span>Потенційні бали</span></div></th>
+      <th class="align-middle" data-field="vgad_expresy"><div><span>Вгадані експреси</span></div></th>
+      <th class="align-middle" data-field="nevgad_expres"><div><span>Невгадані експреси</span></div></th>
+      <th class="align-middle" data-field="guru_turu"><div>Гуру туру</span></div></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for row in rows %}
+      <tr>
+        {% if row["place"] == 1 %}
+          <td class="table-success"><b>{{ row[9] }}</b></td> <!-- row["place"] -->
+          <td class="table-success" align="left">{{ row[1] }}</td> <!-- row["user_name"] -->
+          <td class="table-success"><b>{{ row[2] }}</b></td> <!-- row["total_points"] -->
+          <td class="table-success">{{ row[3] }}</td> <!-- row["total_matchi_prognoz"] -->
+          <td class="table-success">{{ row[4] }}</td> <!-- row["vgad_rah"] -->
+          <td class="table-success">{{ row[5] }}</td> <!-- row["vgad_resultat"] -->
+          <td class="table-success">{{ row[6] }}</td> <!-- row["aver_bal_za_match"] -->
+          <td class="table-success">{{ row[7] }}</td> <!-- row["potential_points"] -->
+          <td class="table-success">{{ row[10] }}</td> <!-- row["vgad_expresy"] -->
+          <td class="table-success">{{ row[11] }}</td> <!-- row["nevgad_expres"] -->
+          <td class="table-success">{{ row[8] }}</td> <!-- row["guru_turu"] -->
+        {% else %}
+          <td><b>{{ row[9] }}</b></td> <!-- row["place"] -->
+          <td align="left">{{ row[1] }}</td> <!-- row["user_name"] -->
+          <td><b>{{ row[2] }}</b></td> <!-- row["total_points"] -->
+          <td>{{ row[3] }}</td> <!-- row["total_matchi_prognoz"] -->
+          <td>{{ row[4] }}</td> <!-- row["vgad_rah"] -->
+          <td>{{ row[5] }}</td> <!-- row["vgad_resultat"] -->
+          <td>{{ row[6] }}</td> <!-- row["aver_bal_za_match"] -->
+          <td>{{ row[7] }}</td> <!-- row["potential_points"] -->
+          <td>{{ row[10] }}</td> <!-- row["vgad_expresy"] -->
+          <td>{{ row[11] }}</td> <!-- row["nevgad_expres"] -->
+          <td>{{ row[8] }}</td> <!-- row["guru_turu"] -->
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br>
+<h2 class="text-muted" align="center">Командний залік</h2>
+<table
+  class="table table-striped table-borderless a table-hover"
+  style="width:auto"
+  id="team_zalik"
+  align="center">
+
+  <thead style="font-size:16px">
+    <tr>
+      <th scope="col" data-field="place">#</th>
+      <th scope="col" data-field="team_name">Команда</th>
+      <th scope="col" data-field="team_points">Бали</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for row in rows5 %}
+      <tr>
+        {% if row[3] == 1 %} <!-- row["place"] -->
+          <td class="table-success"><b>{{ row[3] }}</b></td> <!-- row["place"] -->
+          <td class="table-success" align="left"><b>{{ row[1] }}<b></td> <!-- row["team_name"] -->
+          <td class="table-success"><b>{{ row[2] }}<b></td> <!-- row["team_points"] -->
+        {% else %}
+          <td>{{ row[3] }}</td> <!-- row["place"] -->
+          <td align="left">{{ row[1] }}</td> <!-- row["team_name"] -->
+          <td>{{ row[2] }}</td> <!-- row["team_points"] -->
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

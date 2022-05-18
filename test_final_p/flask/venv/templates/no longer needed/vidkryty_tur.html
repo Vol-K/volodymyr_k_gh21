@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    парпарр
+{% endblock %}
+
+{% block main %}
+<h1 class="text-muted">адмінка - відкриваєм новий тур для прогноза</h1>
+<h3><p>ТРЕБА прописати зміну (status) в табличці прогнозів з (new) на (old), тобто закрить їх</p></h3>
+<form action="/vidkryty_tur" method="post">
+
+  <table class="table table-borderless" style="width:600px" align="center" id="prognoztable">
+
+    <thead style="font-size:17px" align="center">
+      <tr>
+        <th scope="col">Номер тура</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+
+  <tbody>
+      <div class="input-group mb-3">
+        <tr>
+          <td><select autocomplete="off" autofocus class="custom-select" name="tur_nomer" placeholder="Відкриваємо" type="number" min="1" required>
+            <option selected disabled value="">...</option>
+              {% for row in rows %}
+                <option>{{ row["round"] }}</option>
+              {% endfor %}
+            </select></td>
+          <td><button class="btn btn-primary" align="center" type="submit" id="tur">Відкрити тур</button></td>
+        </tr>
+      </div>
+  </tbody>
+  </table>
+</form>
+
+{% endblock %}

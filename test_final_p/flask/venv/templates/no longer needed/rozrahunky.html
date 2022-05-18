@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    парпарр
+{% endblock %}
+
+{% block main %}
+<h1 class="text-muted">адмінка - підрахунок балів</h1>
+<form action="/rozrahunky" method="post">
+    <button class="btn btn-primary" align="center" type="submit" id="calculate">Порахувати</button>
+</form>
+{% endblock %}

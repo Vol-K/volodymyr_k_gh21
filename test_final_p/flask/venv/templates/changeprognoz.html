@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+<!-- Підзаголовок сторінки -->
+{% block title %}
+  Зміна прогноза
+{% endblock %}
+
+{% block main %}
+<h1 class="text-muted">Змінити чи видалити прогноз</h1>
+<p class="text-muted h4">доступно якщо в учасника вже є хоч один прогноз (запис) <br>в поточному турі </p>
+<form action="/changeprognoz" method="post">
+  <table 
+    class="table table-borderless a"
+    style="border-color:#ffffff; width: 70%"
+    id="prognoztable"
+    align="center">
+
+    <thead style="font-size:17px" align="center">
+      <tr>
+        <th scope="col" style="width: 20%">Команди</th>
+        <th scope="col">Господарі</th>
+        <th scope="col">Гості</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+
+    <tbody align="center">
+      <div class="input-group mb-3">
+        <tr>
+          <td><select autocomplete="off" autofocus class="custom-select" name="razom" placeholder="Company`s tiker" type="text" min="1" required>
+            <option selected disabled value="">...</option>
+              {% for row in prog_rows %}
+                <option>{{ row[3] }}</option> <!-- "teams" -->
+              {% endfor %}
+            </select></td>
+          <td><input autocomplete="off" autofocus class="form-control" name="home" type="number" min="0" style="width:60px"></td>
+          <td><input autocomplete="off" autofocus class="form-control" name="visitor" type="number" min="0" style="width:60px"></td>
+          <!--<td><input type="checkbox" id="delete" name="delete" value="yes"><label for="delete">Видалити один матч</label></td>-->
+          <td><button class="btn btn-primary" type="submit" id="button-addon2">Змінити прогноз</button></td>
+          <td><a href="/changeprognoz"><button class="btn btn-warning" name="delete" type="submit" value="yes" id="delete">Видалити матч</button></a></td>
+        </tr>
+      </div>
+    </tbody>
+  </table>
+</form>
+<br>
+<form action="/changeprognoz" method="post">
+<table align="center">
+  <tbody>
+    <tr valign="middle">
+      <!--<td style="width:60px"><input type="checkbox" id="del_all" name="del_all" value="yes"><label for="delete"></td>-->
+      <td><a href="/"><button class="btn btn-danger" align="center" name="del_all" type="submit" value="yes" id="del_all">Видалити всі прогнози в турі</button></a></td>
+    </tr>
+  </tbody>
+</table>
+</form>
+{% endblock %}
+
+

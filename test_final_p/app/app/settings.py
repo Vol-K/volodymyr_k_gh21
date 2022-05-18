@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+from django.contrib.messages import constants as messages
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ou$^$30dy30wiv%3xqo96=pm1ngw)yr&7j_kmp))6)q$c%woyr'
+SECRET_KEY = 'django-insecure-912*84nl-s9vu+qwsjl1=6nw!o#=5ohwoedya&3@$n9a&&hpi='
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'user_side',
+    # 'admin_side',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -105,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'EET'
 
 USE_I18N = True
 
@@ -121,3 +126,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-secondary',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
