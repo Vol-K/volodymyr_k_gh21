@@ -32,7 +32,6 @@
     <td>
       <form method="post" id="MakeForecastForm_page">
         {% csrf_token %}
-        <!-- {% load widget_tweaks %} -->
 
         <table class="table table-borderless" align="center">
 
@@ -49,12 +48,12 @@
           <tbody class="align-middle" align="center">
             <div class="input-group mb-3">
               <tr style="background-color: #ffffff">
-                <td>
-                  <select 
+                <td>{{ form.teams_together }}            
+                  <!-- <select 
                     autocomplete="off" 
                     autofocus class="custom-select" 
-                    name="razom"
-                    placeholder="Company`s tiker" 
+                    name={{ matches_to_forecast.teams_together }}
+                    placeholder="..." 
                     type="text" 
                     min="1" 
                     required>
@@ -62,24 +61,28 @@
                       {% for element in matches_to_forecast %}
                         <option name="razom">{{ element.teams_together }}</option>
                       {% endfor %}
-                  </select>
+                  </select> -->
+                </td>
+                <td>                 
+                  {{ form.team_home_user_forecast }}
+                  <!-- <input autocomplete="off" align="center" autofocus class="form-control" name="home" type="number" min="0" style="width:60px" required> -->
                 </td>
                 <td>
-                  <input autocomplete="off" align="center" autofocus class="form-control" name="home" type="number" min="0" style="width:60px" required>
-                </td>
-                <td>
-                  <input 
+                  {{ form.team_visitor_user_forecast }}
+                  <!-- <input 
                     autocomplete="off" 
                     align="center" autofocus 
                     class="form-control" 
                     name="visitor" 
                     type="number"
                     min="0" 
-                    style="width:60px" 
-                    required>
+                    style="width:60px"
+                    value="{{ form.team_visitor_user_forecast }}"
+                    required> -->
                 </td>
                 <td>
-                  <div class="form-check form-check-inline">
+                  {{ form.forecast_type }}
+                  <!-- <div class="form-check form-check-inline">
                     <input 
                       class="form-check-input" 
                       type="radio" 
@@ -98,11 +101,9 @@
                       id="expres" 
                       value="exp">
                     <label class="form-check-label" for="expres">Експрес</label>
-                  </div>
+                  </div> -->
                   </td>
-                <td>{% for field in form.visible_fields %}
-                  {{ field }}
-                {% endfor %}
+                <td>
                   <button 
                     class="btn btn-primary" 
                     align="center" 

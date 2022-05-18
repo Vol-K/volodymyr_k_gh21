@@ -32,15 +32,12 @@ def make_forecast(request):
             else:
                 print("BAAASSSSS")
             context = {"username": request.user.username}
+            return redirect("../make-forecast.html")
         else:
             form = MakeForecastForm()
-            matches_to_forecast = ListOfMatches.objects.exclude(
-                forecast_availability="no")
             context = {"form": form,
-                       "username": request.user.username,
-                       "matches_to_forecast": matches_to_forecast}
-
-        return render(request, "user_side/make-forecast.html", context)
+                       "username": request.user.username}
+            return render(request, "user_side/make-forecast.html", context)
     else:
         popup_message = (
             "Сторінка 'Зробити прогноз' доступна тільки для "

@@ -42,6 +42,9 @@ class ListOfMatches(models.Model):
         self.teams_together = self.home_team + " - " + self.visitor_team
         super(ListOfMatches, self).save(*args, **kwargs)
 
+    def __str__(self):
+        return self.teams_together
+
 
 # List of user match predicted.
 class ListOfUsersMatchForecast(models.Model):

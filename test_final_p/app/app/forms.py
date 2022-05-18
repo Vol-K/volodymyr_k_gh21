@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
-from user_side.models import ListOfUsersMatchForecast
+from user_side.models import ListOfUsersMatchForecast, ListOfMatches
 
 
 # 'Log in' form for the website users.
@@ -26,12 +26,26 @@ class RegisterForm(UserCreationForm):
 
 #
 class MakeForecastForm(forms.Form):
-    teams_together = forms.CharField()
-    team_home_user_forecast = forms.IntegerField()
-    team_visitor_user_forecast = forms.IntegerField()
-    forecast_type = forms.CharField()
+    forecast_option = [('ordinary', 'Ординар'), ('express', 'Експрес')]
+
+    teams_together = forms.ModelChoiceField(
+        empty_label="(Nothing)",
+        queryset=None
+        # queryset=ListOfMatches.objects.exclude(
+        #     forecast_availability="no").values_list('teams_together', flat=True),
+        # to_field_name="home_team"
+    )
+    team_home_user_forecast = forms.IntegerField(min_value=0)
+    team_visitor_user_forecast = forms.IntegerField(min_value=0)
+    forecast_type = forms.CharField(
+        label='forecast_type', widget=forms.RadioSelect(choices=forecast_option))
 
     class Meta:
         model = ListOfUsersMatchForecast
         fields = ["teams_together", "team_home_user_forecast",
                   "team_visitor_user_forecast", "forecast_type"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['teams_together'].queryset = ListOfMatches.objects.exclude(
+            forecast_availability="no")
