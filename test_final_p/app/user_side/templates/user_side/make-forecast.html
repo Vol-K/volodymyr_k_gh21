@@ -48,7 +48,12 @@
           <tbody class="align-middle" align="center">
             <div class="input-group mb-3">
               <tr style="background-color: #ffffff">
-                <td>{{ form.teams_together }}            
+                <td>
+                  {% if form.teams_together.value %}                
+                    {{ form.teams_together }}
+                  {% else %}
+                    <p>...</p> 
+                  {% endif %}          
                   <!-- <select 
                     autocomplete="off" 
                     autofocus class="custom-select" 
@@ -63,8 +68,8 @@
                       {% endfor %}
                   </select> -->
                 </td>
-                <td>                 
-                  {{ form.team_home_user_forecast }}
+                <td>
+                  {{ form.team_home_user_forecast }}               
                   <!-- <input autocomplete="off" align="center" autofocus class="form-control" name="home" type="number" min="0" style="width:60px" required> -->
                 </td>
                 <td>
@@ -81,7 +86,7 @@
                     required> -->
                 </td>
                 <td>
-                  {{ form.forecast_type }}
+                  {{ form.forecast_type }}                   
                   <!-- <div class="form-check form-check-inline">
                     <input 
                       class="form-check-input" 
@@ -104,11 +109,20 @@
                   </div> -->
                   </td>
                 <td>
+                  {% if form.teams_together.value %}
                   <button 
                     class="btn btn-primary" 
                     align="center" 
                     type="submit" 
                     id="button-addon2">Ставка</button>
+                  {% else %}
+                  <button 
+                    class="btn btn-primary" 
+                    align="center" 
+                    type="submit" 
+                    id="button-addon2"
+                    disabled>Ставка</button>
+                  {% endif %}
                 </td>
               </tr>
             </div>
@@ -150,9 +164,41 @@
         <th data-field="time">Час <br>прогноза</th>
       </tr>
     </thead>
-
+    
     <tbody>
+      {% for element in predicted_matches %}      
+        <tr>
+          <td data-field="tur">{{ element.round_numder }}</td>
+          <td data-field="mtch_round">{{ element.match_in_round }}</td>
+          <td data-field="teams">{{ element.teams_together }}</td>
+          <td data-field="home">{{ element.home_team_forecast }}</td>
+          <td data-field="guest">{{ element.visitor_team_forecast }}</td>
 
+          {% if element.user_points == 2 %}
+            <td 
+              data-field="bal" 
+              style="background-color: #5b9bd5">
+              <b style="color:white" align="center">
+                {{ element.user_points }}
+              </b>
+            </td>
+          {% elif element.user_points == 1 %}
+            <td 
+              data-field="bal" s
+              tyle="background-color: #b6d7a8" 
+              align="center">
+              <b>{{ element.user_points }}</b>
+            </td>
+          {% else %}
+            <td data-field="bal" align="center">
+              <b>{{ element.user_points }}</b>
+            </td>
+          {% endif %}
+
+          <td data-field="prognoz_type">{{ element.forecast_type }}</td>
+          <td data-field="time">{{ element.forecast_time }}</td>
+        </tr>
+      {% endfor %}
     </tbody>
   </table>
 </div>

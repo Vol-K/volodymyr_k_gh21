@@ -13,10 +13,6 @@ class LogInForm(forms.Form):
 
 # 'Registration of the new user' form.
 class RegisterForm(UserCreationForm):
-    # username = forms.CharField()
-    # password_1 = forms.CharField(widget=forms.PasswordInput)
-    # password_2 = forms.CharField(widget=forms.PasswordInput)
-    # user_email = forms.CharField(widget=forms.EmailInput)
     user_email = forms.EmailField()
 
     class Meta:
@@ -29,11 +25,8 @@ class MakeForecastForm(forms.Form):
     forecast_option = [('ordinary', 'Ординар'), ('express', 'Експрес')]
 
     teams_together = forms.ModelChoiceField(
-        empty_label="(Nothing)",
+        empty_label="Список",
         queryset=None
-        # queryset=ListOfMatches.objects.exclude(
-        #     forecast_availability="no").values_list('teams_together', flat=True),
-        # to_field_name="home_team"
     )
     team_home_user_forecast = forms.IntegerField(min_value=0)
     team_visitor_user_forecast = forms.IntegerField(min_value=0)
@@ -46,6 +39,26 @@ class MakeForecastForm(forms.Form):
                   "team_visitor_user_forecast", "forecast_type"]
 
     def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
-        self.fields['teams_together'].queryset = ListOfMatches.objects.exclude(
-            forecast_availability="no")
+        # if request:
+        matches = ListOfMatches.objects.filter(
+            forecast_availability="yes")
+        forecasts = ListOfUsersMatchForecast.objects.filter(
+            user_id=request.user.id)
+
+        #
+        for element in forecasts:
+            print("XXXX", element.teams_together)
+            matches = matches.exclude(match_id=element.match_id)
+
+        print("mat", matches)
+        #
+        if len(matches) == 0:
+            self.fields["teams_together"].queryset = ListOfMatches.objects.none()
+        else:
+            self.fields["teams_together"].queryset = matches
+        # else:
+        #     self.fields["teams_together"].queryset = ListOfMatches.objects.none()
+
+        print("teans", self.fields["teams_together"].queryset)

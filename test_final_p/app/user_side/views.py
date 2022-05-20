@@ -3,8 +3,12 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
-from . models import AllUsers, AllTeams, ListOfMatches, ListOfUsersMatchForecast, FinalTable
+from .models import AllUsers, AllTeams, ListOfMatches, ListOfUsersMatchForecast, FinalTable
+from .user_side_support import add_user_forecast_to_db
 from app.forms import MakeForecastForm
+
+
+from datetime import datetime
 
 
 #
@@ -23,20 +27,44 @@ def make_forecast(request):
     # Blocked access to the page for not authorized user.
     if request.user.is_authenticated:
         if request.method == "POST":
-            form = MakeForecastForm(request.POST)
-            form_errors = form.errors.as_data()
-            print(form_errors)
+            form = MakeForecastForm(request.POST, request=request)
+            # form_errors = form.errors.as_data()
+            # print(form_errors)
             if form.is_valid():
                 form_data = form.cleaned_data
-                print(form_data)
+
+                match_all_details = ListOfMatches.objects.filter(
+                    teams_together=form_data["teams_together"])
+
+                current_date_time = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+                user_data = {
+                    "user_id": request.user.id,
+                    "match_id": match_all_details[0].match_id,
+                    "teams_together": form_data["teams_together"],
+                    "home_team_forecast": form_data["team_home_user_forecast"],
+                    "visitor_team_forecast": form_data[
+                        "team_visitor_user_forecast"],
+                    "round_numder": match_all_details[0].round_numder,
+                    "match_in_round": match_all_details[0].match_in_round,
+                    "forecast_type": form_data["forecast_type"],
+                    "forecast_time": current_date_time
+                }
+                # Wright user match forecast to the DB.
+                add_forecast = add_user_forecast_to_db(user_data)
+
             else:
                 print("BAAASSSSS")
+
             context = {"username": request.user.username}
             return redirect("../make-forecast.html")
         else:
-            form = MakeForecastForm()
+            form = MakeForecastForm(request=request)
+            print(form["teams_together"].value())
+            predicted_matches = ListOfUsersMatchForecast.objects.filter(
+                user_id=request.user.id)
             context = {"form": form,
-                       "username": request.user.username}
+                       "username": request.user.username,
+                       "predicted_matches": list(predicted_matches)}
             return render(request, "user_side/make-forecast.html", context)
     else:
         popup_message = (
@@ -102,8 +130,8 @@ def forecast_by_other(request):
 def teams_and_members(request):
     # Blocked access to the page for not authorized user.
     if request.user.is_authenticated:
-        xx = request.user.id
-        print(xx)
+        # xx = request.user.id
+        # print(xx)
         #! Дописать сортіровку по командам, та балах учасників
         teams_and_members_data = FinalTable.objects.exclude(
             user_team_name__isnull=True)

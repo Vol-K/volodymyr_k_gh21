@@ -13,6 +13,7 @@ from . app_support import validate_user_emal, add_user_to_all_tables
 from django.contrib import admin
 
 
+#
 class MyAdminSite(admin.AdminSite):
     def get_app_list(self, request):
         app_list = super().get_app_list(request)
@@ -33,9 +34,8 @@ class MyAdminSite(admin.AdminSite):
         ]
         return app_list
 
+
 # Registering of new user on the website.
-
-
 def user_register(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)

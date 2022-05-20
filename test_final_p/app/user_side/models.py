@@ -57,10 +57,14 @@ class ListOfUsersMatchForecast(models.Model):
     home_team_forecast = models.PositiveIntegerField()
     visitor_team_forecast = models.PositiveIntegerField()
     round_numder = models.PositiveIntegerField(default=1)
-    forecast_time = models.CharField(max_length=9)
-    user_points = models.PositiveIntegerField()
+    # forecast_time = models.CharField(max_length=9)
+    forecast_time = models.DateTimeField(auto_now_add=True)
+    user_points = models.PositiveIntegerField(null=True, blank=True)
     forecast_type = models.CharField(max_length=7)
     match_in_round = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return self.teams_together
 
 
 # Final table (table of user forecast results).
