@@ -1,7 +1,7 @@
 from django import forms
 
 
-# Log in form for the website users. 
+# Log in form for the website users.
 class LogInForm(forms.Form):
 
     username = forms.CharField()

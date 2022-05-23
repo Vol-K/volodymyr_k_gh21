@@ -10,3 +10,4 @@
 !HT_21/app/shop/static/app/*.png
 local_settings.py
 # db.sqlite3
+*.pyc
