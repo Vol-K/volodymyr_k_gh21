@@ -14,8 +14,13 @@
       <ul class="nav nav-pills">
         <li class="nav-item">
           <span><b>
+            {%if "general" in message.tags %}
               <h3>{{ message }}</h3>
-            </b></span>
+            {%endif%}
+            {%if "forecast_type" in message.tags %}
+              <h3>{{ message }}</h3>
+            {%endif%}
+          </b></span>
         </li>
       </ul>
     </div>
@@ -37,7 +42,7 @@
 
           <thead style="font-size:17px" align="center">
             <tr>
-              <th scope="col">Команди</th>
+              <th scope="col">Команди для вибору</th>
               <th scope="col" style="width:80px">Господарі</th>
               <th scope="col" style="width:80px">Гості</th>
               <th scope="col">Тип ставки</th>
@@ -48,12 +53,12 @@
           <tbody class="align-middle" align="center">
             <div class="input-group mb-3">
               <tr style="background-color: #ffffff">
-                <td>
-                  {% if form.teams_together.value %}                
-                    {{ form.teams_together }}
+                <td>  
+                  {% if form.teams_together|length > 1 %}
+                    <p>{{ form.teams_together }}</p>
                   {% else %}
-                    <p>...</p> 
-                  {% endif %}          
+                    <p>Є прогноз на всі матчі</p>
+                  {% endif %} 
                   <!-- <select 
                     autocomplete="off" 
                     autofocus class="custom-select" 
@@ -109,20 +114,11 @@
                   </div> -->
                   </td>
                 <td>
-                  {% if form.teams_together.value %}
                   <button 
                     class="btn btn-primary" 
                     align="center" 
                     type="submit" 
                     id="button-addon2">Ставка</button>
-                  {% else %}
-                  <button 
-                    class="btn btn-primary" 
-                    align="center" 
-                    type="submit" 
-                    id="button-addon2"
-                    disabled>Ставка</button>
-                  {% endif %}
                 </td>
               </tr>
             </div>

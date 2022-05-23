@@ -25,13 +25,15 @@ class MakeForecastForm(forms.Form):
     forecast_option = [('ordinary', 'Ординар'), ('express', 'Експрес')]
 
     teams_together = forms.ModelChoiceField(
-        empty_label="Список",
+        empty_label=".......",
         queryset=None
     )
     team_home_user_forecast = forms.IntegerField(min_value=0)
     team_visitor_user_forecast = forms.IntegerField(min_value=0)
     forecast_type = forms.CharField(
-        label='forecast_type', widget=forms.RadioSelect(choices=forecast_option))
+        label='forecast_type',
+        widget=forms.RadioSelect(choices=forecast_option),
+        initial="ordinary")
 
     class Meta:
         model = ListOfUsersMatchForecast
@@ -49,16 +51,37 @@ class MakeForecastForm(forms.Form):
 
         #
         for element in forecasts:
-            print("XXXX", element.teams_together)
             matches = matches.exclude(match_id=element.match_id)
 
-        print("mat", matches)
         #
-        if len(matches) == 0:
-            self.fields["teams_together"].queryset = ListOfMatches.objects.none()
-        else:
+        if matches:
             self.fields["teams_together"].queryset = matches
-        # else:
-        #     self.fields["teams_together"].queryset = ListOfMatches.objects.none()
+        else:
+            self.fields["teams_together"].queryset = (
+                ListOfMatches.objects.none())
 
-        print("teans", self.fields["teams_together"].queryset)
+
+#
+class ChangeForecastForm(forms.Form):
+    operation_option = [('change', 'Change'), ('delete', 'Delete')]
+
+    teams_together = forms.ModelChoiceField(
+        empty_label=".......",
+        queryset=None
+    )
+    team_home_user_forecast = forms.IntegerField(min_value=0)
+    team_visitor_user_forecast = forms.IntegerField(min_value=0)
+    match_operaion = forms.CharField(
+        label='match_operaion',
+        widget=forms.RadioSelect(choices=operation_option),
+        initial="change"
+    )
+
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
+        if request:
+            self.fields["teams_together"].queryset = (
+                ListOfUsersMatchForecast.objects.filter(
+                    user_id=request.user.id))

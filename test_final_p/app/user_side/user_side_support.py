@@ -1,22 +1,15 @@
-from . models import AllUsers, AllTeams, ListOfMatches, ListOfUsersMatchForecast, FinalTable
+from . models import (AllUsers, AllTeams, ListOfMatches,
+                      ListOfUsersMatchForecast, FinalTable)
 
-
-def xxxx():
-    matches_to_forecast = ListOfMatches.objects.exclude(
-        forecast_availability="no")
-
-    output_list = []
-    for element in matches_to_forecast:
-        print(element.teams_together)
-        output_list.append(
-            tuple(element.teams_together, element.teams_together))
-    return output_list
+from datetime import datetime
 
 
 #
-def add_user_forecast_to_db(user_data):
+def func_add_user_forecast_to_db(user_data):
+    # Initialize a model
     user_forecasts = ListOfUsersMatchForecast()
-    #
+
+    # Inserting data and after that it's save to DB.
     user_forecasts.match_id = user_data["match_id"]
     user_forecasts.user_id = user_data["user_id"]
     user_forecasts.teams_together = user_data["teams_together"]
@@ -24,7 +17,38 @@ def add_user_forecast_to_db(user_data):
     user_forecasts.visitor_team_forecast = user_data["visitor_team_forecast"]
     user_forecasts.round_numder = user_data["round_numder"]
     user_forecasts.forecast_time = user_data["forecast_time"]
-    # user_forecasts.user_points = ""
     user_forecasts.forecast_type = user_data["forecast_type"]
     user_forecasts.match_in_round = user_data["match_in_round"]
     user_forecasts.save()
+
+
+#
+def func_change_user_forecast(
+        user_id, match_id, forecast_for_home_team,
+        forecast_for_visitor_team, new_forecast_time):
+
+    # Initialize a model
+    new_user_forecasts = ListOfUsersMatchForecast.objects.get(
+        user_id=user_id, match_id=match_id)
+
+    new_user_forecasts.home_team_forecast = forecast_for_home_team
+    new_user_forecasts.visitor_team_forecast = forecast_for_visitor_team
+    new_user_forecasts.forecast_time = new_forecast_time
+    new_user_forecasts.save()
+
+
+#
+def func_check_time_of_user_forecast(match_date, match_time):
+
+    current_date_time = datetime.now().replace(microsecond=0)
+    current_date_time_timestamp = datetime.timestamp(current_date_time)
+
+    match_date_time = datetime.combine(match_date, match_time)
+    match_date_time_timestamp = datetime.timestamp(match_date_time)
+
+    if match_date_time_timestamp > current_date_time_timestamp:
+        check_status = True
+    else:
+        check_status = False
+
+    return check_status, current_date_time

@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "user_side/layout.html" %}
 
 <!-- Підзаголовок сторінки -->
 {% block title %}
@@ -8,7 +8,8 @@
 {% block main %}
 <h1 class="text-muted">Змінити чи видалити прогноз</h1>
 <p class="text-muted h4">доступно якщо в учасника вже є хоч один прогноз (запис) <br>в поточному турі </p>
-<form action="/changeprognoz" method="post">
+<form method="post">
+  {% csrf_token %}
   <table 
     class="table table-borderless a"
     style="border-color:#ffffff; width: 70%"
@@ -28,24 +29,53 @@
     <tbody align="center">
       <div class="input-group mb-3">
         <tr>
-          <td><select autocomplete="off" autofocus class="custom-select" name="razom" placeholder="Company`s tiker" type="text" min="1" required>
+          <!-- <td><select autocomplete="off" autofocus class="custom-select" name="razom" placeholder="Company`s tiker" type="text" min="1" required>
             <option selected disabled value="">...</option>
-              {% for row in prog_rows %}
-                <option>{{ row[3] }}</option> <!-- "teams" -->
+              {% for element in forecasted_matches %}
+                <option>{{ element.teams_together }}</option>
               {% endfor %}
-            </select></td>
-          <td><input autocomplete="off" autofocus class="form-control" name="home" type="number" min="0" style="width:60px"></td>
-          <td><input autocomplete="off" autofocus class="form-control" name="visitor" type="number" min="0" style="width:60px"></td>
+            </select> -->
+            <td>{{ form.teams_together }}</td>
+          <!-- <td><input autocomplete="off" autofocus class="form-control" name="home" type="number" min="0" style="width:60px"> -->
+            <td>{{ form.team_home_user_forecast }}</td>
+          <!-- <td><input autocomplete="off" autofocus class="form-control" name="visitor" type="number" min="0" style="width:60px"> -->
+            <td>{{ form.team_visitor_user_forecast }}</td>
           <!--<td><input type="checkbox" id="delete" name="delete" value="yes"><label for="delete">Видалити один матч</label></td>-->
-          <td><button class="btn btn-primary" type="submit" id="button-addon2">Змінити прогноз</button></td>
-          <td><a href="/changeprognoz"><button class="btn btn-warning" name="delete" type="submit" value="yes" id="delete">Видалити матч</button></a></td>
+         
+          {% for element in form.match_operaion %}
+            <td>  
+              {% if element.choice_label == "Change" %}
+                <button 
+                  class="btn btn-primary" 
+                  type="submit" 
+                  id="change_button" 
+                  value="change">{{ element }}
+                </button>
+              {% endif %}
+            </td>
+            <td>
+              {% if element.choice_label == "Delete" %}
+                <a href="/user/make-forecast.html">
+                  <button 
+                    class="btn btn-warning" 
+                    name="delete" 
+                    id="delete" 
+                    value="delete">{{ element }}
+                  </button>
+                <a/>
+              {% endif %}
+            {% endfor %}
+          </td>
+            
+          <!-- <td><button class="btn btn-primary" type="submit" id="button-addon2" value="change">Змінити прогноз</button></td>
+          <td><a href="/user/make-forecast.html"><button class="btn btn-warning" name="delete" type="submit" value="delete" id="delete">Видалити матч</button></a></td> -->
         </tr>
       </div>
     </tbody>
   </table>
 </form>
 <br>
-<form action="/changeprognoz" method="post">
+<form method="post">
 <table align="center">
   <tbody>
     <tr valign="middle">

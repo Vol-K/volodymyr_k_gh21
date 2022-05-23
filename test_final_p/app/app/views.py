@@ -97,7 +97,7 @@ def user_register(request):
                 messages.info(
                     request,
                     "Некоректно введено email.",
-                    extra_tags='email'
+                    extra_tags="email"
                 )
             return redirect("../register")
 
