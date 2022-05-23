@@ -5,6 +5,28 @@
   Зміна прогноза
 {% endblock %}
 
+<!-- Place/block for system messages -->
+{% block popup %}
+{% for message in messages %}
+<div class="container">
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+    <div class="navbar-brand">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <span><b>
+            {%if "general" in message.tags %}
+              <h3>{{ message }}</h3>
+            {%endif%}
+          </b></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+<!-- Block for main information on the page -->
 {% block main %}
 <h1 class="text-muted">Змінити чи видалити прогноз</h1>
 <p class="text-muted h4">доступно якщо в учасника вже є хоч один прогноз (запис) <br>в поточному турі </p>
@@ -29,44 +51,46 @@
     <tbody align="center">
       <div class="input-group mb-3">
         <tr>
-          <!-- <td><select autocomplete="off" autofocus class="custom-select" name="razom" placeholder="Company`s tiker" type="text" min="1" required>
+          <!-- <td>
+            <select autocomplete="off" autofocus class="custom-select" name="razom" placeholder="Company`s tiker" type="text" min="1" required>
             <option selected disabled value="">...</option>
               {% for element in forecasted_matches %}
                 <option>{{ element.teams_together }}</option>
               {% endfor %}
             </select> -->
             <td>{{ form.teams_together }}</td>
-          <!-- <td><input autocomplete="off" autofocus class="form-control" name="home" type="number" min="0" style="width:60px"> -->
+          <!-- <td>
+            <input autocomplete="off" autofocus class="form-control" name="home" type="number" min="0" style="width:60px"> -->
             <td>{{ form.team_home_user_forecast }}</td>
-          <!-- <td><input autocomplete="off" autofocus class="form-control" name="visitor" type="number" min="0" style="width:60px"> -->
+          <!-- <td>
+            <input autocomplete="off" autofocus class="form-control" name="visitor" type="number" min="0" style="width:60px"> -->
             <td>{{ form.team_visitor_user_forecast }}</td>
-          <!--<td><input type="checkbox" id="delete" name="delete" value="yes"><label for="delete">Видалити один матч</label></td>-->
-         
-          {% for element in form.match_operaion %}
-            <td>  
-              {% if element.choice_label == "Change" %}
-                <button 
-                  class="btn btn-primary" 
-                  type="submit" 
-                  id="change_button" 
-                  value="change">{{ element }}
-                </button>
-              {% endif %}
-            </td>
-            <td>
-              {% if element.choice_label == "Delete" %}
-                <a href="/user/make-forecast.html">
-                  <button 
-                    class="btn btn-warning" 
-                    name="delete" 
-                    id="delete" 
-                    value="delete">{{ element }}
-                  </button>
-                <a/>
-              {% endif %}
-            {% endfor %}
+          <!--<td>
+            <input type="checkbox" id="delete" name="delete" value="yes"><label for="delete">Видалити один матч</label></td>-->
+          <td>  
+            {% if form.change_forecast.label == "change_forecast" %}
+              <button 
+                class="btn btn-primary"
+                name="change" 
+                type="submit" 
+                id="change_forecast" 
+                value={{ form.change_forecast.value }}>Змінити прогноз
+              </button>
+            {% endif %}
           </td>
-            
+          <td>
+            {% if form.delete_forecast.label == "delete_forecast" %}
+              <a href="/user/make-forecast.html">
+                <button 
+                  class="btn btn-warning" 
+                  name="delete" 
+                  type="submit" 
+                  id="delete_forecast" 
+                  value={{ form.change_forecast.value }}>Видалити матч
+                </button>
+              <a/>
+            {% endif %}
+          </td>
           <!-- <td><button class="btn btn-primary" type="submit" id="button-addon2" value="change">Змінити прогноз</button></td>
           <td><a href="/user/make-forecast.html"><button class="btn btn-warning" name="delete" type="submit" value="delete" id="delete">Видалити матч</button></a></td> -->
         </tr>
@@ -76,14 +100,28 @@
 </form>
 <br>
 <form method="post">
-<table align="center">
-  <tbody>
-    <tr valign="middle">
-      <!--<td style="width:60px"><input type="checkbox" id="del_all" name="del_all" value="yes"><label for="delete"></td>-->
-      <td><a href="/"><button class="btn btn-danger" align="center" name="del_all" type="submit" value="yes" id="del_all">Видалити всі прогнози в турі</button></a></td>
-    </tr>
-  </tbody>
-</table>
+  {% csrf_token %}
+  <table align="center">
+    <tbody>
+      <tr valign="middle">
+        {% if delete_form.delete_all.label == "delete_all" %}
+        <!--<td style="width:60px"><
+          input type="checkbox" id="del_all" name="del_all" value="yes"><label for="delete"></td>-->
+          <td>
+            <a href="user/make-forecast.html">
+              <button 
+                class="btn btn-danger" 
+                align="center" 
+                name="delelete_all" 
+                type="submit" 
+                value={{ delete_form.delete_all.value }}>Видалити всі прогнози в турі
+              </button>
+            </a>
+          </td>
+        {% endif %}
+      </tr>
+    </tbody>
+  </table>
 </form>
 {% endblock %}
 

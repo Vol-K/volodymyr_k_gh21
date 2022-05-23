@@ -3,13 +3,14 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
-from .models import AllUsers, AllTeams, ListOfMatches, ListOfUsersMatchForecast, FinalTable
+from .models import AllTeams, ListOfMatches, ListOfUsersMatchForecast, FinalTable
 from .user_side_support import (
     func_add_user_forecast_to_db,
     func_check_time_of_user_forecast,
     func_change_user_forecast
 )
-from app.forms import MakeForecastForm, ChangeForecastForm
+from app.forms import (MakeForecastForm, ChangeForecastForm,
+                       DeleteAllForecastsForm)
 
 
 from datetime import datetime
@@ -26,7 +27,8 @@ def index(request):
         return render(request, "user_side/index.html", context)
 
 
-#
+#! Треба блокувати зміни до початку першого експреса
+# Creating a match forecast by user (include all limitations).
 def make_forecast(request):
     if request.user.is_authenticated:
 
@@ -52,14 +54,31 @@ def make_forecast(request):
                         match_id=match_all_details[0].match_id,
                     )
                 )
-                if check_for_dublicat_forecast:
+                # Check time availabilty for the forecast (time block).
+                check_date_time_forecast = func_check_time_of_user_forecast(
+                    match_all_details[0].match_date,
+                    match_all_details[0].match_time
+                )
+
+                # Procces of checking all possible 'blocks' fo the rorecast.
+                # Activate time block.
+                if not check_date_time_forecast[0]:
+                    popup_message = (
+                        "Вибачте, операція доступна тільки до початку матча.")
+                    messages.info(request, popup_message, extra_tags="general")
+                    return redirect("../make-forecast.html")
+
+                # Prevent to make a duplicate of forecast.
+                elif check_for_dublicat_forecast:
                     popup_message_general = (
                         "Вибачте, у вас є прогноз на цей матч"
                     )
                     messages.info(request, popup_message_general,
                                   extra_tags="general")
+                    return redirect("../make-forecast.html")
 
-                # If not dublicate of forecast:
+                # If user do not create a dublicate of forecast
+                # and time enought before start of the match.
                 else:
                     # Checking for only one 'forecast_type' in current round
                     # by one user.
@@ -69,8 +88,6 @@ def make_forecast(request):
                             round_numder=match_all_details[0].round_numder
                         ).values("forecast_type").distinct()
                     )
-                    # for ii in check_for_one_only_forecast_type:
-                    #     print(ii)
 
                     if check_for_one_only_forecast_type:
 
@@ -130,8 +147,6 @@ def make_forecast(request):
 
                 # Combining all information about "user forecast on match"
                 # to the 'dict', and write its to the DB.
-                current_date_time = (
-                    datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
                 user_data = {
                     "user_id": request.user.id,
                     "match_id": match_all_details[0].match_id,
@@ -142,7 +157,7 @@ def make_forecast(request):
                     "round_numder": match_all_details[0].round_numder,
                     "match_in_round": match_all_details[0].match_in_round,
                     "forecast_type": form_data["forecast_type"],
-                    "forecast_time": current_date_time
+                    "forecast_time": check_date_time_forecast[1]
                 }
                 func_add_user_forecast_to_db(user_data)
 
@@ -177,16 +192,26 @@ def make_forecast(request):
         return redirect("../index.html")
 
 
-#
+#! Треба блокувати зміни до початку першого експреса
+# A change of existing match forecast by user.
 def change_forecast(request):
     if request.user.is_authenticated:
-        if request.method == "POST":
+        if request.method == "POST" and "change" in request.POST:
+
             form = ChangeForecastForm(request.POST, request=request)
 
             if form.is_valid():
                 form_data = form.cleaned_data
 
                 #
+                if (not form_data["team_home_user_forecast"] or
+                        form_data["team_visitor_user_forecast"]):
+                    popup_message = (
+                        "Поля з рахунками обов'язкові для заповнення, спробуйте ще раз.")
+                    messages.info(request, popup_message, extra_tags="general")
+                    return redirect("../change-forecast.html")
+
+                # Getting forecast and match details.
                 forecast_details = ListOfUsersMatchForecast.objects.filter(
                     user_id=request.user.id,
                     teams_together=form_data["teams_together"]
@@ -201,24 +226,14 @@ def change_forecast(request):
                 )
 
                 if check_date_time_forecast[0]:
-                    if form_data["match_operaion"] == "delete":
 
-                        delete_user_forecast = match_details.delete()
-                        popup_message = (
-                            "Ви щовйно видалили прогноз на матч "
-                            f"'{form_data['teams_together']}'.")
-                        messages.info(request, popup_message,
-                                      extra_tags="general")
-
-                    elif form_data["match_operaion"] == "change":
-
-                        func_change_user_forecast(
-                            request.user.id,
-                            forecast_details[0].match_id,
-                            form_data["team_home_user_forecast"],
-                            form_data["team_visitor_user_forecast"],
-                            check_date_time_forecast[1]
-                        )
+                    func_change_user_forecast(
+                        request.user.id,
+                        forecast_details[0].match_id,
+                        form_data["team_home_user_forecast"],
+                        form_data["team_visitor_user_forecast"],
+                        check_date_time_forecast[1]
+                    )
 
                 else:
                     popup_message = (
@@ -233,14 +248,91 @@ def change_forecast(request):
 
             return redirect("../make-forecast.html")
 
+        elif request.method == "POST" and "delete" in request.POST:
+            form = ChangeForecastForm(request.POST, request=request)
+
+            if form.is_valid():
+                form_data = form.cleaned_data
+
+                # Getting forecast and match details.
+                forecast_details = ListOfUsersMatchForecast.objects.filter(
+                    user_id=request.user.id,
+                    teams_together=form_data["teams_together"]
+                )
+                match_details = ListOfMatches.objects.filter(
+                    match_id=forecast_details[0].match_id)
+
+                # Checking for action availability (time block).
+                check_date_time_forecast = func_check_time_of_user_forecast(
+                    match_details[0].match_date,
+                    match_details[0].match_time
+                )
+
+                if check_date_time_forecast[0]:
+                    forecast_details.delete()
+                    popup_message = (
+                        "Ви щойно видалили прогноз на матч "
+                        f"'{form_data['teams_together']}'.")
+                    messages.info(request, popup_message,
+                                  extra_tags="general")
+
+                else:
+                    popup_message = (
+                        "Вибачте, операція доступна тільки до початку матча.")
+                    messages.info(request, popup_message, extra_tags="general")
+
+            else:
+                popup_message = (
+                    "Вибачте, внесено некоректну інформацію, "
+                    "спробуйте ще раз.")
+                messages.info(request, popup_message, extra_tags="general")
+
+            return redirect("../make-forecast.html")
+
+        elif request.method == "POST" and "delelete_all" in request.POST:
+            form = DeleteAllForecastsForm(request.POST)
+
+            if form.is_valid():
+
+                #! Окрема лоігка для 'експресів' треба.
+
+                # Checking for action availability (time block).
+
+                # Checking which round are active now.
+                round_details = ListOfMatches.objects.filter(
+                    forecast_availability="yes").values("round_numder").distinct()
+
+                user_forecasts_in_corrent_round = ListOfUsersMatchForecast.objects.filter(
+                    user_id=request.user.id,
+                    round_numder=round_details[0]["round_numder"]
+                )
+                user_forecasts_in_corrent_round.delete()
+
+                popup_message = (
+                    "Ви щойно видалили всі прогнози в даному турі")
+                messages.info(request, popup_message, extra_tags="general")
+
+            #
+            else:
+                form_errors = form.errors.as_data()
+                # print(form_errors)
+                popup_message = (
+                    "Вибачте, внесено некоректну інформацію, "
+                    "спробуйте ще раз.")
+                messages.info(request, popup_message, extra_tags="general")
+
+            return redirect("../make-forecast.html")
+
         # Generate 'Form' for first user visit to the page.
         else:
             form = ChangeForecastForm(request=request)
+            delete_form = DeleteAllForecastsForm()
             forecasted_matches = ListOfUsersMatchForecast.objects.filter(
                 user_id=request.user.id)
             context = {"username": request.user.username,
                        "forecasted_matches": forecasted_matches,
-                       "form": form}
+                       "form": form,
+                       "delete_form": delete_form}
             return render(request, "user_side/change-forecast.html", context)
 
     # Blocking access to the page for not authorized user.
@@ -250,6 +342,14 @@ def change_forecast(request):
             "зареєстрованих користувачів.")
         messages.info(request, popup_message)
         return redirect("../index.html")
+
+
+#! Треба блокувати зміни до початку першого експреса
+#
+def delete_all_forecasts(request):
+
+    #! Треба чек на експреси
+    pass
 
 
 # Showing rank table of all users, with additional statistics.

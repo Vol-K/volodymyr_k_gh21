@@ -1,30 +1,18 @@
-{% extends "user_side/layout.html" %}
+{% extends "admin/change_list.html" %}
 
-<!-- Page subtitle -->
-{% block title %}
-CustomPage
-{% endblock %}
 
-<!-- Place/block for system messages -->
-{% block popup %}
-{% for message in messages %}
-<div class="container">
-  <div class="alert {{ message.tags }} alert-dismissible" role="alert">
-    <div class="navbar-brand">
-      <ul class="nav nav-pills">
-        <li class="nav-item">
-          <span><b>
-              <h3 style="text-align:center">{{ message }}</h3>
-            </b></span>
-        </li>
-      </ul>
-    </div>
-  </div>
+{% block pagination %}{% endblock %}
+{% block filters %}{% endblock filters %}
+{% block object-tools %}{% endblock object-tools %}
+{% block search %}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">Home</a>
+  {% if page_name %} &rsaquo; {{ page_name }}{% endif %}
 </div>
-{% endfor %}
 {% endblock %}
 
-<!-- Block for main information on the page -->
-{% block main %}
-<h>Заглушка для костома</h>
-{% endblock %}
+{% block result_list %}
+{{text}}
+{% endblock result_list %}

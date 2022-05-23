@@ -1,3 +1,4 @@
+from email.policy import default
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -20,7 +21,7 @@ class RegisterForm(UserCreationForm):
         fields = ["username", "password1", "password2", "user_email"]
 
 
-#
+# 'Form' for create an one forecast by user.
 class MakeForecastForm(forms.Form):
     forecast_option = [('ordinary', 'Ординар'), ('express', 'Експрес')]
 
@@ -40,43 +41,45 @@ class MakeForecastForm(forms.Form):
         fields = ["teams_together", "team_home_user_forecast",
                   "team_visitor_user_forecast", "forecast_type"]
 
+     # Modifying the 'teams_together' field of form.
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
-        # if request:
-        matches = ListOfMatches.objects.filter(
-            forecast_availability="yes")
-        forecasts = ListOfUsersMatchForecast.objects.filter(
-            user_id=request.user.id)
 
-        #
-        for element in forecasts:
-            matches = matches.exclude(match_id=element.match_id)
+        if request:
 
-        #
-        if matches:
-            self.fields["teams_together"].queryset = matches
-        else:
-            self.fields["teams_together"].queryset = (
-                ListOfMatches.objects.none())
+            # Preparring of supporting data.
+            matches = ListOfMatches.objects.filter(
+                forecast_availability="yes")
+            forecasts = ListOfUsersMatchForecast.objects.filter(
+                user_id=request.user.id)
+            for element in forecasts:
+                matches = matches.exclude(match_id=element.match_id)
+
+            # Create a field.
+            if matches:
+                self.fields["teams_together"].queryset = matches
+            else:
+                self.fields["teams_together"].queryset = (
+                    ListOfMatches.objects.none())
 
 
-#
+# 'Form' for change or delete one forecast by user.
 class ChangeForecastForm(forms.Form):
-    operation_option = [('change', 'Change'), ('delete', 'Delete')]
 
     teams_together = forms.ModelChoiceField(
         empty_label=".......",
         queryset=None
     )
-    team_home_user_forecast = forms.IntegerField(min_value=0)
-    team_visitor_user_forecast = forms.IntegerField(min_value=0)
-    match_operaion = forms.CharField(
-        label='match_operaion',
-        widget=forms.RadioSelect(choices=operation_option),
-        initial="change"
-    )
+    team_home_user_forecast = forms.IntegerField(min_value=0, required=False)
+    team_visitor_user_forecast = forms.IntegerField(
+        min_value=0, required=False)
+    change_forecast = forms.CharField(
+        label="change_forecast", initial="yes", required=False)
+    delete_forecast = forms.CharField(
+        label="delete_forecast", initial="yes", required=False)
 
+    # Modifying the 'teams_together' field of form.
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
@@ -85,3 +88,9 @@ class ChangeForecastForm(forms.Form):
             self.fields["teams_together"].queryset = (
                 ListOfUsersMatchForecast.objects.filter(
                     user_id=request.user.id))
+
+
+# 'Form' for delete all forecasts by user in current round.
+class DeleteAllForecastsForm(forms.Form):
+    delete_all = forms.CharField(
+        label="delete_all", initial="yes", required=False)

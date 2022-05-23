@@ -1,8 +1,10 @@
+from django.contrib import admin
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.template.response import TemplateResponse
 
 import translators as ts
 
@@ -10,7 +12,14 @@ from . forms import LogInForm, RegisterForm
 from . app_support import validate_user_emal, add_user_to_all_tables
 
 
-from django.contrib import admin
+#
+class YourCustomAdminSite(admin.AdminSite):
+    def custom_page(self, request):
+        context = {"text": "Hello Admin",
+                   "page_name": "Custom Page"}
+        return TemplateResponse(request,
+                                "admin/custom_page.html",
+                                context)
 
 
 #

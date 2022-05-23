@@ -3,15 +3,6 @@ from requests import options
 
 
 # Create your models here.
-# List of all users.
-class AllUsers(models.Model):
-    user_id = models.BigAutoField(
-        auto_created=True, primary_key=True, serialize=False,
-        verbose_name="User ID")
-    user_name = models.CharField(max_length=25)
-    pass_hash = models.CharField(max_length=94)
-
-
 # List of Teams (band of users).
 class AllTeams(models.Model):
     team_id = models.BigAutoField(
@@ -57,7 +48,6 @@ class ListOfUsersMatchForecast(models.Model):
     home_team_forecast = models.PositiveIntegerField()
     visitor_team_forecast = models.PositiveIntegerField()
     round_numder = models.PositiveIntegerField(default=1)
-    # forecast_time = models.CharField(max_length=9)
     forecast_time = models.DateTimeField(auto_now_add=True)
     user_points = models.PositiveIntegerField(null=True, blank=True)
     forecast_type = models.CharField(max_length=7)

@@ -1,21 +1,45 @@
 from django.contrib import admin
-# from django.contrib.auth.models import User
+from django.contrib.admin import AdminSite
+from django.contrib.auth.models import User, Group
 
-from .models import (AllUsers, AllTeams, ListOfMatches, FinalTable,
+from .models import (AllTeams, ListOfMatches, FinalTable,
                      ListOfUsersMatchForecast)
 
+from etc.admin import CustomModelPage
+from django.db import models
 
-#
-class CustomPageAdmin(admin.AdminSite):
+
+#! типу працює, треба думати над рендером кнопок та іншого
+class MyPage(CustomModelPage):
+    title = 'My custom page'
+
+    # Define some fields you want to proccess data from.
+    my_field = models.CharField('some title', max_length=10)
+    my_field_2 = models.CharField('some title', max_length=10)
+
+    my_field_3 = models.CharField('some title', max_length=10)
+
+    def save(self):
+        # Here implement data handling.
+        super().save()
+
+
+# Register the page within Django admin.
+MyPage.register()
+
+
+#! Спроба номер два
+class YourCustomAdminSite(admin.AdminSite):
     pass
 
 
 #
-class AllUsersAdmin(admin.ModelAdmin):
-    list_display = ("user_name",)
-    exclude = ("user_id", "pass_hash")
-    search_fields = ("user_name",)
-    readonly_fields = ("user_id", "user_name", )
+class UserAdmin(admin.ModelAdmin):
+    list_display = ("id", "username",  "first_name",
+                    "last_name", "email", "is_staff", "is_superuser", "last_login")
+    list_filter = ("last_login",)
+    search_fields = ("username", "id", "last_login")
+    list_display_links = ("username",)
 
 
 #
@@ -32,8 +56,10 @@ class ListOfMatchesAdmin(admin.ModelAdmin):
                     "match_time", "forecast_availability", "home_team_result",
                     "visitor_team_result")
     exclude = ("match_id", "teams_together")
+    list_filter = ("round_numder",)
     search_fields = ("teams_together", "visitor_team",
                      "home_team", "match_date")
+    list_display_links = ("teams_together",)
 
 
 #
@@ -43,7 +69,9 @@ class ListOfUsersMatchForecastAdmin(admin.ModelAdmin):
                     "round_numder", "user_points", "forecast_type",
                     "match_in_round")
     exclude = ("forecast_id",)
+    list_filter = ("round_numder", "user_points")
     search_fields = ("teams_together", "forecast_type")
+    list_display_links = ("teams_together",)
 
 
 #
@@ -65,29 +93,13 @@ class FinalTableAdmin(admin.ModelAdmin):
                        "user_team_name")
 
 
-class MyAdminSite(admin.AdminSite):
-    def get_app_list(self, request):
-        app_list = super().get_app_list(request)
-        app_list += [
-            {
-                "name": "My Custom App",
-                "app_label": "my_test_app",
-                # "app_url": "/admin/test_view",
-                "models": [
-                    {
-                        "name": "tcptraceroute",
-                        "object_name": "tcptraceroute",
-                        "admin_url": "/admin/test_view",
-                        "view_only": True,
-                    }
-                ],
-            }
-        ]
-        return app_list
+# Registering all models:
+# First - its customizing 'Admin' page views.
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
+admin.site.unregister(Group)
 
-
-# Registering all models.
-admin.site.register(AllUsers, AllUsersAdmin)
+# And other models.
 admin.site.register(AllTeams, AllTeamsAdmin)
 admin.site.register(ListOfMatches, ListOfMatchesAdmin)
 admin.site.register(ListOfUsersMatchForecast, ListOfUsersMatchForecastAdmin)

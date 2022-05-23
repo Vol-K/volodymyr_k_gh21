@@ -1,10 +1,10 @@
-from . models import (AllUsers, AllTeams, ListOfMatches,
-                      ListOfUsersMatchForecast, FinalTable)
+from . models import (AllTeams, ListOfMatches, FinalTable,
+                      ListOfUsersMatchForecast)
 
 from datetime import datetime
 
 
-#
+# Wrighting user forecast to the DataBase.
 def func_add_user_forecast_to_db(user_data):
     # Initialize a model
     user_forecasts = ListOfUsersMatchForecast()
@@ -22,7 +22,7 @@ def func_add_user_forecast_to_db(user_data):
     user_forecasts.save()
 
 
-#
+# Modifying user forecast into DataBase.
 def func_change_user_forecast(
         user_id, match_id, forecast_for_home_team,
         forecast_for_visitor_team, new_forecast_time):
@@ -37,7 +37,8 @@ def func_change_user_forecast(
     new_user_forecasts.save()
 
 
-#
+# Checking - if have user enough time to make a forecast, or
+# how many time still before the start of match.
 def func_check_time_of_user_forecast(match_date, match_time):
 
     current_date_time = datetime.now().replace(microsecond=0)
