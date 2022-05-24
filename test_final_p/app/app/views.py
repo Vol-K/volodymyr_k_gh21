@@ -16,9 +16,9 @@ from . app_support import validate_user_emal, add_user_to_all_tables
 class YourCustomAdminSite(admin.AdminSite):
     def custom_page(self, request):
         context = {"text": "Hello Admin",
-                   "page_name": "Custom Page"}
+                   "test-custom": "Custom Page"}
         return TemplateResponse(request,
-                                "admin/custom_page.html",
+                                "admin/test-custom.html",
                                 context)
 
 

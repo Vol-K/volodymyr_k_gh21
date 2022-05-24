@@ -1,7 +1,9 @@
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+# from django.http import HttpResponse
+
+from datetime import datetime
 
 from .models import AllTeams, ListOfMatches, ListOfUsersMatchForecast, FinalTable
 from .user_side_support import (
@@ -11,9 +13,6 @@ from .user_side_support import (
 )
 from app.forms import (MakeForecastForm, ChangeForecastForm,
                        DeleteAllForecastsForm)
-
-
-from datetime import datetime
 
 
 #

@@ -1,36 +1,8 @@
 from django.contrib import admin
-from django.contrib.admin import AdminSite
 from django.contrib.auth.models import User, Group
 
 from .models import (AllTeams, ListOfMatches, FinalTable,
                      ListOfUsersMatchForecast)
-
-from etc.admin import CustomModelPage
-from django.db import models
-
-
-#! типу працює, треба думати над рендером кнопок та іншого
-class MyPage(CustomModelPage):
-    title = 'My custom page'
-
-    # Define some fields you want to proccess data from.
-    my_field = models.CharField('some title', max_length=10)
-    my_field_2 = models.CharField('some title', max_length=10)
-
-    my_field_3 = models.CharField('some title', max_length=10)
-
-    def save(self):
-        # Here implement data handling.
-        super().save()
-
-
-# Register the page within Django admin.
-MyPage.register()
-
-
-#! Спроба номер два
-class YourCustomAdminSite(admin.AdminSite):
-    pass
 
 
 #
@@ -93,8 +65,7 @@ class FinalTableAdmin(admin.ModelAdmin):
                        "user_team_name")
 
 
-# Registering all models:
-# First - its customizing 'Admin' page views.
+# First of all - its customizing 'Admin' page views.
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.unregister(Group)

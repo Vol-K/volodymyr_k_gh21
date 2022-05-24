@@ -1,0 +1,31 @@
+{# templates/admin/custom_page.html #}
+
+{% extends 'admin/index.html' %}
+
+{% block pagination %}{% endblock %}
+{% block filters %}{% endblock filters %}
+{% block object-tools %}{% endblock object-tools %}
+{% block search %}{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">Home</a>
+  {% if page_name %} &rsaquo; {{ page_name }}{% endif %}
+</div>
+{% endblock %}
+
+{% block result_list %}
+{{text}}
+{% endblock result_list %}
+{% block content %}
+<div id="content-main">
+  <!-- {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %} -->
+</div>
+<H1><b>HHHHHHHHHHHHHHHHHH</b></H1>
+<form method="post">
+  {% csrf_token %}
+  <a href="google.com"><button submit>BBBBBBBB</button></a>
+</form>
+{% endblock %}

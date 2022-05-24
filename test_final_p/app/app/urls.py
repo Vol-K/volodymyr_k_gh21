@@ -19,21 +19,6 @@ from django.urls import include, path
 from . import views
 
 
-class YourCustomAdminSite(admin.AdminSite):
-    ...
-
-    def get_urls(
-        self,
-    ):
-        return [
-            path(
-                "custom_page/",
-                self.admin_view(self.custom_page),
-                name="custom_page",
-            ),
-        ] + super().get_urls()
-
-
 #
 urlpatterns = [
     path('admin/', admin.site.urls),

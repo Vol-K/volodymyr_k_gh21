@@ -2,7 +2,6 @@ from django.db import models
 from requests import options
 
 
-# Create your models here.
 # List of Teams (band of users).
 class AllTeams(models.Model):
     team_id = models.BigAutoField(
@@ -11,6 +10,9 @@ class AllTeams(models.Model):
     team_name = models.CharField(max_length=25)
     team_points = models.PositiveIntegerField(default=0, blank=True)
     team_position = models.PositiveIntegerField(default=0, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Команди (учасників)"
 
 
 # List of all matches.
@@ -36,6 +38,9 @@ class ListOfMatches(models.Model):
     def __str__(self):
         return self.teams_together
 
+    class Meta:
+        verbose_name_plural = "Список мітчів"
+
 
 # List of user match predicted.
 class ListOfUsersMatchForecast(models.Model):
@@ -56,6 +61,9 @@ class ListOfUsersMatchForecast(models.Model):
     def __str__(self):
         return self.teams_together
 
+    class Meta:
+        verbose_name_plural = "Прогнози всіх користувачів"
+
 
 # Final table (table of user forecast results).
 class FinalTable(models.Model):
@@ -72,3 +80,6 @@ class FinalTable(models.Model):
     user_not_predicted_express = models.PositiveIntegerField(default=0)
     user_achive_guru_turu = models.PositiveIntegerField(default=0)
     user_team_name = models.CharField(max_length=25, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Підсумкова таблиця"

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'user_side',
+    'admin_side',
     'django.contrib.admin',
     'widget_tweaks',
 ]
