@@ -28,3 +28,4 @@ urlpatterns = [
     path("register/", views.user_register, name="register_new_user"),
     path("logout/", views.log_out, name="user_logout"),
 ]
+admin.autodiscover()

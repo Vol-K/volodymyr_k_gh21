@@ -15,6 +15,13 @@ class AllTeams(models.Model):
         verbose_name_plural = "Команди (учасників)"
 
 
+#
+def xxx(inside_round_numder):
+    ccc = ListOfMatches.objects.filter(
+        round_numder=inside_round_numder).count()
+    return ccc
+
+
 # List of all matches.
 class ListOfMatches(models.Model):
     match_id = models.BigAutoField(
@@ -27,12 +34,19 @@ class ListOfMatches(models.Model):
     teams_together = models.CharField(max_length=41, default="")
     match_date = models.DateField(auto_now=False, auto_now_add=False)
     match_time = models.TimeField(auto_now=False, auto_now_add=False,)
-    forecast_availability = models.CharField(max_length=3)
+    forecast_availability = models.CharField(max_length=3, default="no")
     home_team_result = models.PositiveIntegerField(null=True, blank=True)
     visitor_team_result = models.PositiveIntegerField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.teams_together = self.home_team + " - " + self.visitor_team
+
+        match_in_round222 = xxx(self.round_numder)
+        if not match_in_round222:
+            self.match_in_round = 1
+        else:
+            self.match_in_round = match_in_round222 + 1
+
         super(ListOfMatches, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -57,6 +71,7 @@ class ListOfUsersMatchForecast(models.Model):
     user_points = models.PositiveIntegerField(null=True, blank=True)
     forecast_type = models.CharField(max_length=7)
     match_in_round = models.PositiveIntegerField(default=1)
+    # forecast_status = models.CharField(max_length=3, default="new")
 
     def __str__(self):
         return self.teams_together

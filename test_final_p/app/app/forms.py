@@ -1,4 +1,3 @@
-from email.policy import default
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -41,7 +40,7 @@ class MakeForecastForm(forms.Form):
         fields = ["teams_together", "team_home_user_forecast",
                   "team_visitor_user_forecast", "forecast_type"]
 
-     # Modifying the 'teams_together' field of form.
+    # Modifying the 'teams_together' field of form.
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)

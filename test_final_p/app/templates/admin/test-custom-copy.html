@@ -1,6 +1,6 @@
 {# templates/admin/custom_page.html #}
 
-{% extends 'admin/index.html' %}
+{% extends 'admin/base_site.html' %}
 
 {% block pagination %}{% endblock %}
 {% block filters %}{% endblock filters %}
@@ -21,11 +21,71 @@
 {% endblock result_list %}
 {% block content %}
 <div id="content-main">
-  <!-- {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %} -->
+  {% include "admin/app_list.html" with app_list=ccc show_changelinks=True %}
 </div>
-<H1><b>HHHHHHHHHHHHHHHHHH</b></H1>
+<table>
+<tr>
+  <div align="center">
+    {% for element in rounds_and_forecast_availability %}
+    <td>
+      <div class="btn-group" role="toolbar" aria-label="Toolbar with button groups" >
+        {% if element.forecast_availability == 'no' %} <!-- row["availability"] -->
+          <div class="btn-group mr-2" role="group">
+            <button type="button" class="btn btn-success" style="width:100px" disabled>{{ element.round_numder }}</button> <!-- row["round"] -->
+          </div>
+    </td>
+    <td>
+        {% elif element.forecast_availability == 'yes' %} <!-- row["availability"] -->
+          <div class="btn-group mr-2" role="group">
+            <button type="button" class="btn btn-success" style="width:120px"><b>Тур #{{ element.round_numder }}</b></button> <!-- row["round"] -->
+          </div>
+        </td>
+        <td>
+        {% else %}
+          <div class="btn-group mr-2" role="group">
+            <button type="button" class="btn btn-outline-secondary" style="width:100px">{{ element.round_numder }}</button> <!-- row["round"] -->
+          </div>
+        {% endif %}
+      </div>
+    <td>
+    {% endfor %}
+  </div>
+</tr>
+</table>
 <form method="post">
   {% csrf_token %}
-  <a href="google.com"><button submit>BBBBBBBB</button></a>
+  <table>
+    <tr>
+      <td></td>
+      <td>{{ form.rounds_list }}</td>
+      <td><button 
+        class="btn btn-warning" 
+        name="open_close_round"
+        value={{ form.rounds_list.value }}
+        type="submit">Відкрити</button></td>
+    </tr>
+  </table>
+</form>
+<form method="post">
+  {% csrf_token %}
+    <tr>
+      <td><button 
+        class="btn btn-warning" 
+        name="calculate_points"
+        value={{ calculate_points.start_process.value }}
+        type="submit">Запустити обрахунок балів</button></td>
+    </tr>
+  </table>
+</form>
+<form method="post">
+  {% csrf_token %}
+    <tr>
+      <td><button 
+        class="btn btn-warning" 
+        name="clean_fintable"
+        value={{ calculate_points.clean_fintable.value }}
+        type="submit">Clean fintable</button></td>
+    </tr>
+  </table>
 </form>
 {% endblock %}

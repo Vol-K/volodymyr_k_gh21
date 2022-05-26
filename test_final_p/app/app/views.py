@@ -8,8 +8,8 @@ from django.template.response import TemplateResponse
 
 import translators as ts
 
-from . forms import LogInForm, RegisterForm
-from . app_support import validate_user_emal, add_user_to_all_tables
+from .forms import LogInForm, RegisterForm
+from .app_support import validate_user_emal, add_user_to_all_tables
 
 
 #
@@ -28,14 +28,14 @@ class MyAdminSite(admin.AdminSite):
         app_list = super().get_app_list(request)
         app_list += [
             {
-                "name": "My Custom App",
+                "name": "App",
                 "app_label": "my_test_app",
                 # "app_url": "/admin/test_view",
                 "models": [
                     {
-                        "name": "tcptraceroute",
-                        "object_name": "tcptraceroute",
-                        "admin_url": "/admin/test_view",
+                        "name": "Dummy Model",
+                        "object_name": "Dummy Model",
+                        "admin_url": "/admin/test-custom-copy",
                         "view_only": True,
                     }
                 ],

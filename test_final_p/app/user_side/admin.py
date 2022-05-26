@@ -23,11 +23,11 @@ class AllTeamsAdmin(admin.ModelAdmin):
 
 #
 class ListOfMatchesAdmin(admin.ModelAdmin):
-    list_display = ("round_numder", "match_in_round", "home_team",
-                    "visitor_team", "teams_together", "match_date",
-                    "match_time", "forecast_availability", "home_team_result",
-                    "visitor_team_result")
-    exclude = ("match_id", "teams_together")
+    list_display = ("round_numder", "home_team", "visitor_team",
+                    "teams_together", "match_date", "match_time",
+                    "home_team_result", "visitor_team_result")
+    exclude = ("match_id", "match_in_round",
+               "teams_together", "forecast_availability")
     list_filter = ("round_numder",)
     search_fields = ("teams_together", "visitor_team",
                      "home_team", "match_date")
@@ -62,7 +62,8 @@ class FinalTableAdmin(admin.ModelAdmin):
                        "user_predicted_match_score",
                        "user_predicted_match_result", "user_predicted_express",
                        "user_not_predicted_express", "user_achive_guru_turu",
-                       "user_team_name")
+                       #    "user_team_name"
+                       )
 
 
 # First of all - its customizing 'Admin' page views.

@@ -18,6 +18,13 @@ class DummyModel(models.Model):
 #
 class DummyModelAdmin(admin.ModelAdmin):
     model = DummyModel
+    # is_superuser = models.BooleanField(default=False)
+
+    # def has_perm(self, perm, obj=None):
+    #     return self.is_admin
+
+    # def has_module_perms(self, app_label):
+    #     return self.is_admin
 
     def get_urls(self):
         view_name = '{}_{}_changelist'.format(
