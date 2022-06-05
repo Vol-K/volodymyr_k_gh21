@@ -97,7 +97,7 @@
         {% if element.user_position == 1 %}
           <td class="table-success"><b>{{ element.user_position }}</b></td>
           <td class="table-success" align="left">
-            {{ element.user_name }}
+            {{ element.user_id }}
           </td>
           <td class="table-success"><b>{{ element.user_points}}</b></td>
           <td class="table-success">
@@ -120,7 +120,7 @@
           <td class="table-success">{{ element.user_achive_guru_turu }}</td>
         {% else %}
           <td><b>{{ element.user_position }}</b></td>
-          <td align="left">{{ element.user_name }}</td>
+          <td align="left">{{ element.user_id }}</td>
           <td><b>{{ element.user_points }}</b></td>
           <td>{{ element.user_all_predicted_matches }}</td>
           <td>{{ element.user_predicted_match_score }}</td>

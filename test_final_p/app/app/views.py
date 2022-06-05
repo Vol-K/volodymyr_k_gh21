@@ -13,35 +13,35 @@ from .app_support import validate_user_emal, add_user_to_all_tables
 
 
 #
-class YourCustomAdminSite(admin.AdminSite):
-    def custom_page(self, request):
-        context = {"text": "Hello Admin",
-                   "test-custom": "Custom Page"}
-        return TemplateResponse(request,
-                                "admin/test-custom.html",
-                                context)
+# class YourCustomAdminSite(admin.AdminSite):
+#     def custom_page(self, request):
+#         context = {"text": "Hello Admin",
+#                    "test-custom": "Custom Page"}
+#         return TemplateResponse(request,
+#                                 "admin/test-custom.html",
+#                                 context)
 
 
 #
-class MyAdminSite(admin.AdminSite):
-    def get_app_list(self, request):
-        app_list = super().get_app_list(request)
-        app_list += [
-            {
-                "name": "App",
-                "app_label": "my_test_app",
-                # "app_url": "/admin/test_view",
-                "models": [
-                    {
-                        "name": "Dummy Model",
-                        "object_name": "Dummy Model",
-                        "admin_url": "/admin/test-custom-copy",
-                        "view_only": True,
-                    }
-                ],
-            }
-        ]
-        return app_list
+# class MyAdminSite(admin.AdminSite):
+#     def get_app_list(self, request):
+#         app_list = super().get_app_list(request)
+#         app_list += [
+#             {
+#                 "name": "App",
+#                 "app_label": "my_test_app",
+#                 # "app_url": "/admin/test_view",
+#                 "models": [
+#                     {
+#                         "name": "Dummy Model",
+#                         "object_name": "Dummy Model",
+#                         "admin_url": "/admin/test-custom-copy",
+#                         "view_only": True,
+#                     }
+#                 ],
+#             }
+#         ]
+#         return app_list
 
 
 # Registering of new user on the website.

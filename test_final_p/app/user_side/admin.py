@@ -13,7 +13,7 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ("username", "id", "last_login")
     list_display_links = ("username",)
 
-
+    
 #
 class AllTeamsAdmin(admin.ModelAdmin):
     list_display = ("team_name", "team_points", "team_position")
@@ -71,7 +71,7 @@ admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.unregister(Group)
 
-# And other models.
+# And after, registed all models.
 admin.site.register(AllTeams, AllTeamsAdmin)
 admin.site.register(ListOfMatches, ListOfMatchesAdmin)
 admin.site.register(ListOfUsersMatchForecast, ListOfUsersMatchForecastAdmin)

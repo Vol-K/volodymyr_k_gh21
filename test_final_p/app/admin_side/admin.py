@@ -39,9 +39,9 @@ class DummyModelAdmin(admin.ModelAdmin):
         return app_list
 
 
-#
+# Customising Admin site.
 admin.site.site_header = "Адмін панель Клуба"
 admin.site.index_title = ""
 
-#
+# Registing model.
 admin.site.register(DummyModel, DummyModelAdmin)

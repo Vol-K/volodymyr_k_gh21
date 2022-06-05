@@ -202,11 +202,16 @@ def change_forecast(request):
             if form.is_valid():
                 form_data = form.cleaned_data
 
-                #
+                # Check is form forecasts field are not empty,
+                # exclude "0" (zero) type of value in the field.
                 if (not form_data["team_home_user_forecast"] or
-                        form_data["team_visitor_user_forecast"]):
+                    not form_data["team_visitor_user_forecast"]) and (
+                    form_data["team_home_user_forecast"] is None or
+                        form_data["team_visitor_user_forecast"] is None):
+
                     popup_message = (
-                        "Поля з рахунками обов'язкові для заповнення, спробуйте ще раз.")
+                        "Поля з рахунками обов'язкові для заповнення, "
+                        "спробуйте ще раз.")
                     messages.info(request, popup_message, extra_tags="general")
                     return redirect("../change-forecast.html")
 
@@ -247,6 +252,7 @@ def change_forecast(request):
 
             return redirect("../make-forecast.html")
 
+        #
         elif request.method == "POST" and "delete" in request.POST:
             form = ChangeForecastForm(request.POST, request=request)
 
@@ -370,14 +376,15 @@ def fintable(request):
         return redirect("../index.html")
 
 
-# Showing forecasted of matches from other users,
-# excluded forecasts by user who send request.
+# Showing forecasted of matches from other users.
 def forecast_by_other(request):
 
     if request.user.is_authenticated:
-        # forecasts_list = ListOfUsersMatchForecast.objects.exclude(
-        #     user_id=request.user.id)
-        forecasts_list = ListOfUsersMatchForecast.objects.all()
+        # Get all forecasts and excluded forecasts by user who send request.
+        forecasts_list = ListOfUsersMatchForecast.objects.exclude(
+            user_id=request.user.id)
+        # forecasts_list = ListOfUsersMatchForecast.objects.all()
+
         context = {"username": request.user.username,
                    "match_forecasts": forecasts_list}
         return render(request, "user_side/forecast-by-other.html", context)
@@ -394,13 +401,10 @@ def forecast_by_other(request):
 # Showing list of 'teams' and their member
 def teams_and_members(request):
     if request.user.is_authenticated:
-        # xx = request.user.id
-        # print(xx)
 
         #! Дописать сортіровку по командам, та балах учасників
-
         teams_and_members_data = FinalTable.objects.exclude(
-            user_team_name__isnull=True)
+            user_team_name__exact="")
         context = {"username": request.user.username,
                    "team_and_members": list(teams_and_members_data)}
         return render(request, "user_side/teams-and-members.html", context)

@@ -1,5 +1,7 @@
+from tkinter import CASCADE
 from django.db import models
 from requests import options
+from django.contrib.auth.models import User
 
 
 # List of Teams (band of users).
@@ -12,14 +14,8 @@ class AllTeams(models.Model):
     team_position = models.PositiveIntegerField(default=0, blank=True)
 
     class Meta:
+        verbose_name = "Команди (учасників)"
         verbose_name_plural = "Команди (учасників)"
-
-
-#
-def xxx(inside_round_numder):
-    ccc = ListOfMatches.objects.filter(
-        round_numder=inside_round_numder).count()
-    return ccc
 
 
 # List of all matches.
@@ -38,14 +34,21 @@ class ListOfMatches(models.Model):
     home_team_result = models.PositiveIntegerField(null=True, blank=True)
     visitor_team_result = models.PositiveIntegerField(null=True, blank=True)
 
+    # Modifyed "teams_together" & "match_in_round" fields.
     def save(self, *args, **kwargs):
         self.teams_together = self.home_team + " - " + self.visitor_team
 
-        match_in_round222 = xxx(self.round_numder)
-        if not match_in_round222:
+        # Get number of last match in round.
+        def counter_match_in_round(inside_round_numder):
+            last_match_in_round_number = ListOfMatches.objects.filter(
+                round_numder=inside_round_numder).count()
+            return last_match_in_round_number
+
+        last_match_in_round = counter_match_in_round(self.round_numder)
+        if not last_match_in_round:
             self.match_in_round = 1
         else:
-            self.match_in_round = match_in_round222 + 1
+            self.match_in_round = last_match_in_round + 1
 
         super(ListOfMatches, self).save(*args, **kwargs)
 
@@ -53,7 +56,8 @@ class ListOfMatches(models.Model):
         return self.teams_together
 
     class Meta:
-        verbose_name_plural = "Список мітчів"
+        verbose_name = "Список матчів"
+        verbose_name_plural = "Список матчів"
 
 
 # List of user match predicted.
@@ -62,7 +66,8 @@ class ListOfUsersMatchForecast(models.Model):
         auto_created=True, primary_key=True, serialize=False,
         verbose_name="Forecast ID")
     match_id = models.PositiveIntegerField()
-    user_id = models.PositiveIntegerField()
+    user_id = models.ForeignKey(
+        User, on_delete=models.DO_NOTHING, related_name="user_forecasts")
     teams_together = models.CharField(max_length=41, default="")
     home_team_forecast = models.PositiveIntegerField()
     visitor_team_forecast = models.PositiveIntegerField()
@@ -71,18 +76,20 @@ class ListOfUsersMatchForecast(models.Model):
     user_points = models.PositiveIntegerField(null=True, blank=True)
     forecast_type = models.CharField(max_length=7)
     match_in_round = models.PositiveIntegerField(default=1)
-    # forecast_status = models.CharField(max_length=3, default="new")
 
     def __str__(self):
         return self.teams_together
 
     class Meta:
-        verbose_name_plural = "Прогнози всіх користувачів"
+        verbose_name = "Прогнози всіх учасників"
+        verbose_name_plural = "Прогнози всіх учасників"
 
 
 # Final table (table of user forecast results).
 class FinalTable(models.Model):
-    user_id = models.PositiveIntegerField()
+    # user_id = models.PositiveIntegerField()
+    user_id = models.ForeignKey(
+        User, on_delete=models.DO_NOTHING, related_name="user_fintable")
     user_name = models.CharField(max_length=25)
     user_position = models.PositiveIntegerField(default=0, blank=True)
     user_points = models.PositiveIntegerField(default=0)
@@ -97,4 +104,5 @@ class FinalTable(models.Model):
     user_team_name = models.CharField(max_length=25, blank=True)
 
     class Meta:
+        verbose_name = "Підсумкова таблиця"
         verbose_name_plural = "Підсумкова таблиця"

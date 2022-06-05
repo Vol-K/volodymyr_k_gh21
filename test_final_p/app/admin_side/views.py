@@ -1,28 +1,17 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 # from .admin import DummyModelAdmin
-from .admin_side_support import func_calculate_points_by_user_forecasts
+from .admin_side_support import func_calculate_points_by_user_forecasts, print_time
 from .forms import ActivateDIsableRound, CalculateUserPointsForm
+from admin_side.tasks import processing_logic
+
 from user_side.models import ListOfMatches, ListOfUsersMatchForecast
 
 
 # Create your views here.
 def my_custom_view(request):
-    # from .admin import DummyModelAdmin
     if request.user.is_superuser:
         if request.method == "POST" and "open_close_round" in request.POST:
-            # form = ActivateDIsableRound(request.POST, request=request)
-            # print("EHUUUUUUU", form.data["rounds_list"])
-            # rounds_list = request.POST.get('rounds_list')
-            # form.fields['rounds_list'].choices = rounds_list
-
-            # if form.is_valid():
-            #     form_data = form.cleaned_data
-            #     print("EHUUUUUUU", form_data)
-
-            # else:
-            #     form_errors = form.errors.as_data()
-            #     print("form_errors", form_errors)
-            # print(form)
 
             select_rounds_number = request.POST.get('rounds_list')
 
@@ -37,12 +26,19 @@ def my_custom_view(request):
 
             return redirect("../dummymodel")
 
+        #
         elif request.method == "POST" and "calculate_points" in request.POST:
-            print("calculate_points")
+            # print("calculate_points")
+            # xxx = func_calculate_points_by_user_forecasts()
+            processing_logic.delay()
             return redirect("../dummymodel")
+
+        #
         elif request.method == "POST" and "clean_fintable" in request.POST:
             print("clean_fintable")
             return redirect("../dummymodel")
+
+        # Prepare contex for GET request of page.
         else:
             form = ActivateDIsableRound(request=request)
             calculate_points = CalculateUserPointsForm()
@@ -57,5 +53,10 @@ def my_custom_view(request):
                        "calculate_points": calculate_points}
 
             return render(request, "admin/test-custom-copy.html", context)
+
     else:
-        print("loser")
+        popup_message = (
+            "Сторінка 'DummyModelAdmin' доступна тільки для "
+            "зареєстрованих користувачів.")
+        messages.info(request, popup_message)
+        return redirect("/admin")
