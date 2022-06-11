@@ -29,7 +29,7 @@ class MakeForecastForm(forms.Form):
         queryset=None
     )
     team_home_user_forecast = forms.IntegerField(min_value=0)
-    team_visitor_user_forecast = forms.IntegerField(min_value=0)
+    team_visitor_user_forecast = forms.IntegerField(min_value=0, max_value=11)
     forecast_type = forms.CharField(
         label='forecast_type',
         widget=forms.RadioSelect(choices=forecast_option),

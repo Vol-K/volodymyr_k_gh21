@@ -90,7 +90,7 @@ class FinalTable(models.Model):
     # user_id = models.PositiveIntegerField()
     user_id = models.ForeignKey(
         User, on_delete=models.DO_NOTHING, related_name="user_fintable")
-    user_name = models.CharField(max_length=25)
+    user_name = models.CharField(max_length=25)  # !НА  винос
     user_position = models.PositiveIntegerField(default=0, blank=True)
     user_points = models.PositiveIntegerField(default=0)
     user_potential_points = models.PositiveIntegerField(default=0)

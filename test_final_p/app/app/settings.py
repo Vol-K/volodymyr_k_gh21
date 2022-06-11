@@ -28,7 +28,8 @@ SECRET_KEY = 'django-insecure-912*84nl-s9vu+qwsjl1=6nw!o#=5ohwoedya&3@$n9a&&hpi=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "ancient-chamber-01111", "127.0.0.1", "0.0.0.0"]
 
 
 # Application definition
@@ -122,6 +123,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -136,7 +139,7 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 # Redis related options.
 REDIS_HOST = "127.0.0.1"

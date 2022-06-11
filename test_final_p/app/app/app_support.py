@@ -4,9 +4,8 @@ from django.contrib.auth.models import User
 
 from user_side.models import AllTeams, ListOfMatches, ListOfUsersMatchForecast, FinalTable
 
+
 # User email validation.
-
-
 def validate_user_emal(email_to_validate):
     validator = EmailValidator(allowlist=["gmail.com", "localhost"])
     try:
@@ -16,10 +15,15 @@ def validate_user_emal(email_to_validate):
         return False
 
 
-#
+# Add "New User" to the DataBase (inside "Fintab" table).
 def initialize_new_user_in_fintab(user_data):
+    # Create a User instance.
+    new_user_instance = User.objects.filter(id=user_data["user_id"])
+
+    # Initialize a model
     user_in_fintab = FinalTable()
-    user_in_fintab.user_id = user_data["user_id"]
+    # Inserting data and after that it's save to DB.
+    user_in_fintab.user_id = new_user_instance[0]
     user_in_fintab.user_name = user_data["user_login"]
     user_in_fintab.user_position = 0
     user_in_fintab.user_points = 0

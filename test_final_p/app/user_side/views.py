@@ -36,8 +36,8 @@ def make_forecast(request):
         if request.method == "POST":
             form = MakeForecastForm(request.POST, request=request)
 
-            #! form_errors = form.errors.as_data()
-            #! print(form_errors)
+            form_errors = form.errors.as_data()
+            print(form_errors)
 
             if form.is_valid():
                 form_data = form.cleaned_data
@@ -166,6 +166,8 @@ def make_forecast(request):
                 messages.info(request, popup_message, extra_tags="general")
 
             else:
+                form_errors = form.errors.as_data()
+                print(form_errors)
                 popup_message = (
                     "Вибачте, внесено некоректну інформацію, спробуйте ще раз")
                 messages.info(request, popup_message, extra_tags="general")
