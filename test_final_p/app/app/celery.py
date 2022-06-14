@@ -20,6 +20,7 @@ app.conf.beat_schedule = {
     'print-time-every-1-minute': {
         'task': 'admin_side.tasks.every_minute_printing',
         'schedule': crontab(minute='*/1'),
+        # 'schedule': crontab(minute=53, hour=0),
     },
 }
 app.autodiscover_tasks()

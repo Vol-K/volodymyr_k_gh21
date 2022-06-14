@@ -8,7 +8,6 @@ from django.db.models import Sum
 
 from bs4 import BeautifulSoup
 from pathlib import Path
-# from time import sleep
 from datetime import datetime
 
 
@@ -17,8 +16,7 @@ from user_side.models import (ListOfMatches, ListOfUsersMatchForecast,
 
 
 #
-def func_calculate_points_by_user_forecasts():
-    # options = ChromeOptions()
+def looking_for_scores_of_matches_in_round():
     options = Options()
     options.add_argument('--headless')
     options.add_argument("--no-sandbox")
@@ -27,7 +25,7 @@ def func_calculate_points_by_user_forecasts():
     webdriver_path = Path(Path.cwd(), "chromedriver")
     wd = Chrome(options=options, executable_path=webdriver_path)
 
-    # Link to the form which must be filled.a
+    # Link to the form which must be filled.
     page_link = "https://www.flashscore.com/football/"
 
     wd.get(page_link)
@@ -43,104 +41,175 @@ def func_calculate_points_by_user_forecasts():
             )
         ).click()
 
-    #
-    raw_list_of_matches = WebDriverWait(wd, 90).until(
-        EC.visibility_of_all_elements_located(
-            (By.CLASS_NAME, "event__match--twoLine"))
-    )
+        #
+        raw_list_of_matches = WebDriverWait(wd, 90).until(
+            EC.visibility_of_all_elements_located(
+                (By.CLASS_NAME, "event__match--twoLine"))
+        )
 
-    matches_in_round = ListOfMatches.objects.filter(
-        forecast_availability="yes")
-    current_round = matches_in_round[0].round_numder
+        matches_in_round = ListOfMatches.objects.filter(
+            forecast_availability="yes")
+        current_round = matches_in_round[0].round_numder
 
-    #
-    for match in matches_in_round:
-        db_home_team = match.home_team
-        db_visitor_team = match.visitor_team
+        #
+        for match in matches_in_round:
+            db_home_team = match.home_team
+            db_visitor_team = match.visitor_team
 
-        for ii in raw_list_of_matches:
-            raw_matches_html = ii.get_attribute('innerHTML')
-            raw_matches_soup = BeautifulSoup(raw_matches_html, "lxml")
-            # print(raw_matches_soup)
-            home_team_name = raw_matches_soup.select(
-                ".event__participant--home")
-            # print(home_team_name[0].text)
+            for ii in raw_list_of_matches:
+                raw_matches_html = ii.get_attribute('innerHTML')
+                raw_matches_soup = BeautifulSoup(raw_matches_html, "lxml")
 
-            #!  Запобіжник щоб зря не йти далі
-            #!
-            visitor_team_name = raw_matches_soup.select(
-                ".event__participant--away")
-            home_team_score = raw_matches_soup.select(
-                ".event__score--home")
-            visitor_team_score = raw_matches_soup.select(
-                ".event__score--away")
-            if home_team_name[0].text == db_home_team and visitor_team_name[0].text == db_visitor_team:
-                print(home_team_name[0].text, home_team_score[0].text,
-                      visitor_team_score[0].text, visitor_team_name[0].text)
+                home_team_name = raw_matches_soup.select(
+                    ".event__participant--home")
 
-                match.home_team_result = home_team_score[0].text
-                match.visitor_team_result = visitor_team_score[0].text
-                match.save()
-                break
-            print("------")
+                #!  Запобіжник щоб зря не йти далі
+                if home_team_name[0].text != db_home_team:
+                    pass
+                else:
+                    visitor_team_name = raw_matches_soup.select(
+                        ".event__participant--away")
+                    print("visitor_team_name", visitor_team_name[0].text)
+                    home_team_score = raw_matches_soup.select(
+                        ".event__score--home")
+                    visitor_team_score = raw_matches_soup.select(
+                        ".event__score--away")
 
-    #!
-    #! Блок саме для реального обрахунку результатів.
+                    if (home_team_name[0].text == db_home_team and
+                            visitor_team_name[0].text == db_visitor_team):
+
+                        #
+                        home_team_score_isdigit_check = (
+                            home_team_score[0].text.isdigit()
+                        )
+                        visitor_team_score_isdigit_check = (
+                            visitor_team_score[0].text.isdigit()
+                        )
+
+                        if (not home_team_score_isdigit_check or
+                                not visitor_team_score_isdigit_check):
+                            print(
+                                home_team_name[0].text,
+                                visitor_team_name[0].text,
+                                "--- SEND EMAIL TO ADMIN ---"
+                            )
+
+                        #
+                        else:
+                            print(home_team_name[0].text, home_team_score[0].text,
+                                  visitor_team_score[0].text, visitor_team_name[0].text)
+
+                            match.home_team_result = home_team_score[0].text
+                            match.visitor_team_result = visitor_team_score[0].text
+                            match.save()
+
+                            print("------")
+
+    # Start proccess of calculation User points by forecasts.
+    # func_calculate_points_by_user_forecasts(current_round, matches_in_round)
+
+
+#
+def func_calculate_points_by_user_forecasts(input_round_numder,
+                                            input_matches_in_round):
+
     all_forecasts = ListOfUsersMatchForecast.objects.filter(
-        round_numder=current_round)
+        round_numder=input_round_numder)
 
     list_of_user_hwo_did_forecast = all_forecasts.values("user_id").distinct()
 
-    # Calculate points proccess (per User view).
+    # Calculate points proccess (from User point of view).
     for user in list_of_user_hwo_did_forecast:
         forecasts_by_user = all_forecasts.filter(
-            user_id=user["user_id"], round_numder=current_round)
+            user_id=user["user_id"], round_numder=input_round_numder)
 
         for forecast in forecasts_by_user:
 
-            results = matches_in_round.filter(match_id=forecast.match_id)
+            results = input_matches_in_round.filter(
+                match_id=forecast.match_id)
 
             home_team_score = results[0].home_team_result
             visitor_team_score = results[0].visitor_team_result
-            # print(results[0].home_team_result, results[0].visitor_team_result)
 
-            # For the precision user forecast - 2 points.
-            if (home_team_score == forecast.home_team_forecast and
-                    visitor_team_score == forecast.visitor_team_forecast):
-                forecast.user_points = "2"
-                forecast.save()
-            # For the positive user forecast (draw/win_home/win_visitor) - 1 point.
-            elif ((home_team_score == visitor_team_score and
-                  forecast.home_team_forecast == forecast.visitor_team_forecast) or
-                  (home_team_score > visitor_team_score and
-                  forecast.home_team_forecast > forecast.visitor_team_forecast) or
-                  (home_team_score < visitor_team_score and
-                  forecast.home_team_forecast < forecast.visitor_team_forecast)):
-                forecast.user_points = "1"
-                forecast.save()
-            # For bad user forecast (guessed nothing)
-            else:
-                forecast.user_points = "0"
-                forecast.save()
+            # Two way of calculation of points by "User" forecasts.
+            # If user has "ordinary" type of forecasts.
+            user_type_of_forecast = forecasts_by_user.values(
+                "forecast_type").distinct()[0]["forecast_type"]
+            if user_type_of_forecast == "ordinary":
 
-        # print(user["user_id"])
+                # For the precision user forecast - 2 points.
+                if (home_team_score == forecast.home_team_forecast and
+                        visitor_team_score == forecast.visitor_team_forecast):
+                    forecast.user_points = "2"
+                    forecast.save()
+                # For the positive user forecast (draw/win_home/win_visitor) - 1 point.
+                elif ((home_team_score == visitor_team_score and
+                        forecast.home_team_forecast == forecast.visitor_team_forecast) or
+                        (home_team_score > visitor_team_score and
+                         forecast.home_team_forecast > forecast.visitor_team_forecast) or
+                        (home_team_score < visitor_team_score and
+                         forecast.home_team_forecast < forecast.visitor_team_forecast)):
+                    forecast.user_points = "1"
+                    forecast.save()
+                # For bad user forecast (guessed nothing)
+                else:
+                    forecast.user_points = "0"
+                    forecast.save()
+
+            # Or if user has "express" type of forecasts.
+            elif user_type_of_forecast == "express":
+                # For the precision user forecast - 2 points.
+                if ((home_team_score == visitor_team_score and
+                        forecast.home_team_forecast == forecast.visitor_team_forecast) or
+                        (home_team_score > visitor_team_score and
+                         forecast.home_team_forecast > forecast.visitor_team_forecast) or
+                        (home_team_score < visitor_team_score and
+                         forecast.home_team_forecast < forecast.visitor_team_forecast)):
+                    forecast.user_points = "2"
+                    forecast.save()
+                else:
+                    forecasts_by_user.update(user_points=0)
+                    break
+
+    # Updating whole statistic information about "User" inside "Fintable".
     update_user_statistic_in_fintab()
-    print("The End falks")
 
 
-# def procces_delayed():
+#
 def print_time():
-    xxx = datetime.now().replace(microsecond=0)
-    print(xxx)
-    xxx_timestamp = datetime.timestamp(xxx)
-    my_date = "2022-06-06 22:45:59"
-    my_date_timestamp = datetime.timestamp(
-        datetime.strptime(my_date, "%Y-%m-%d %H:%M:%S"))
-    if xxx_timestamp < my_date_timestamp:
+    current_date_time = datetime.now().replace(microsecond=0)
+    current_date_time_timestamp = datetime.timestamp(current_date_time)
+    # print(current_date_time)
+    # print(current_date_time_timestamp)
+    xxx = ListOfMatches.objects.filter(
+        forecast_availability="yes")
+
+    # for ii in xxx:
+    #     print("xxx -- home_team_result", ii.home_team_result)
+    #     print("xxx -- visitor_team_result", ii.visitor_team_result)
+
+    xxx2 = xxx.filter(home_team_result__isnull=True,
+                      visitor_team_result__isnull=True)
+    print(xxx2)
+    if xxx2.exists():
+        for ii in xxx2:
+            print("xxx2 - home_team_result", ii.home_team_result)
+            print("xxx2 - visitor_team_result", ii.visitor_team_result)
+    else:
+        print("not exist")
+
+    my_date = xxx.latest('match_date', "match_time")
+
+    match_date_time = datetime.combine(
+        my_date.match_date, my_date.match_time)
+    match_date_time_timestamp = datetime.timestamp(match_date_time)
+    # print(match_date_time)
+    # print(match_date_time_timestamp)
+
+    if current_date_time_timestamp < match_date_time_timestamp:
         print("не час")
-    elif xxx_timestamp > my_date_timestamp:
+    elif current_date_time_timestamp > match_date_time_timestamp:
         print("Вже час уууррррааааа")
-    # print("18:50", xxx)
 
 
 #
@@ -179,7 +248,7 @@ def reset_db_values_to_default():
     )
 
 
-#
+# Update/create forecast`s statustic information for every "User".
 def update_user_statistic_in_fintab():
     # Initialize necessary models with all data.
     all_forecasts = ListOfUsersMatchForecast.objects.all()
@@ -197,8 +266,8 @@ def update_user_statistic_in_fintab():
         # Save a new data by "User".
         user.user_points = total_points_sum["user_points__sum"]
         user.user_potential_points = forecasted_matches * 2
-        user.user_average_point_per_match = total_points_sum["user_points__sum"] / \
-            forecasted_matches
+        user.user_average_point_per_match = round((total_points_sum["user_points__sum"] /
+                                                   forecasted_matches), 2)
         user.user_all_predicted_matches = forecasted_matches
         user.user_predicted_match_score = all_forecasts_by_user.filter(
             user_points=2).count()
@@ -207,5 +276,3 @@ def update_user_statistic_in_fintab():
         user.user_predicted_express = "11"
         user.user_not_predicted_express = "11"
         user.save()
-
-    print("DONE")

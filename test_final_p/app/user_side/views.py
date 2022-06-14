@@ -362,7 +362,11 @@ def delete_all_forecasts(request):
 # Showing rank table of all users, with additional statistics.
 def fintable(request):
     if request.user.is_authenticated:
-        fintable_info = FinalTable.objects.all()  # ! Виписати сортіровки
+        fintable_info = FinalTable.objects.all().order_by(
+            "-user_points",
+            "-user_predicted_match_score",
+            "-user_average_point_per_match"
+        )
         teams_rank = AllTeams.objects.all().order_by("-team_position")
         context = {"fintable": list(fintable_info),
                    "username": request.user.username,

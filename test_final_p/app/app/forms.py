@@ -84,9 +84,13 @@ class ChangeForecastForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         if request:
+            # Create a list of matches available for changes/delete.
+            available_round_number = ListOfMatches.objects.filter(
+                forecast_availability="yes").values("round_numder").distinct()
             self.fields["teams_together"].queryset = (
                 ListOfUsersMatchForecast.objects.filter(
-                    user_id=request.user.id))
+                    user_id=request.user.id,
+                    round_numder=available_round_number[0]["round_numder"]))
 
 
 # 'Form' for delete all forecasts by user in current round.

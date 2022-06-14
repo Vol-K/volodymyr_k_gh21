@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'admin_side',
     'django.contrib.admin',
     'widget_tweaks',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
