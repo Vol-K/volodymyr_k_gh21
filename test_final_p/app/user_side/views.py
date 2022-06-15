@@ -1,9 +1,9 @@
-from django.contrib.auth import login, logout, authenticate
+# from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.shortcuts import render, redirect
 # from django.http import HttpResponse
 
-from datetime import datetime
+# from datetime import datetime
 
 from .models import AllTeams, ListOfMatches, ListOfUsersMatchForecast, FinalTable
 from .user_side_support import (
@@ -166,8 +166,6 @@ def make_forecast(request):
                 messages.info(request, popup_message, extra_tags="general")
 
             else:
-                form_errors = form.errors.as_data()
-                print(form_errors)
                 popup_message = (
                     "Вибачте, внесено некоректну інформацію, спробуйте ще раз")
                 messages.info(request, popup_message, extra_tags="general")
@@ -296,6 +294,7 @@ def change_forecast(request):
 
             return redirect("../make-forecast.html")
 
+        #
         elif request.method == "POST" and "delelete_all" in request.POST:
             form = DeleteAllForecastsForm(request.POST)
 
@@ -321,7 +320,7 @@ def change_forecast(request):
 
             #
             else:
-                form_errors = form.errors.as_data()
+                # form_errors = form.errors.as_data()
                 # print(form_errors)
                 popup_message = (
                     "Вибачте, внесено некоректну інформацію, "
@@ -352,11 +351,6 @@ def change_forecast(request):
 
 
 #! Треба блокувати зміни до початку першого експреса
-#
-def delete_all_forecasts(request):
-
-    #! Треба чек на експреси
-    pass
 
 
 # Showing rank table of all users, with additional statistics.
@@ -382,7 +376,8 @@ def fintable(request):
         return redirect("../index.html")
 
 
-# Showing forecasted of matches from other users.
+# Showing forecasted of matches from other users,
+# excluded forecasts by user who send request.
 def forecast_by_other(request):
 
     if request.user.is_authenticated:

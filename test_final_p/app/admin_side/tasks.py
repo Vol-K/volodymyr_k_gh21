@@ -1,8 +1,5 @@
-from datetime import datetime
-
-from .admin_side_support import print_time, looking_for_scores_of_matches_in_round
 from app.celery import app
-from user_side.models import ListOfMatches
+from .admin_side_support import print_time, looking_for_scores_of_matches_in_round
 
 
 # Main logic of processing data ('category' from user).

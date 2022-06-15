@@ -1,22 +1,43 @@
+# Import all necessary moduls:
+# 1) from Selenium package.
+# from selenium import webdriver
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.common.by import By
 
+# 2) from Django package.
 from django.db.models import Sum
+from django.core.mail import send_mail
 
+# 3) from Other packages.
 from bs4 import BeautifulSoup
 from pathlib import Path
 from datetime import datetime
 
-
+# 4) Local import.
 from user_side.models import (ListOfMatches, ListOfUsersMatchForecast,
                               FinalTable)
 
 
 #
 def looking_for_scores_of_matches_in_round():
+
+    # ##! HEROKU (cloud server) options !##
+    # # Setup options for "Google Chrome" by Heroku server.
+    # options = webdriver.ChromeOptions()
+    # options.add_argument('--headless')
+    # options.add_argument("--no-sandbox")
+    # options.add_argument("disable-dev-shm-usage")
+
+    # # Select webdriver path and open browser.
+    # webdriver_path = Path(Path.cwd(), "chromedriver")
+    # wd = webdriver.Chrome(
+    #     chrome_options=options, executable_path=webdriver_path)
+
+    ##! PC (local server) options !##
+    # Setup options for "Google Chrome" by local server.
     options = Options()
     options.add_argument('--headless')
     options.add_argument("--no-sandbox")
@@ -25,6 +46,7 @@ def looking_for_scores_of_matches_in_round():
     webdriver_path = Path(Path.cwd(), "chromedriver")
     wd = Chrome(options=options, executable_path=webdriver_path)
 
+    ##! Спільна частина !##
     # Link to the form which must be filled.
     page_link = "https://www.flashscore.com/football/"
 
@@ -69,7 +91,7 @@ def looking_for_scores_of_matches_in_round():
                 else:
                     visitor_team_name = raw_matches_soup.select(
                         ".event__participant--away")
-                    print("visitor_team_name", visitor_team_name[0].text)
+                    # print("visitor_team_name", visitor_team_name[0].text)
                     home_team_score = raw_matches_soup.select(
                         ".event__score--home")
                     visitor_team_score = raw_matches_soup.select(
@@ -93,11 +115,19 @@ def looking_for_scores_of_matches_in_round():
                                 visitor_team_name[0].text,
                                 "--- SEND EMAIL TO ADMIN ---"
                             )
+                            match_status = raw_matches_soup.select(
+                                ".event__stage")[0].text
+                            print("match_status", match_status)
 
+                            match_data = {
+                                "match_status": match_status,
+                                "teams_together": home_team_name[0].text + " " + visitor_team_name[0].text
+                            }
+                            send_message_to_admin_email(match_data)
                         #
                         else:
-                            print(home_team_name[0].text, home_team_score[0].text,
-                                  visitor_team_score[0].text, visitor_team_name[0].text)
+                            # print(home_team_name[0].text, home_team_score[0].text,
+                            #       visitor_team_score[0].text, visitor_team_name[0].text)
 
                             match.home_team_result = home_team_score[0].text
                             match.visitor_team_result = visitor_team_score[0].text
@@ -106,7 +136,7 @@ def looking_for_scores_of_matches_in_round():
                             print("------")
 
     # Start proccess of calculation User points by forecasts.
-    # func_calculate_points_by_user_forecasts(current_round, matches_in_round)
+    func_calculate_points_by_user_forecasts(current_round, matches_in_round)
 
 
 #
@@ -190,13 +220,13 @@ def print_time():
 
     xxx2 = xxx.filter(home_team_result__isnull=True,
                       visitor_team_result__isnull=True)
-    print(xxx2)
-    if xxx2.exists():
-        for ii in xxx2:
-            print("xxx2 - home_team_result", ii.home_team_result)
-            print("xxx2 - visitor_team_result", ii.visitor_team_result)
-    else:
-        print("not exist")
+    # print(xxx2)
+    # if xxx2.exists():
+    #     for ii in xxx2:
+    #         print("xxx2 - home_team_result", ii.home_team_result)
+    #         print("xxx2 - visitor_team_result", ii.visitor_team_result)
+    # else:
+    #     print("not exist")
 
     my_date = xxx.latest('match_date', "match_time")
 
@@ -205,11 +235,24 @@ def print_time():
     match_date_time_timestamp = datetime.timestamp(match_date_time)
     # print(match_date_time)
     # print(match_date_time_timestamp)
-
+    score_exist_list = []
     if current_date_time_timestamp < match_date_time_timestamp:
         print("не час")
     elif current_date_time_timestamp > match_date_time_timestamp:
         print("Вже час уууррррааааа")
+        for match in xxx:
+            print(match)
+            if match.home_team_result:
+                score_exist_list.append("yes")
+            else:
+                score_exist_list.append("no")
+        print(score_exist_list)
+        if "no" in score_exist_list:
+            print("no in score_exist_list")
+            looking_for_scores_of_matches_in_round()
+        else:
+            print("--- pass ---")
+            pass
 
 
 #
@@ -276,3 +319,15 @@ def update_user_statistic_in_fintab():
         user.user_predicted_express = "11"
         user.user_not_predicted_express = "11"
         user.save()
+
+
+#
+def send_message_to_admin_email(input_data):
+    admin_emal = "cozak@meta.ua"
+    send_mail(
+        f"Щось трапилося з матчем '{input_data['teams_together']}',",
+        f"матч був '{input_data['match_status']}'",
+        "karbivnychyi.volodymyr@gmail.com",
+        [admin_emal],
+        fail_silently=False,
+    )

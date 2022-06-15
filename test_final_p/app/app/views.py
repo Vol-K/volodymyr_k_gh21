@@ -13,16 +13,6 @@ from .app_support import validate_user_emal, add_user_to_all_tables
 
 
 #
-# class YourCustomAdminSite(admin.AdminSite):
-#     def custom_page(self, request):
-#         context = {"text": "Hello Admin",
-#                    "test-custom": "Custom Page"}
-#         return TemplateResponse(request,
-#                                 "admin/test-custom.html",
-#                                 context)
-
-
-#
 # class MyAdminSite(admin.AdminSite):
 #     def get_app_list(self, request):
 #         app_list = super().get_app_list(request)

@@ -12,12 +12,11 @@ environ.setdefault('DJANGO_SETTINGS_MODULE', 'app.settings')
 
 app = Celery("app", brocker="pyamqp://guest@localhost/")
 app.config_from_object("django.conf:settings", namespace="CELERY")
-# app.autodiscover_tasks()
 
 #
 app.conf.beat_schedule = {
     # Executes every minutes
-    'print-time-every-1-minute': {
+    'daily-check-for-match_datetime': {
         'task': 'admin_side.tasks.every_minute_printing',
         'schedule': crontab(minute='*/1'),
         # 'schedule': crontab(minute=53, hour=0),

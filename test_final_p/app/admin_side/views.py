@@ -7,7 +7,7 @@ from django.contrib import messages
 from .forms import ActivateDIsableRound, CalculateUserPointsForm
 from .admin_side_support import (
     looking_for_scores_of_matches_in_round,
-    print_time,
+    # print_time,
     open_round_for_users_forecast,
     reset_db_values_to_default,
 )
@@ -28,8 +28,8 @@ def my_custom_view(request):
 
         # MAnual activating of the Points calculation script by User forecasts.
         elif request.method == "POST" and "calculate_points" in request.POST:
-            print("--- calculate_points ---")
-            looking_for_scores_of_matches_in_round()
+            print("--- looking_for_scores_of_matches_in_round ---")
+            looking_for_scores_of_matches_in_round.delay()
             print("--- done ---")
             # processing_logic.delay()
             return redirect("../dummymodel")
@@ -52,11 +52,13 @@ def my_custom_view(request):
             rounds_and_forecast_availability = all_matches.values(
                 "round_numder", "forecast_availability").distinct()
 
-            context = {"app_list": "ccc",
-                       "form": form,
-                       "rounds_and_forecast_availability":
-                       rounds_and_forecast_availability,
-                       "calculate_points": calculate_points}
+            context = {
+                # "app_list": "ccc",
+                "form": form,
+                "rounds_and_forecast_availability":
+                rounds_and_forecast_availability,
+                "calculate_points": calculate_points
+            }
 
             return render(request, "admin/test-custom-copy.html", context)
 
