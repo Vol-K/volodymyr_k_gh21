@@ -4,12 +4,16 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 
 # 2) Local import.
-from .forms import ActivateDIsableRound, CalculateUserPointsForm
+from .forms import (ActivateDIsableRound,
+                    CalculateUserPointsForm, LookingMatchesScoreForm)
 from .admin_side_support import (
     looking_for_scores_of_matches_in_round,
     # print_time,
     open_round_for_users_forecast,
     reset_db_values_to_default,
+    func_calculate_points_by_user_forecasts,
+    sort_allteams,
+    sort_fintable,
 )
 from admin_side.tasks import processing_logic
 from user_side.models import ListOfMatches, ListOfUsersMatchForecast
@@ -26,11 +30,20 @@ def my_custom_view(request):
 
             return redirect("../dummymodel")
 
-        # MAnual activating of the Points calculation script by User forecasts.
+        # Manual activating of the Points calculation script by User forecasts.
         elif request.method == "POST" and "calculate_points" in request.POST:
+            print("--- calculate_points ---")
+            func_calculate_points_by_user_forecasts()
+            print("--- done calculate_points ---")
+            sort_allteams()
+            sort_fintable()
+            return redirect("../dummymodel")
+
+        # Manual activating of the Points
+        elif request.method == "POST" and "looking_matches_score" in request.POST:
             print("--- looking_for_scores_of_matches_in_round ---")
-            looking_for_scores_of_matches_in_round.delay()
-            print("--- done ---")
+            looking_for_scores_of_matches_in_round()
+            print("--- done looking ---")
             # processing_logic.delay()
             return redirect("../dummymodel")
 
@@ -48,6 +61,7 @@ def my_custom_view(request):
         else:
             form = ActivateDIsableRound(request=request)
             calculate_points = CalculateUserPointsForm()
+            looking_matches_score = LookingMatchesScoreForm()
             all_matches = ListOfMatches.objects.all()
             rounds_and_forecast_availability = all_matches.values(
                 "round_numder", "forecast_availability").distinct()
@@ -57,7 +71,8 @@ def my_custom_view(request):
                 "form": form,
                 "rounds_and_forecast_availability":
                 rounds_and_forecast_availability,
-                "calculate_points": calculate_points
+                "calculate_points": calculate_points,
+                "looking_matches_score": looking_matches_score
             }
 
             return render(request, "admin/test-custom-copy.html", context)

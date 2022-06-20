@@ -28,8 +28,7 @@ SECRET_KEY = 'django-insecure-912*84nl-s9vu+qwsjl1=6nw!o#=5ohwoedya&3@$n9a&&hpi=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "ancient-chamber-01111", "127.0.0.1", "0.0.0.0"]
+ALLOWED_HOSTS = [".herokuapp.com", "127.0.0.1", "0.0.0.0"]
 
 
 # Application definition
@@ -156,5 +155,6 @@ CELERY_RESULT_SERIALIZER = "json"
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = "k0zar1uga@gmail.com"
-EMAIL_HOST_PASSWORD = "wvyklmyfuflewasd"
+#! ТРЕБА ЗАХОВАТЬ ДЛЯ GITHUB
+EMAIL_HOST_PASSWORD = "*"
 EMAIL_PORT = 587

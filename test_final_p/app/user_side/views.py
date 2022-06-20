@@ -19,7 +19,7 @@ from app.forms import (MakeForecastForm, ChangeForecastForm,
 def index(request):
     context = {}
     # Blocked access to the page for not authorized user.
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.is_superuser:
         context["username"] = request.user.username
         return render(request, "user_side/index.html", context)
     else:
@@ -361,7 +361,7 @@ def fintable(request):
             "-user_predicted_match_score",
             "-user_average_point_per_match"
         )
-        teams_rank = AllTeams.objects.all().order_by("-team_position")
+        teams_rank = AllTeams.objects.all().order_by("team_position")
         context = {"fintable": list(fintable_info),
                    "username": request.user.username,
                    "teams_rank": list(teams_rank)}
@@ -403,9 +403,12 @@ def forecast_by_other(request):
 def teams_and_members(request):
     if request.user.is_authenticated:
 
-        #! Дописать сортіровку по командам, та балах учасників
+        # Ordering list by name of team & user points.
         teams_and_members_data = FinalTable.objects.exclude(
-            user_team_name__exact="")
+            user_team_name__exact="").order_by(
+                "user_team_name",
+                "-user_points"
+        )
         context = {"username": request.user.username,
                    "team_and_members": list(teams_and_members_data)}
         return render(request, "user_side/teams-and-members.html", context)

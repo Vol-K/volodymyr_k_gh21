@@ -1,7 +1,16 @@
-from tkinter import CASCADE
+# Import all necessary moduls:
+# 1) from Django package.
 from django.db import models
-from requests import options
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator
+
+
+# 2) from Other packages.
+from tkinter import CASCADE
+from requests import options
+
+# 3) Local import.
+from app.app_support import custom_choices
 
 
 # List of Teams (band of users).
@@ -10,8 +19,15 @@ class AllTeams(models.Model):
         auto_created=True, primary_key=True, serialize=False,
         verbose_name="Team ID")
     team_name = models.CharField(max_length=25)
-    team_points = models.PositiveIntegerField(default=0, blank=True)
+    team_points = models.PositiveIntegerField(
+        default=0,
+        blank=True,
+        # validators=[MaxValueValidator(120)]
+    )
     team_position = models.PositiveIntegerField(default=0, blank=True)
+
+    def __str__(self):
+        return self.team_name
 
     class Meta:
         verbose_name = "Команди (учасників)"
@@ -60,7 +76,7 @@ class ListOfMatches(models.Model):
         verbose_name_plural = "Список матчів"
 
 
-# List of user match predicted.
+# List of users all matches predicted.
 class ListOfUsersMatchForecast(models.Model):
     forecast_id = models.BigAutoField(
         auto_created=True, primary_key=True, serialize=False,
@@ -87,7 +103,10 @@ class ListOfUsersMatchForecast(models.Model):
 
 # Final table (table of user forecast results).
 class FinalTable(models.Model):
-    # user_id = models.PositiveIntegerField()
+
+    # Prepare empty "choices" instanse for the further update.
+    user_team_choices = ()
+
     user_id = models.ForeignKey(
         User, on_delete=models.DO_NOTHING, related_name="user_fintable")
     user_name = models.CharField(max_length=25)  # !НА  винос
@@ -101,7 +120,20 @@ class FinalTable(models.Model):
     user_predicted_express = models.PositiveIntegerField(default=0)
     user_not_predicted_express = models.PositiveIntegerField(default=0)
     user_achive_guru_turu = models.PositiveIntegerField(default=0)
-    user_team_name = models.CharField(max_length=25, blank=True)
+    # user_team_name = models.CharField(max_length=25, blank=True)
+    user_team_name = models.CharField(
+        max_length=225, blank=True, choices=user_team_choices)
+
+    # Create a dynamic "choices" dropdaown list (based on "AllTeams" model).
+    def __init__(self, *args, **kwargs):
+        super(FinalTable, self).__init__(*args, **kwargs)
+        # xx = self._meta.get_fields()
+        # xx = self._meta.get_field("user_team_name").__dict__
+        self._meta.get_field(
+            "user_team_name").choices = custom_choices()
+
+    def __str__(self):
+        return self.user_name
 
     class Meta:
         verbose_name = "Підсумкова таблиця"

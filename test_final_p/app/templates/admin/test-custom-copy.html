@@ -73,8 +73,7 @@
         class="btn btn-warning" 
         name="calculate_points"
         value={{ calculate_points.start_process.value }}
-        type="submit">Зараз це автоматичне внесення рахунків матчів <br>
-        (Запустити обрахунок балів)</button></td>
+        type="submit"> <br>Запустити обрахунок балів</button></td>
     </tr>
   </table>
 </form>
@@ -86,6 +85,17 @@
         name="clean_fintable"
         value={{ calculate_points.clean_fintable.value }}
         type="submit">Clean fintable</button></td>
+    </tr>
+  </table>
+</form>
+<form method="post">
+  {% csrf_token %}
+    <tr>
+      <td><button 
+        class="btn btn-warning" 
+        name="looking_matches_score"
+        value={{ looking_matches_score.start_process.value }}
+        type="submit">Ручний запуск пошуку рахунків матчів</button></td>
     </tr>
   </table>
 </form>

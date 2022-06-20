@@ -10,6 +10,7 @@ from selenium.webdriver.common.by import By
 # 2) from Django package.
 from django.db.models import Sum
 from django.core.mail import send_mail
+from django.contrib.auth.models import User
 
 # 3) from Other packages.
 from bs4 import BeautifulSoup
@@ -18,7 +19,7 @@ from datetime import datetime
 
 # 4) Local import.
 from user_side.models import (ListOfMatches, ListOfUsersMatchForecast,
-                              FinalTable)
+                              FinalTable, AllTeams)
 
 
 #
@@ -54,7 +55,7 @@ def looking_for_scores_of_matches_in_round():
     wait = WebDriverWait(wd, 10)
 
     #
-    eurocups_playing_days = ["Tuesday", "Wednesday", "Thursday"]
+    eurocups_playing_days = ["Tuesday", "Wednesday", "Thursday", "1"]
     for day in eurocups_playing_days:
         # Click on calendar for move to previus day.
         calendar_select_yesterday1 = WebDriverWait(wd, 90).until(
@@ -132,16 +133,18 @@ def looking_for_scores_of_matches_in_round():
                             match.home_team_result = home_team_score[0].text
                             match.visitor_team_result = visitor_team_score[0].text
                             match.save()
-
+                            print(db_home_team, " - ", db_visitor_team)
                             print("------")
 
     # Start proccess of calculation User points by forecasts.
-    func_calculate_points_by_user_forecasts(current_round, matches_in_round)
+    # func_calculate_points_by_user_forecasts()
 
 
 #
-def func_calculate_points_by_user_forecasts(input_round_numder,
-                                            input_matches_in_round):
+def func_calculate_points_by_user_forecasts():
+    input_matches_in_round = ListOfMatches.objects.filter(
+        forecast_availability="yes")
+    input_round_numder = input_matches_in_round[0].round_numder
 
     all_forecasts = ListOfUsersMatchForecast.objects.filter(
         round_numder=input_round_numder)
@@ -201,8 +204,12 @@ def func_calculate_points_by_user_forecasts(input_round_numder,
                     forecasts_by_user.update(user_points=0)
                     break
 
-    # Updating whole statistic information about "User" inside "Fintable".
+    # Updating whole statistic information:
+    # 1) about "User" inside "Fintable".
     update_user_statistic_in_fintab()
+
+    # 2) about "Teams" inside "Allteams".
+    update_userteam_statistic_in_allteams()
 
 
 #
@@ -307,10 +314,19 @@ def update_user_statistic_in_fintab():
         forecasted_matches = all_forecasts_by_user.count()
 
         # Save a new data by "User".
-        user.user_points = total_points_sum["user_points__sum"]
+        if total_points_sum["user_points__sum"]:
+            user.user_points = total_points_sum["user_points__sum"]
+        else:
+            user.user_points = 0
+
         user.user_potential_points = forecasted_matches * 2
-        user.user_average_point_per_match = round((total_points_sum["user_points__sum"] /
-                                                   forecasted_matches), 2)
+
+        try:
+            user.user_average_point_per_match = round((total_points_sum["user_points__sum"] /
+                                                       forecasted_matches), 2)
+        except TypeError:
+            user.user_average_point_per_match = 0
+
         user.user_all_predicted_matches = forecasted_matches
         user.user_predicted_match_score = all_forecasts_by_user.filter(
             user_points=2).count()
@@ -331,3 +347,123 @@ def send_message_to_admin_email(input_data):
         [admin_emal],
         fail_silently=False,
     )
+
+
+#
+def update_userteam_statistic_in_allteams():
+    all_represented_teams = AllTeams.objects.all()
+    users_statistics = FinalTable.objects.all()
+
+    for team in all_represented_teams:
+        xx = users_statistics.filter(
+            user_team_name=team).aggregate(Sum("user_points"))
+        team.team_points = xx["user_points__sum"]
+        team.save()
+
+
+#
+def sort_allteams():
+    all_represented_teams = AllTeams.objects.all().order_by("-team_points")
+
+    rank = 1
+    list_position = 0
+    sorted_flag = False
+    while not sorted_flag:
+        if list_position <= (len(all_represented_teams) - 1):
+            points_by_first_db_row = all_represented_teams[list_position].team_points
+            teams_with_equal_points = all_represented_teams.filter(
+                team_points=points_by_first_db_row)
+            teams_with_equal_points.update(team_position=rank)
+            rank += 1
+            list_position += len(teams_with_equal_points)
+        else:
+            sorted_flag = True
+
+
+#
+def sort_fintable():
+    users_statistics = FinalTable.objects.all().order_by(
+        "-user_points",
+        "-user_predicted_match_score",
+        "-user_average_point_per_match"
+    )
+
+    rank = 1
+    list_position = 0
+    sorted_flag = False
+    while not sorted_flag:
+        if list_position <= (len(users_statistics) - 1):
+            points_by_first_db_row = users_statistics[list_position].user_points
+            users_with_equal_points = users_statistics.filter(
+                user_points=points_by_first_db_row)
+
+            if len(users_with_equal_points) > 1:
+                predicted_match_score_by_first_db_row = users_with_equal_points[
+                    0].user_predicted_match_score
+                users_with_equal_predicted_match_score = users_with_equal_points.filter(
+                    user_predicted_match_score=predicted_match_score_by_first_db_row)
+
+                # users_with_equal_predicted_match_score.update(
+                #     user_position=rank)
+                # rank = rank + len(users_with_equal_predicted_match_score)
+
+                if len(users_with_equal_predicted_match_score) > 1:
+                    user_average_point_per_match_by_first_db_row = users_with_equal_predicted_match_score[
+                        0].user_average_point_per_match
+                    users_with_equal_user_average_point_per_match = users_with_equal_predicted_match_score.filter(
+                        user_average_point_per_match=user_average_point_per_match_by_first_db_row)
+
+                    if len(users_with_equal_user_average_point_per_match) > 1:
+                        users_with_equal_predicted_match_score.update(
+                            user_position=rank)
+                    else:
+                        users_with_equal_user_average_point_per_match.update(
+                            user_position=rank)
+                        exclude_user = users_with_equal_user_average_point_per_match[0].user_id_id
+                        users_with_equal_predicted_match_score.exclude(
+                            user_id_id=exclude_user).update(user_position=(rank+1))
+                    # rank = rank + len(users_with_equal_predicted_match_score)
+                    # list_position += len(users_with_equal_predicted_match_score)
+
+                else:
+                    users_with_equal_user_average_point_per_match.update(
+                        user_position=rank)
+
+                rank = rank + len(users_with_equal_predicted_match_score)
+                list_position += len(users_with_equal_predicted_match_score)
+
+            else:
+                users_with_equal_points.update(user_position=rank)
+                rank = rank + len(users_with_equal_points)
+                list_position += len(users_with_equal_points)
+
+            # users_with_equal_points.update(user_position=rank)
+            # rank += 1
+            # list_position += len(users_with_equal_points)
+
+        else:
+            sorted_flag = True
+
+
+#
+def every_hour_done_forecasts_check():
+    current_date_time = datetime.now().replace(microsecond=0)
+    current_date_time_timestamp = datetime.timestamp(current_date_time)
+    # print(current_date_time)
+    # print(current_date_time_timestamp)
+    matches_in_round = ListOfMatches.objects.filter(
+        forecast_availability="yes")
+
+    match_datetimes = matches_in_round.earliest('match_date', "match_time")
+    print(match_datetimes.match_date, match_datetimes.match_time)
+
+    xxx = matches_in_round.filter(
+        match_date=match_datetimes.match_date, match_time=match_datetimes.match_time)
+    for ii in xxx:
+        print(ii)
+
+    all_users = User.objects.exclude(username="admin")
+
+    # for ii in all_users:
+    #     print(ii)
+    pass

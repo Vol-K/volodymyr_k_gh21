@@ -38,6 +38,11 @@ class ActivateDIsableRound(forms.Form):
 
 
 #
+class LookingMatchesScoreForm(forms.Form):
+    start_process = forms.CharField(
+        label="looking_matches_score", initial="yes", required=False)
+
+#
 class CalculateUserPointsForm(forms.Form):
     start_process = forms.CharField(
         label="calculate_points", initial="yes", required=False)

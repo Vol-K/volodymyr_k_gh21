@@ -1,7 +1,12 @@
+# Import all necessary moduls:
+# 1) from Django package.
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
+from django.utils.safestring import mark_safe
+
+# 2) Local import.
 from user_side.models import ListOfUsersMatchForecast, ListOfMatches
 
 
@@ -26,13 +31,17 @@ class MakeForecastForm(forms.Form):
 
     teams_together = forms.ModelChoiceField(
         empty_label=".......",
-        queryset=None
+        queryset=None,
+        # attrs={'style': 'width:80px'},
     )
-    team_home_user_forecast = forms.IntegerField(min_value=0)
+    team_home_user_forecast = forms.IntegerField(min_value=0, max_value=11)
     team_visitor_user_forecast = forms.IntegerField(min_value=0, max_value=11)
     forecast_type = forms.CharField(
         label='forecast_type',
-        widget=forms.RadioSelect(choices=forecast_option),
+        widget=forms.RadioSelect(
+            choices=forecast_option,
+            attrs={'class': 'form-check-inline'},
+        ),
         initial="ordinary")
 
     class Meta:
@@ -70,9 +79,10 @@ class ChangeForecastForm(forms.Form):
         empty_label=".......",
         queryset=None
     )
-    team_home_user_forecast = forms.IntegerField(min_value=0, required=False)
+    team_home_user_forecast = forms.IntegerField(
+        min_value=0, max_value=11, required=False)
     team_visitor_user_forecast = forms.IntegerField(
-        min_value=0, required=False)
+        min_value=0, max_value=11, required=False)
     change_forecast = forms.CharField(
         label="change_forecast", initial="yes", required=False)
     delete_forecast = forms.CharField(

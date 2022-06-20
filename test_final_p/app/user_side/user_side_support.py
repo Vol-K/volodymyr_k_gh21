@@ -1,11 +1,21 @@
-from .models import (AllTeams, ListOfMatches, FinalTable,
-                     ListOfUsersMatchForecast)
+# Import all necessary moduls:
+# 1) from Selenium package.
 from django.contrib.auth.models import User
 
+# 2) from Other packages.
 from datetime import datetime
 
+# 3) Local import.
+from .models import (
+    AllTeams,
+    ListOfMatches,
+    FinalTable,
+    ListOfUsersMatchForecast
+)
 
 # Wrighting user forecast to the DataBase.
+
+
 def func_add_user_forecast_to_db(user_data):
     # Create a User instance to model related field.
     user = User.objects.filter(id=user_data["user_id"])

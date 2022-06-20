@@ -1,8 +1,13 @@
-from django.core.validators import EmailValidator
+# Import all necessary moduls:
+# 1) from Django package.
 from django.core.exceptions import ValidationError
+from django.core.validators import EmailValidator
 from django.contrib.auth.models import User
 
-from user_side.models import AllTeams, ListOfMatches, ListOfUsersMatchForecast, FinalTable
+# from user_side.models import (
+#     ListOfMatches,
+#     ListOfUsersMatchForecast,
+# )
 
 
 # User email validation.
@@ -17,6 +22,9 @@ def validate_user_emal(email_to_validate):
 
 # Add "New User" to the DataBase (inside "Fintab" table).
 def initialize_new_user_in_fintab(user_data):
+    # Func nessesary import (to prevent circular imports)
+    from user_side.models import FinalTable
+
     # Create a User instance.
     new_user_instance = User.objects.filter(id=user_data["user_id"])
 
@@ -37,6 +45,7 @@ def initialize_new_user_in_fintab(user_data):
     user_in_fintab.user_not_predicted_express = 0
     user_in_fintab.user_achive_guru_turu = 0
     user_in_fintab.user_team_name = ""
+    # user_in_fintab.user_team_name = AllTeams.objects.none()
     user_in_fintab.save()
 
 
@@ -49,3 +58,18 @@ def add_user_to_all_tables(user_data):
     add_user_to_fintab = initialize_new_user_in_fintab(user_info)
 
     return new_user
+
+
+# Prepare & create a dynamic "choices" dropdaown list for "FinTable" model.
+def custom_choices():
+    # Func nessesary import (to prevent circular imports)
+    from user_side.models import AllTeams
+
+    all_teams_in_db = AllTeams.objects.all().values_list("team_name")
+    all_teams_in_db = list(all_teams_in_db)
+    user_team_choices = []
+    for team in all_teams_in_db:
+        user_team_choices.append((team[0], team[0]))
+    user_team_choices = tuple(user_team_choices)
+
+    return user_team_choices

@@ -1,24 +1,30 @@
+# Import all necessary moduls:
+# 1) from Django package
 from django.contrib import admin
 from django.contrib.auth.models import User, Group
 
+# 2) Local import.
 from .models import (AllTeams, ListOfMatches, FinalTable,
                      ListOfUsersMatchForecast)
 
 
 #
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("id", "username",  "first_name",
-                    "last_name", "email", "is_staff", "is_superuser", "last_login")
+    list_display = ("id", "username",  "first_name", "last_name", "email",
+                    "is_staff", "is_superuser", "last_login")
+    exclude = ("password",)
     list_filter = ("last_login",)
     search_fields = ("username", "id", "last_login")
     list_display_links = ("username",)
+    readonly_fields = ("id", "username",  "first_name", "last_name", "email",
+                       "last_login", "date_joined", "groups", "user_permissions")
 
-    
+
 #
 class AllTeamsAdmin(admin.ModelAdmin):
     list_display = ("team_name", "team_points", "team_position")
     exclude = ("team_id",)
-    # readonly_fields = ("team_name", "team_points", "team_position")
+    readonly_fields = ( "team_points", "team_position")
 
 
 #
@@ -48,7 +54,7 @@ class ListOfUsersMatchForecastAdmin(admin.ModelAdmin):
 
 #
 class FinalTableAdmin(admin.ModelAdmin):
-    list_display = ("user_name", "user_position", "user_points",
+    list_display = ("user_id", "user_position", "user_points",
                     "user_potential_points", "user_average_point_per_match",
                     "user_all_predicted_matches", "user_predicted_match_score",
                     "user_predicted_match_result", "user_predicted_express",
