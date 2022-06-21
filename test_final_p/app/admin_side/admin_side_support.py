@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 # 3) from Other packages.
 from bs4 import BeautifulSoup
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # 4) Local import.
 from user_side.models import (ListOfMatches, ListOfUsersMatchForecast,
@@ -339,13 +339,14 @@ def update_user_statistic_in_fintab():
 
 #
 def send_message_to_admin_email(input_data):
-    admin_emal = "cozak@meta.ua"
+    # Email for recived notification.
+    admin_email = "cozak@meta.ua"
     send_mail(
         f"Щось трапилося з матчем '{input_data['teams_together']}',",
         f"матч був '{input_data['match_status']}'",
         "karbivnychyi.volodymyr@gmail.com",
-        [admin_emal],
-        fail_silently=False,
+        [admin_email],
+        fail_silently=False
     )
 
 
@@ -445,25 +446,62 @@ def sort_fintable():
             sorted_flag = True
 
 
-#
+# Checking start time of each match in round, and send email reminder for Users
+# who didn't make forecast for each match.
 def every_hour_done_forecasts_check():
-    current_date_time = datetime.now().replace(microsecond=0)
-    current_date_time_timestamp = datetime.timestamp(current_date_time)
-    # print(current_date_time)
-    # print(current_date_time_timestamp)
+    # Prepare data from DataBase (from tables: Users, Matches, Forecasts)
     matches_in_round = ListOfMatches.objects.filter(
         forecast_availability="yes")
-
-    match_datetimes = matches_in_round.earliest('match_date', "match_time")
-    print(match_datetimes.match_date, match_datetimes.match_time)
-
-    xxx = matches_in_round.filter(
-        match_date=match_datetimes.match_date, match_time=match_datetimes.match_time)
-    for ii in xxx:
-        print(ii)
-
     all_users = User.objects.exclude(username="admin")
+    users_forecasts = ListOfUsersMatchForecast.objects.all()
 
-    # for ii in all_users:
-    #     print(ii)
-    pass
+    # Check current time & convert to the timestamp
+    current_datetime = datetime.now().replace(microsecond=0)
+    current_datetime_ts = datetime.timestamp(current_datetime)
+
+    # Start "check forecasts & send reminder" proccess for each match.
+    for match in matches_in_round:
+        match_datetime = datetime.combine(
+            match.match_date, match.match_time)
+        match_datetime_ts = datetime.timestamp(match_datetime)
+        time_delta = match_datetime_ts - current_datetime_ts
+
+        # Send reminder only for matches which start time less
+        # than one hour from current time.
+        if time_delta < 3600 and time_delta > 0:
+            print(match, "--- time to start")
+
+            for user in all_users:
+                check_forecasts_by_user = users_forecasts.filter(
+                    user_id_id=user.id, match_id=match.match_id)
+
+                if not check_forecasts_by_user:
+                    output_data = {
+                        "user_name": user.username,
+                        "user_email": user.email,
+                        "match": match.teams_together
+                    }
+                    send_reminder_email(output_data)
+                    print(user.username, "sent reminder")
+
+        else:
+            print(match, "--- no time to start (more or less")
+            pass
+
+
+# Sending notification via email, for User who didn`t make forecast.
+def send_reminder_email(input_data):
+    # Email of User who will get notification.
+    user_email = "cozak@meta.ua"
+    send_mail(
+        subject="Нагадування про прогноз.",
+        message=(
+            f"Шановний '{input_data['user_name']}', матч "
+            f"'{input_data['match']}' розпочнеться менше ніж за годину, "
+            "будь-ласка не забудьте зробити прогноз. "
+            "Перейдіть за почиланням - http://127.0.0.1:8000/"
+        ),
+        from_email="karbivnychyi.volodymyr@gmail.com",
+        recipient_list=[user_email, ],
+        fail_silently=False,
+    )

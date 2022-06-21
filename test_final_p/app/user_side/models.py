@@ -81,7 +81,8 @@ class ListOfUsersMatchForecast(models.Model):
     forecast_id = models.BigAutoField(
         auto_created=True, primary_key=True, serialize=False,
         verbose_name="Forecast ID")
-    match_id = models.PositiveIntegerField()
+    # match_id = models.PositiveIntegerField()
+    match_id = models.ForeignKey(ListOfMatches, on_delete=models.CASCADE)
     user_id = models.ForeignKey(
         User, on_delete=models.DO_NOTHING, related_name="user_forecasts")
     teams_together = models.CharField(max_length=41, default="")

@@ -13,6 +13,7 @@ def processing_logic():
 
 
 #
+# @app.task(queue="check_match_score")
 @app.task()
 def task_every_minute_printing():
     print_time()
@@ -20,7 +21,8 @@ def task_every_minute_printing():
 
 
 #
-@app.task
+# @app.task(queue="email_reminder")
+@app.task()
 def task_every_hour_done_forecasts_check():
     every_hour_done_forecasts_check()
     pass

@@ -14,6 +14,7 @@ from .admin_side_support import (
     func_calculate_points_by_user_forecasts,
     sort_allteams,
     sort_fintable,
+    every_hour_done_forecasts_check,
 )
 from admin_side.tasks import processing_logic
 from user_side.models import ListOfMatches, ListOfUsersMatchForecast
@@ -33,10 +34,11 @@ def my_custom_view(request):
         # Manual activating of the Points calculation script by User forecasts.
         elif request.method == "POST" and "calculate_points" in request.POST:
             print("--- calculate_points ---")
-            func_calculate_points_by_user_forecasts()
-            print("--- done calculate_points ---")
-            sort_allteams()
-            sort_fintable()
+            # func_calculate_points_by_user_forecasts()
+            # print("--- done calculate_points ---")
+            # sort_allteams()
+            # sort_fintable()
+            every_hour_done_forecasts_check()
             return redirect("../dummymodel")
 
         # Manual activating of the Points
