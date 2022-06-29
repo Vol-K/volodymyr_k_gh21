@@ -32,133 +32,76 @@
 <!-- Block for main information on the page -->
 {% block main %}
 <h1 class="text-muted" align="center">Зробити прогноз</h1>
-<table style="border-color:#ffffff; width: 95%" align="center">
+<table 
+  class="table table-borderless"
+  style="border-color:#ffffff; 
+  width: 95%" 
+  align="center">
   <div class="input-group mb-3">
-    <tr>
-      <td>
+    <thead style="font-size:17px" align="center">
+      <tr>
+        <th scope="col">Команди для вибору</th>
+        <th scope="col" style="width:80px">Господарі</th>
+        <th scope="col" style="width:80px">Гості</th>
+        <th scope="col" style="width:180px">Тип ставки</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody class="align-middle" align="center">
+      <div class="input-group mb-3">
         <form method="post" id="MakeForecastForm_page">
           {% csrf_token %}
-
-          <table class="table table-borderless" align="center">
-
-            <thead style="font-size:17px" align="center">
-              <tr>
-                <th scope="col">Команди для вибору</th>
-                <th scope="col" style="width:80px">Господарі</th>
-                <th scope="col" style="width:80px">Гості</th>
-                <th scope="col">Тип ставки</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-
-            <tbody class="align-middle" align="center">
-              <div class="input-group mb-3">
-                <tr style="background-color: #ffffff">
-                  <td>  
-                    {% if form.teams_together|length > 1 %}
-                      <p>{{ form.teams_together }}</p>
-                    {% else %}
-                      <p>Є прогноз на всі матчі</p>
-                    {% endif %} 
-                    <!-- <select 
-                      autocomplete="off" 
-                      autofocus class="custom-select" 
-                      name={{ matches_to_forecast.teams_together }}
-                      placeholder="..." 
-                      type="text" 
-                      min="1" 
-                      required>
-                      <option selected disabled value="">...</option>
-                        {% for element in matches_to_forecast %}
-                          <option name="razom">{{ element.teams_together }}</option>
-                        {% endfor %}
-                    </select> -->
-                  </td>
-                  <td>
-                    {{ form.team_home_user_forecast }}               
-                    <!-- <input 
-                          autocomplete="off" 
-                          align="center" 
-                          autofocus 
-                          class="form-control" 
-                          name="home" 
-                          type="number" 
-                          min="0" 
-                          style="width:60px" 
-                          required> -->
-                  </td>
-                  <td>
-                    {{ form.team_visitor_user_forecast }}
-                    <!-- <input 
-                      autocomplete="off" 
-                      align="center" autofocus 
-                      class="form-control" 
-                      name="visitor" 
-                      type="number"
-                      min="0" 
-                      style="width:60px"
-                      value="{{ form.team_visitor_user_forecast }}"
-                      required> -->
-                  </td>
-                  <td>
-                    {{ form.forecast_type }}                   
-                    <!-- <div class="form-check form-check-inline">
-                      <input 
-                        class="form-check-input" 
-                        type="radio" 
-                        name="gridRadios" 
-                        id="ordinar" 
-                        value="ord" 
-                        checked>
-                      <label class="form-check-label" for="ordinar">Ординар</label>
-                    </div>
-                    <br>
-                    <div class="form-check form-check-inline">
-                      <input 
-                        class="form-check-input" 
-                        type="radio" 
-                        name="gridRadios" 
-                        id="expres" 
-                        value="exp">
-                      <label class="form-check-label" for="expres">Експрес</label>
-                    </div> -->
-                  </td>
-                  <td>
-                    {% if form.teams_together|length > 1 %}
-                      <button 
-                        class="btn btn-primary" 
-                        align="center" 
-                        type="submit" 
-                        id="button-addon2">Зробити прогноз
-                      </button>
-                    {% else %}
-                      <button 
-                        class="btn btn-primary" 
-                        align="center" 
-                        type="submit" 
-                        id="button-addon2"
-                        disabled>Зробити прогноз
-                      </button>
-                    {% endif %}
-                  </td>
-                </tr>
-              </div>
-            </tbody>
-          </table>
-        </form>
-      </td>
-      <td>
-        <div class="mt-3 pt-4">
-          <a href="/user/change-forecast.html">
-            {% if predicted_matches|length > 0 %}
-              <button class="btn btn-danger" type="submit">Змінити прогноз</button>
-            {% else %}
-              <button class="btn btn-danger" type="submit" disabled>Змінити прогноз</button>
-            {% endif %}
-          </a>
-        </div>
-      </td>
-    </tr>
+          <tr style="background-color: #ffffff">
+            <td>  
+              {% if form.teams_together|length > 1 %}
+                <p>{{ form.teams_together }}</p>
+              {% else %}
+                <p>Є прогноз на всі матчі</p>
+              {% endif %}
+            </td>
+            <td>
+              {{ form.team_home_user_forecast }}
+            </td>
+            <td>
+              {{ form.team_visitor_user_forecast }}
+            </td>
+            <td>
+              {{ form.forecast_type }}
+            </td>
+            <td>
+              {% if form.teams_together|length > 1 %}
+                <button 
+                  class="btn btn-primary" 
+                  align="center" 
+                  type="submit" 
+                  id="button-addon2">Зробити прогноз
+                </button>
+              {% else %}
+                <button 
+                  class="btn btn-primary" 
+                  align="center" 
+                  type="submit" 
+                  id="button-addon2"
+                  disabled>Зробити прогноз
+                </button>
+              {% endif %}
+            </td> 
+            </form>
+            <td>
+              <a href="/user/change-forecast.html">
+                {% if predicted_matches|length > 0 %}
+                  <button class="btn btn-danger" type="submit">
+                    Змінити прогноз</button>
+                {% else %}
+                  <button class="btn btn-danger" type="submit" disabled>
+                    Змінити прогноз</button>
+                {% endif %}
+              </a>
+            </td>
+          </tr>
+      </div>
+    </tbody>
   </div>
 </table>
 <br>
@@ -183,7 +126,7 @@
         <th data-field="home">Дома</th>
         <th data-field="guest">Гості</th>
         <th data-field="bal" data-sortable="true">Бали</th>
-        <th data-field="prognoz_type" data-sortable="true">Тип <br>прогноза</th>
+        <th data-field="prognoz_type" data-sortable="true">Тип<br>прогноза</th>
         <th data-field="time">Час <br>прогноза</th>
       </tr>
     </thead>
@@ -191,7 +134,7 @@
     <tbody>
       {% for element in predicted_matches %}      
         <tr>
-          <td data-field="tur">{{ element.round_numder }}</td>
+          <td data-field="tur">{{ element.round_number }}</td>
           <td data-field="mtch_round">{{ element.match_in_round }}</td>
           <td data-field="teams">{{ element.teams_together }}</td>
           <td data-field="home">{{ element.home_team_forecast }}</td>

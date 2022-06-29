@@ -1,28 +1,39 @@
+# Import all necessary moduls:
+# 1) from Celery package.
 from app.celery import app
+
+# 2) Local import.
 from .admin_side_support import (
-    print_time,
     looking_for_scores_of_matches_in_round,
-    every_hour_done_forecasts_check
+    func_calculate_points_by_user_forecasts
+)
+from .celery_tasks_support import (
+    logic_to_start_score_checking,
+    done_forecasts_check
 )
 
 
-# Main logic of processing data ('category' from user).
+# Manualy activation of points calculation.
 @app.task()  # queue="get_matches_scores")
-def processing_logic():
-    print_time()
+def points_calculation_manual():
+    func_calculate_points_by_user_forecasts()
 
 
-#
+# Manualy activation of points calculation.
+@app.task()  # queue="get_matches_scores")
+def looking_for_scores_manual():
+    looking_for_scores_of_matches_in_round()
+
+
+# Period tasks which running on bacjground.
 # @app.task(queue="check_match_score")
 @app.task()
-def task_every_minute_printing():
-    print_time()
-    # looking_for_scores_of_matches_in_round()
+def task_every_day_check_match_score():
+    logic_to_start_score_checking()
 
 
 #
 # @app.task(queue="email_reminder")
 @app.task()
 def task_every_hour_done_forecasts_check():
-    every_hour_done_forecasts_check()
-    pass
+    done_forecasts_check()

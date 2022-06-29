@@ -2,17 +2,12 @@
 # 1) from Django package.
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
-from django.contrib.auth.models import User
-
-# from user_side.models import (
-#     ListOfMatches,
-#     ListOfUsersMatchForecast,
-# )
+# from django.contrib.auth.models import User
 
 
 # User email validation.
 def validate_user_emal(email_to_validate):
-    validator = EmailValidator(allowlist=["gmail.com", "localhost"])
+    validator = EmailValidator(allowlist=["gmail.com", "ukr.net"])
     try:
         validator(email_to_validate)
         return True
@@ -23,10 +18,11 @@ def validate_user_emal(email_to_validate):
 # Add "New User" to the DataBase (inside "Fintab" table).
 def initialize_new_user_in_fintab(user_data):
     # Func nessesary import (to prevent circular imports)
-    from user_side.models import FinalTable
+    from user_side.models import FinalTable, CustomUser
 
     # Create a User instance.
-    new_user_instance = User.objects.filter(id=user_data["user_id"])
+    # new_user_instance = User.objects.filter(id=user_data["user_id"])
+    new_user_instance = CustomUser.objects.filter(id=user_data["user_id"])
 
     # Initialize a model
     user_in_fintab = FinalTable()
@@ -51,9 +47,13 @@ def initialize_new_user_in_fintab(user_data):
 
 # Addecd user to the all tables in the DB.
 def add_user_to_all_tables(user_data):
-    new_user = User.objects.create_user(user_data["user_login"],
-                                        user_data["user_email"],
-                                        user_data["user_pass"])
+    # Func nessesary import (to prevent circular imports)
+    from user_side.models import CustomUser
+
+    # new_user = User.objects.create_user(user_data["user_login"],
+    new_user = CustomUser.objects.create_user(user_data["user_login"],
+                                              user_data["user_email"],
+                                              user_data["user_pass"])
     user_info = {"user_login": new_user.username, "user_id": new_user.id}
     add_user_to_fintab = initialize_new_user_in_fintab(user_info)
 

@@ -1,16 +1,24 @@
 # Import all necessary moduls:
 # 1) from Django package.
 from django.db import models
-from django.contrib.auth.models import User
-from django.core.validators import MaxValueValidator
-
+from django.db.models.deletion import CASCADE
+from django.contrib.auth.models import AbstractUser  # , User,
+# from django.core.validators import MaxValueValidator
 
 # 2) from Other packages.
-from tkinter import CASCADE
-from requests import options
+# from requests import options
 
-# 3) Local import.
+# 2) Local import.
 from app.app_support import custom_choices
+
+
+# Modify User model.
+class CustomUser(AbstractUser):
+    send_reminder = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Зареєстровані Користувачі"
+        verbose_name_plural = "Зареєстровані Користувачі"
 
 
 # List of Teams (band of users).
@@ -39,7 +47,7 @@ class ListOfMatches(models.Model):
     match_id = models.BigAutoField(
         auto_created=True, primary_key=True, serialize=False,
         verbose_name="Match ID")
-    round_numder = models.PositiveIntegerField(default=1)
+    round_number = models.PositiveIntegerField(default=1)
     match_in_round = models.PositiveIntegerField(default=1)
     home_team = models.CharField(max_length=20, default="")
     visitor_team = models.CharField(max_length=20, default="")
@@ -55,12 +63,12 @@ class ListOfMatches(models.Model):
         self.teams_together = self.home_team + " - " + self.visitor_team
 
         # Get number of last match in round.
-        def counter_match_in_round(inside_round_numder):
+        def counter_match_in_round(inside_round_number):
             last_match_in_round_number = ListOfMatches.objects.filter(
-                round_numder=inside_round_numder).count()
+                round_number=inside_round_number).count()
             return last_match_in_round_number
 
-        last_match_in_round = counter_match_in_round(self.round_numder)
+        last_match_in_round = counter_match_in_round(self.round_number)
         if not last_match_in_round:
             self.match_in_round = 1
         else:
@@ -83,12 +91,14 @@ class ListOfUsersMatchForecast(models.Model):
         verbose_name="Forecast ID")
     # match_id = models.PositiveIntegerField()
     match_id = models.ForeignKey(ListOfMatches, on_delete=models.CASCADE)
+    # user_id = models.ForeignKey(
+    #     User, on_delete=models.DO_NOTHING, related_name="user_forecasts")
     user_id = models.ForeignKey(
-        User, on_delete=models.DO_NOTHING, related_name="user_forecasts")
+        CustomUser, on_delete=models.DO_NOTHING, related_name="user_forecasts")
     teams_together = models.CharField(max_length=41, default="")
     home_team_forecast = models.PositiveIntegerField()
     visitor_team_forecast = models.PositiveIntegerField()
-    round_numder = models.PositiveIntegerField(default=1)
+    round_number = models.PositiveIntegerField(default=1)
     forecast_time = models.DateTimeField(auto_now_add=True)
     user_points = models.PositiveIntegerField(null=True, blank=True)
     forecast_type = models.CharField(max_length=7)
@@ -108,8 +118,10 @@ class FinalTable(models.Model):
     # Prepare empty "choices" instanse for the further update.
     user_team_choices = ()
 
+    # user_id = models.ForeignKey(
+    #     User, on_delete=models.DO_NOTHING, related_name="user_fintable")
     user_id = models.ForeignKey(
-        User, on_delete=models.DO_NOTHING, related_name="user_fintable")
+        CustomUser, on_delete=models.DO_NOTHING, related_name="user_fintable")
     user_name = models.CharField(max_length=25)  # !НА  винос
     user_position = models.PositiveIntegerField(default=0, blank=True)
     user_points = models.PositiveIntegerField(default=0)

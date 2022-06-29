@@ -1,43 +1,55 @@
+# Import all necessary moduls:
+# 1) from Django package.
 # from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.shortcuts import render, redirect
+# from django.contrib.auth.hashers import check_password
 # from django.http import HttpResponse
 
-# from datetime import datetime
+# from datetime import datetime, timedelta
 
-from .models import AllTeams, ListOfMatches, ListOfUsersMatchForecast, FinalTable
+# 2) Local import.
+from .models import (AllTeams, ListOfMatches,
+                     ListOfUsersMatchForecast, FinalTable, CustomUser)
 from .user_side_support import (
     func_add_user_forecast_to_db,
     func_check_time_of_user_forecast,
-    func_change_user_forecast
+    func_change_user_forecast,
+    quantity_of_online_users
 )
 from app.forms import (MakeForecastForm, ChangeForecastForm,
-                       DeleteAllForecastsForm)
+                       DeleteAllForecastsForm, ChangeSendEmailReminderForm)
 
 
-#
+# Main/landing page of the website/project.
 def index(request):
-    context = {}
-    # Blocked access to the page for not authorized user.
+
+    # Show welcome message for User and show some statistical info about him.
     if request.user.is_authenticated and not request.user.is_superuser:
-        context["username"] = request.user.username
+        user_statistics = FinalTable.objects.filter(user_id_id=request.user.id)
+        online_users = quantity_of_online_users(request)
+        context = {"username": request.user.username,
+                   "online_users": online_users,
+                   "user_statistics": user_statistics[0]}
+
         return render(request, "user_side/index.html", context)
+
+    # Blocked access to the page for not authorized user.
     else:
-        return render(request, "user_side/index.html", context)
+        return render(request, "user_side/index.html")
 
 
-#! Треба блокувати зміни до початку першого експреса
 # Creating a match forecast by user (include all limitations).
 def make_forecast(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.is_superuser:
 
         # Getting information from 'Form' (user forecast), and processing
         # of all data (checking, validating, writhing/show error message).
         if request.method == "POST":
             form = MakeForecastForm(request.POST, request=request)
 
-            form_errors = form.errors.as_data()
-            print(form_errors)
+            # form_errors = form.errors.as_data()
+            # print(form_errors)
 
             if form.is_valid():
                 form_data = form.cleaned_data
@@ -55,8 +67,7 @@ def make_forecast(request):
                 )
                 # Check time availabilty for the forecast (time block).
                 check_date_time_forecast = func_check_time_of_user_forecast(
-                    match_all_details[0].match_date,
-                    match_all_details[0].match_time
+                    match_all_details[0]
                 )
 
                 # Procces of checking all possible 'blocks' fo the rorecast.
@@ -84,7 +95,7 @@ def make_forecast(request):
                     check_for_one_only_forecast_type = (
                         ListOfUsersMatchForecast.objects.filter(
                             user_id=request.user.id,
-                            round_numder=match_all_details[0].round_numder
+                            round_number=match_all_details[0].round_number
                         ).values("forecast_type").distinct()
                     )
 
@@ -153,7 +164,7 @@ def make_forecast(request):
                     "home_team_forecast": form_data["team_home_user_forecast"],
                     "visitor_team_forecast": form_data[
                         "team_visitor_user_forecast"],
-                    "round_numder": match_all_details[0].round_numder,
+                    "round_number": match_all_details[0].round_number,
                     "match_in_round": match_all_details[0].match_in_round,
                     "forecast_type": form_data["forecast_type"],
                     "forecast_time": check_date_time_forecast[1]
@@ -177,9 +188,11 @@ def make_forecast(request):
             form = MakeForecastForm(request=request)
             predicted_matches = ListOfUsersMatchForecast.objects.filter(
                 user_id=request.user.id)
+            online_users = quantity_of_online_users(request)
             context = {"form": form,
                        "username": request.user.username,
-                       "predicted_matches": list(predicted_matches)}
+                       "predicted_matches": list(predicted_matches),
+                       "online_users": online_users}
             return render(request, "user_side/make-forecast.html", context)
 
     # Blocking access to the page for not authorized user.
@@ -191,10 +204,9 @@ def make_forecast(request):
         return redirect("../index.html")
 
 
-#! Треба блокувати зміни до початку першого експреса
 # A change of existing match forecast by user.
 def change_forecast(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.is_superuser:
         if request.method == "POST" and "change" in request.POST:
 
             form = ChangeForecastForm(request.POST, request=request)
@@ -220,13 +232,14 @@ def change_forecast(request):
                     user_id=request.user.id,
                     teams_together=form_data["teams_together"]
                 )
+
                 match_details = ListOfMatches.objects.filter(
-                    match_id=forecast_details[0].match_id)
+                    match_id=forecast_details[0].match_id_id)
 
                 # Checking for action availability (time block).
                 check_date_time_forecast = func_check_time_of_user_forecast(
-                    match_details[0].match_date,
-                    match_details[0].match_time
+                    match_details[0],
+                    forecast_details[0],
                 )
 
                 if check_date_time_forecast[0]:
@@ -241,7 +254,7 @@ def change_forecast(request):
 
                 else:
                     popup_message = (
-                        "Вибачте, операція доступна тільки до початку матча.")
+                        "Вибачте, операція доступна тільки до початку матча / експреса матчів.")
                     messages.info(request, popup_message, extra_tags="general")
 
             else:
@@ -252,7 +265,7 @@ def change_forecast(request):
 
             return redirect("../make-forecast.html")
 
-        #
+        # Main processing logic for delete of selected match.
         elif request.method == "POST" and "delete" in request.POST:
             form = ChangeForecastForm(request.POST, request=request)
 
@@ -265,12 +278,13 @@ def change_forecast(request):
                     teams_together=form_data["teams_together"]
                 )
                 match_details = ListOfMatches.objects.filter(
-                    match_id=forecast_details[0].match_id)
+                    match_id=forecast_details[0].match_id_id)
 
-                # Checking for action availability (time block).
+                # Checking is this action availabile in that time for
+                # ime block for "ordynary" forecast type.
                 check_date_time_forecast = func_check_time_of_user_forecast(
-                    match_details[0].match_date,
-                    match_details[0].match_time
+                    match_details[0],
+                    forecast_details[0],
                 )
 
                 if check_date_time_forecast[0]:
@@ -283,7 +297,7 @@ def change_forecast(request):
 
                 else:
                     popup_message = (
-                        "Вибачте, операція доступна тільки до початку матча.")
+                        "Вибачте, операція доступна тільки до початку матча / експреса матчів.")
                     messages.info(request, popup_message, extra_tags="general")
 
             else:
@@ -301,16 +315,14 @@ def change_forecast(request):
             if form.is_valid():
 
                 #! Окрема лоігка для 'експресів' треба.
-
                 # Checking for action availability (time block).
-
                 # Checking which round are active now.
                 round_details = ListOfMatches.objects.filter(
-                    forecast_availability="yes").values("round_numder").distinct()
+                    forecast_availability="yes").values("round_number").distinct()
 
                 user_forecasts_in_corrent_round = ListOfUsersMatchForecast.objects.filter(
                     user_id=request.user.id,
-                    round_numder=round_details[0]["round_numder"]
+                    round_number=round_details[0]["round_number"]
                 )
                 user_forecasts_in_corrent_round.delete()
 
@@ -335,10 +347,12 @@ def change_forecast(request):
             delete_form = DeleteAllForecastsForm()
             forecasted_matches = ListOfUsersMatchForecast.objects.filter(
                 user_id=request.user.id)
+            online_users = quantity_of_online_users(request)
             context = {"username": request.user.username,
                        "forecasted_matches": forecasted_matches,
                        "form": form,
-                       "delete_form": delete_form}
+                       "delete_form": delete_form,
+                       "online_users": online_users}
             return render(request, "user_side/change-forecast.html", context)
 
     # Blocking access to the page for not authorized user.
@@ -350,21 +364,29 @@ def change_forecast(request):
         return redirect("../index.html")
 
 
-#! Треба блокувати зміни до початку першого експреса
-
-
 # Showing rank table of all users, with additional statistics.
 def fintable(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.is_superuser:
         fintable_info = FinalTable.objects.all().order_by(
             "-user_points",
             "-user_predicted_match_score",
             "-user_average_point_per_match"
         )
         teams_rank = AllTeams.objects.all().order_by("team_position")
+        # show_all_rounds = ListOfMatches.objects.all().values("round_number").distinct()
+        show_all_rounds = ListOfMatches.objects.all().values(
+            "round_number", "forecast_availability").distinct()
+        active_round = show_all_rounds.filter(
+            forecast_availability="yes")
+        active_round = active_round[0]["round_number"]
+        online_users = quantity_of_online_users(request)
         context = {"fintable": list(fintable_info),
                    "username": request.user.username,
-                   "teams_rank": list(teams_rank)}
+                   "teams_rank": list(teams_rank),
+                   "show_all_rounds": show_all_rounds,
+                   "active_round": active_round,
+                   "online_users": online_users}
+
         return render(request, "user_side/fintable.html", context)
 
     # Blocking access to the page for not authorized user.
@@ -380,14 +402,15 @@ def fintable(request):
 # excluded forecasts by user who send request.
 def forecast_by_other(request):
 
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.is_superuser:
         # Get all forecasts and excluded forecasts by user who send request.
         forecasts_list = ListOfUsersMatchForecast.objects.exclude(
             user_id=request.user.id)
         # forecasts_list = ListOfUsersMatchForecast.objects.all()
-
+        online_users = quantity_of_online_users(request)
         context = {"username": request.user.username,
-                   "match_forecasts": forecasts_list}
+                   "match_forecasts": forecasts_list,
+                   "online_users": online_users}
         return render(request, "user_side/forecast-by-other.html", context)
 
     # Blocking access to the page for not authorized user.
@@ -401,7 +424,7 @@ def forecast_by_other(request):
 
 # Showing list of 'teams' and their member
 def teams_and_members(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.is_superuser:
 
         # Ordering list by name of team & user points.
         teams_and_members_data = FinalTable.objects.exclude(
@@ -409,8 +432,10 @@ def teams_and_members(request):
                 "user_team_name",
                 "-user_points"
         )
+        online_users = quantity_of_online_users(request)
         context = {"username": request.user.username,
-                   "team_and_members": list(teams_and_members_data)}
+                   "team_and_members": list(teams_and_members_data),
+                   "online_users": online_users}
         return render(request, "user_side/teams-and-members.html", context)
 
     # Blocking access to the page for not authorized user.
@@ -422,12 +447,59 @@ def teams_and_members(request):
         return redirect("../index.html")
 
 
-#
+# Access to change "send email notification" about forecasts by Iser.
 def user_account(request):
-    context = {}
-    if request.user.is_authenticated:
-        context["username"] = request.user.username
-        return render(request, "user_side/account.html", context)
+    if request.user.is_authenticated and not request.user.is_superuser:
+        if request.method == "POST" and "change_reminder" in request.POST:
+            form = ChangeSendEmailReminderForm(request.POST)
+
+            if form.is_valid():
+                form_data = form.cleaned_data
+
+                current_user = CustomUser.objects.filter(id=request.user.id)
+                current_user.update(send_reminder=int(
+                    form_data["change_reminder"]))
+
+                popup_message = (
+                    "Ви щойно змінили налаштування надсилання нагадувань")
+                messages.info(request, popup_message, extra_tags="general")
+
+                return redirect("../account.html")
+
+        # elif request.method == "POST" and "change_reminder" in request.POST:
+        #     pass
+
+        # Generate 'Form' for first user visit to the page.
+        else:
+            # Getting only one available option to change.
+            current_user_reminder_status = CustomUser.objects.filter(
+                id=request.user.id)[0].send_reminder
+
+            form = ChangeSendEmailReminderForm(request=request)
+            online_users = quantity_of_online_users(request)
+            context = {"username": request.user.username,
+                       "form": form,
+                       "current_reminder_status": current_user_reminder_status,
+                       "online_users": online_users}
+            return render(request, "user_side/account.html", context)
+
+    # Blocking access to the page for not authorized user.
+    else:
+        popup_message = (
+            "Сторінка 'Акаунт' доступна тільки для "
+            "зареєстрованих користувачів.")
+        messages.info(request, popup_message)
+        return redirect("../index.html")
+
+
+# Represent "Club rules" for registered Users.
+def club_rules(request):
+    if request.user.is_authenticated and not request.user.is_superuser:
+
+        online_users = quantity_of_online_users(request)
+        context = {"online_users": online_users}
+
+        return render(request, "user_side/club-rules.html", context)
 
     # Blocking access to the page for not authorized user.
     else:

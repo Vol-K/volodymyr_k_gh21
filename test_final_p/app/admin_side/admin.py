@@ -1,23 +1,25 @@
+# Import all necessary moduls:
+# 1) from Django package.
 from django.contrib import admin
 from django.db import models
-
-from django.shortcuts import render, redirect
+# from django.shortcuts import render, redirect
 from django.urls import path
 
+# 2) Local import.
 from .views import my_custom_view
 
 
-#
-class DummyModel(models.Model):
+# Create a custom model to get page url on admin side.
+class CustomModel(models.Model):
 
     class Meta:
-        verbose_name_plural = 'Dummy Model'
+        verbose_name_plural = 'Кастомні Admin операції'
         app_label = 'admin_side'
 
 
-#
-class DummyModelAdmin(admin.ModelAdmin):
-    model = DummyModel
+# Setup empty model "CustomModel", without any fields.
+class CustomModelAdmin(admin.ModelAdmin):
+    model = CustomModel
     # is_superuser = models.BooleanField(default=False)
 
     # def has_perm(self, perm, obj=None):
@@ -36,6 +38,7 @@ class DummyModelAdmin(admin.ModelAdmin):
     def get_app_list(self, request):
         app_list = super().get_app_list(request)
         # reorder the app list as you like
+        print(app_list)
         return app_list
 
 
@@ -44,4 +47,4 @@ admin.site.site_header = "Адмін панель Клуба"
 admin.site.index_title = ""
 
 # Registing model.
-admin.site.register(DummyModel, DummyModelAdmin)
+admin.site.register(CustomModel, CustomModelAdmin)

@@ -1,13 +1,17 @@
-from django.contrib import admin
+# Import all necessary moduls:
+# 1) from Django package.
+# from django.contrib import admin
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.template.response import TemplateResponse
+# from django.template.response import TemplateResponse
 
+# 2) from Other packages.
 import translators as ts
 
+# 3) Local import.
 from .forms import LogInForm, RegisterForm
 from .app_support import validate_user_emal, add_user_to_all_tables
 
@@ -68,7 +72,8 @@ def user_register(request):
                 )
                 return redirect("../register")
 
-        # Check error by form validation procces and show error message for user.
+        # Check error by form validation procces and
+        # show error message for user.
         else:
             form_errors = form.errors.as_data()
             if "username" in form_errors:
@@ -116,10 +121,11 @@ def user_login(request):
         if form.is_valid():
             form_data = form.cleaned_data
 
-            user = authenticate(request,
-                                username=form_data["username"],
-                                password=form_data["password"],
-                                )
+            user = authenticate(
+                request,
+                username=form_data["username"],
+                password=form_data["password"],
+            )
 
             # Checkinng is user has active status now.
             if user is not None:

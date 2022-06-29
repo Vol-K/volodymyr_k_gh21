@@ -1,7 +1,12 @@
+# Import all necessary moduls:
+# 1) from Django package.
 from django.urls import path
+
+# 2) Local import.
 from . import views
 
-#
+
+# List of supported urls of application.
 urlpatterns = [
     path("index.html", views.index, name="index_adress"),
     path("", views.index, name="blank_index_adress"),
@@ -17,4 +22,6 @@ urlpatterns = [
          views.change_forecast, name="make_forecast"),
     path("account.html",
          views.user_account, name="user_account"),
+    path("club-rules.html",
+         views.club_rules, name="club_rules"),
 ]

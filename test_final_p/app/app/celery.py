@@ -1,7 +1,12 @@
+# Import all necessary moduls:
+# 1) Import "system" packages.
 import sys
 from os import (path, environ)
 
+# 2) from Django package.
 import django
+
+# 3) from Celery package.
 from celery import Celery
 from celery.schedules import crontab
 
@@ -17,13 +22,13 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 app.conf.beat_schedule = {
     # Executes every minutes
     'daily-check-for-match_datetime': {
-        'task': 'admin_side.tasks.task_every_minute_printing',
-        'schedule': crontab(minute='*/1'),
+        'task': 'admin_side.tasks.task_every_day_check_match_score',
+        'schedule': crontab(minute='*/5'),
         # 'schedule': crontab(minute=53, hour=0),
     },
-    "daily-check-if-user-made-forecast": {
+    "hourly-check-if-user-made-forecast": {
         "task": "admin_side.tasks.task_every_hour_done_forecasts_check",
-        "schedule": crontab(minute="*/1"),
+        "schedule": crontab(minute="*/5"),
     },
 }
 app.autodiscover_tasks()

@@ -25,11 +25,52 @@
 {% endblock %}
 
 {% block main %}
-<h1 class="text-muted" align="center">Заглушка для index.html</h1>
-<br>
-<P><b>п. 2.2 <a href="https://www.facebook.com/groups/pany.experty/permalink/225634028226979/">Правил</a> (щодо
-    Експрес-прогноза)</b></P>
-<P>- Мінімальна кількість матчів в експрес-прогнозі - 3 матчі.</P>
-<P>- Учасник МОЖЕ дати АБО експрес-прогноз, АБО звичайний <i>(нововведення від 23.06.2018).</i></P>
-<P>- Більше деталей в правилах Клубу.</P>
+  {% if request.user.is_authenticated  %}
+    <h2 class="text-muted" align="center">
+      Вітаємо '{{ request.user.username }}' на сайті
+    </h2> 
+    <h1 class="text-muted" align="center"><b>Клубу любителів прогнозів</b></h1>
+    <br>
+    <p style="font-size: 20px">На сайті для Вас доступна можливість:</p>
+    <table align="center">
+      <tr>
+        <td align="left"><li>робити прогноз</li></td>
+      </tr>
+      <tr>
+        <td align="left"><li>переглядати турнірну таблицю</li></td>
+      </tr>
+      <tr>
+        <td align="left"><li>склади учасників інших команд</li></td>
+      </tr>
+      <tr>
+        <td align="left"><li>прогнози інших учасників</li></td>
+      </tr>
+      <tr>
+        <td align="left"><li>власну статистику</li></td>
+      </tr>
+    </table>
+    <br>
+    <br>
+    <p style="font-size: 20px">Вперед до прогнозів</p>
+    <br>
+    <br>
+    <p>Поточне місце - {{ user_statistics.user_position }}</p>
+    <p>Набрані очки - {{ user_statistics.user_points }}</p>
+    <p>чи вагравав гуру туру - {{ user_statistics.user_achive_guru_turu }}</p>
+    <p>
+      середній бал за матч - {{ user_statistics.user_average_point_per_match }}
+    </p>
+    <p>
+      Більше інформації в <a href="/user/fintable.html">Підсумковій Таблиці</a>
+    </p>
+  {% else %}
+    <h2 class="text-muted" align="center">Вітаємо Вас на сайті</h2> 
+    <h1 class="text-muted" align="center"><b>Клубу любителів прогнозів</b></h1>
+    <br>
+    <br>
+    <p style="font-size: 20px">
+      <a href="/register">Зареєструйтесь</a>, 
+      щоб долучитись до найкращого Клубу у всесвіті.
+    </p>
+  {% endif %}
 {% endblock %}

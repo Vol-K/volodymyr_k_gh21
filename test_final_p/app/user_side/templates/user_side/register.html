@@ -38,7 +38,7 @@
   {% csrf_token %}
   {% load widget_tweaks %}
   <H2>Для продовження реєстрації, внесіть дані у форму.</H2>
-  <p style="font-size:20px">Всі поля є обов'язковими</p>
+  <p style="font-size:20px"><b>Всі поля є обов'язковими</b></p>
   <div class="form-group">
     {% render_field form.username class="form-control" name="username" placeholder="Придумайте свій Login" type="text" id="new_user_register_field" %}
     <p style="font-size:15px">150 characters or fewer. Letters, digits and @/./+/-/_ only.</p>
