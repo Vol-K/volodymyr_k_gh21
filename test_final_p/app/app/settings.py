@@ -160,7 +160,7 @@ CELERY_RESULT_SERIALIZER = "json"
 # Email related options.
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "k0zar1uga@gmail.com"
+EMAIL_HOST_USER = "**"
 #! ТРЕБА ЗАХОВАТЬ ДЛЯ GITHUB
-EMAIL_HOST_PASSWORD = "*"
+EMAIL_HOST_PASSWORD = "**"
 EMAIL_PORT = 587
