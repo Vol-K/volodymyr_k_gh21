@@ -1,0 +1,57 @@
+{% extends "user_side/layout.html" %}
+
+<!-- Page subtitle -->
+{% block title %}
+  Учасники команд
+{% endblock %}
+
+<!-- Place/block for system messages -->
+{% block popup %}
+{% for message in messages %}
+<div class="container">
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+    <div class="navbar-brand">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <span><b>
+              <h3 style="text-align:center">{{ message }}</h3>
+            </b></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+<!-- Block for main information on the page -->
+{% block main %}
+<h1 class="text-muted" align="center">Команди та їх учасники</h1>
+<br>
+<table 
+  class="table table-striped table-borderless align-middle" 
+  style="border-color:#ffffff; width:auto" 
+  align="center"
+  id="teams_and_members">
+
+  <thead style="font-size:16px" align="center">
+    <tr>
+      <th data-field="teams">Команда</th>
+      <th data-field="members">Член команди</th>
+      <th data-field="total_points">Бали</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <div class="input-group mb-3">
+      {% for element in team_and_members %}
+      <tr>
+        <td data-field="teams">{{ element.user_team_name }}</td>
+        <td data-field="members">{{ element.user_name }}</td>
+        <th data-field="total_points">{{ element.user_points }}</th>
+      </tr>
+      {% endfor %}
+    </div>
+  </tbody>
+</table>
+{% endblock %}

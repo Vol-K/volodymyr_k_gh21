@@ -1,0 +1,40 @@
+{% extends "user_side/layout.html" %}
+
+<!-- Page subtitle -->
+{% block title %}
+Вхід
+{% endblock %}
+
+<!-- Place/block for system messages -->
+{% block popup %}
+{% for message in messages %}
+<div class="container">
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+    <div class="navbar-brand">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <span><b>
+              <h3 style="text-align:center">{{ message }}</h3>
+            </b></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+<!-- Block for main information on the page -->
+{% block main %}
+<form method="post">
+  {% csrf_token %}
+  {% load widget_tweaks %}
+  <div class="form-group">
+    {% render_field form.username class="form-control" name="username" placeholder="Login користвача" type="text" %}
+  </div>
+  <div class="form-group">
+    {% render_field form.password class="form-control" name="password" placeholder="Пароль" type="text" %}
+  </div>
+  <button class="btn btn-primary" type="submit" id="login_btn">Вхід</button>
+</form>
+{% endblock %}

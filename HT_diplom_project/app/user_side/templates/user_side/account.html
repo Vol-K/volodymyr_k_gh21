@@ -1,0 +1,70 @@
+{% extends "user_side/layout.html" %}
+
+<!-- Page subtitle -->
+{% block title %}
+  Акаунт
+{% endblock %}
+
+<!-- Place/block for system messages. -->
+{% block popup %}
+{% for message in messages %}
+<div class="container">
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+    <div class="navbar-brand">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <span>
+            {%if "general" in message.tags %}
+              <h3>{{ message }}</h3>
+            {%endif%}
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block main %}
+<h1 class="text-muted" align="center">Налаштування</h1>
+<br>
+<form method="post">
+  {% csrf_token %}
+  <table 
+    class="table table-borderless" 
+    align="center" 
+    style="border-color:#ffffff; width: 50%" 
+    id="ChangeReminderStatusForm_page">
+    <thead style="font-size:17px" align="center">
+      <tr>
+        <th scope="col">Зараз активно</th>
+        <th scope="col">Змінити на</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody class="align-middle" align="center">
+      <tr>
+        <td>
+          {% if current_reminder_status %}
+            <button class="btn btn-success" disabled><b>Надсилати нагадування</b></button>
+          {% else %}
+            <button class="btn btn-outline-secondary" disabled><b>Не надсилати нагадування</b></button>
+          {% endif %}
+        </td>
+        <td>
+          {{ form.change_reminder }}
+        </td>
+        <td>
+          <button 
+            class="btn btn-primary"
+            name="new_reminder_status" 
+            type="submit" 
+            id="change_reminder_status">Застосувати
+          </button>
+        </td>
+      </tr>
+    </tbody>  
+  </table>              
+</form>
+{% endblock %}
