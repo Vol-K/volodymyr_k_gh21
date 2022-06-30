@@ -14,26 +14,23 @@ from .celery_tasks_support import (
 
 
 # Manualy activation of points calculation.
-@app.task()  # queue="get_matches_scores")
+@app.task()
 def points_calculation_manual():
     func_calculate_points_by_user_forecasts()
 
 
 # Manualy activation of points calculation.
-@app.task()  # queue="get_matches_scores")
+@app.task()
 def looking_for_scores_manual():
     looking_for_scores_of_matches_in_round()
 
 
-# Period tasks which running on bacjground.
-# @app.task(queue="check_match_score")
+# Period tasks which running on background.
 @app.task()
 def task_every_day_check_match_score():
     logic_to_start_score_checking()
 
 
-#
-# @app.task(queue="email_reminder")
 @app.task()
 def task_every_hour_done_forecasts_check():
     done_forecasts_check()

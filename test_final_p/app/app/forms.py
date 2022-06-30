@@ -2,7 +2,6 @@
 # 1) from Django package.
 from random import choices
 from django import forms
-# from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.safestring import mark_safe
 
@@ -22,7 +21,6 @@ class RegisterForm(UserCreationForm):
     user_email = forms.EmailField()
 
     class Meta:
-        # model = User
         model = CustomUser
         fields = ["username", "password1", "password2", "user_email"]
 
@@ -34,7 +32,6 @@ class MakeForecastForm(forms.Form):
     teams_together = forms.ModelChoiceField(
         empty_label=".......",
         queryset=None,
-        # attrs={'style': 'width:80px'},
     )
     team_home_user_forecast = forms.IntegerField(min_value=0, max_value=11)
     team_visitor_user_forecast = forms.IntegerField(min_value=0, max_value=11)
@@ -137,9 +134,3 @@ class ChangeSendEmailReminderForm(forms.Form):
 
             self.fields["change_reminder"] = forms.ChoiceField(
                 choices=reminder_choices2, required=True)
-
-
-#
-class ChangeUserEmailForm(forms.Form):
-    new_user_email = ""
-    

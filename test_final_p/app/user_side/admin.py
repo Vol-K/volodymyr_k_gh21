@@ -4,21 +4,12 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group  # , User
 
-# from django_celery_beat.models import (
-#     IntervalSchedule,
-#     CrontabSchedule,
-#     SolarSchedule,
-#     ClockedSchedule,
-#     PeriodicTask,
-# )
-# from online_users.models import OnlineUserActivity
-
 # 2) Local import.
 from .models import (AllTeams, ListOfMatches, FinalTable,
                      ListOfUsersMatchForecast, CustomUser)
 
 
-#
+# Setting all options for fields by model "CustomUser".
 class CustomUserAdmin(UserAdmin):
     list_display = ("id", "username", "email",
                     "is_staff", "is_superuser", "last_login", "send_reminder")
@@ -28,18 +19,6 @@ class CustomUserAdmin(UserAdmin):
     list_display_links = ("username",)
     readonly_fields = ("id", "username", "first_name", "last_name", "email",
                        "last_login", "date_joined", "groups", "user_permissions")
-
-
-# #
-# class UserAdmin(admin.ModelAdmin):
-#     list_display = ("id", "username",  "first_name", "last_name", "email",
-#                     "is_staff", "is_superuser", "last_login")
-#     exclude = ("password",)
-#     list_filter = ("last_login",)
-#     search_fields = ("username", "id", "last_login")
-#     list_display_links = ("username",)
-#     readonly_fields = ("id", "username",  "first_name", "last_name", "email",
-#                        "last_login", "date_joined", "groups", "user_permissions")
 
 
 # Setting all options for fields by model "AllTeams".
@@ -90,7 +69,6 @@ class FinalTableAdmin(admin.ModelAdmin):
                        "user_predicted_match_score",
                        "user_predicted_match_result", "user_predicted_express",
                        "user_not_predicted_express",
-                       #    "user_achive_guru_turu",
                        )
 
 
@@ -99,12 +77,6 @@ class FinalTableAdmin(admin.ModelAdmin):
 # admin.site.register(User, UserAdmin)
 admin.site.unregister(Group)
 admin.site.register(CustomUser, CustomUserAdmin)
-
-# admin.site.unregister(SolarSchedule)
-# admin.site.unregister(ClockedSchedule)
-# admin.site.unregister(PeriodicTask)
-# admin.site.unregister(IntervalSchedule)
-# admin.site.unregister(CrontabSchedule)
 
 # And after, registed all models.
 admin.site.register(AllTeams, AllTeamsAdmin)

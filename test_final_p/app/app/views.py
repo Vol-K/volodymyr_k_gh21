@@ -1,12 +1,9 @@
 # Import all necessary moduls:
 # 1) from Django package.
-# from django.contrib import admin
 from django.contrib.auth import login, logout, authenticate
-# from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-# from django.template.response import TemplateResponse
 
 # 2) from Other packages.
 import translators as ts
@@ -14,28 +11,6 @@ import translators as ts
 # 3) Local import.
 from .forms import LogInForm, RegisterForm
 from .app_support import validate_user_emal, add_user_to_all_tables
-
-
-#
-# class MyAdminSite(admin.AdminSite):
-#     def get_app_list(self, request):
-#         app_list = super().get_app_list(request)
-#         app_list += [
-#             {
-#                 "name": "App",
-#                 "app_label": "my_test_app",
-#                 # "app_url": "/admin/test_view",
-#                 "models": [
-#                     {
-#                         "name": "Dummy Model",
-#                         "object_name": "Dummy Model",
-#                         "admin_url": "/admin/test-custom-copy",
-#                         "view_only": True,
-#                     }
-#                 ],
-#             }
-#         ]
-#         return app_list
 
 
 # Registering of new user on the website.
@@ -112,7 +87,7 @@ def user_register(request):
         return render(request, "user_side/register.html", context)
 
 
-#
+# Log9n user to the website & show message of that.
 def user_login(request):
     if request.method == "POST":
         form = LogInForm(request.POST)

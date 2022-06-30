@@ -7,6 +7,14 @@
 
 {% block main %}
 <!-- Highlighting active round -->
+<table align="center">
+  <tr>
+    <td><p>Раунди в турнірі </p></td>
+    <td><p style="color: lightgreen;">(минулі,</p></td>
+    <td><p class="text-success">активний,</p></td>
+    <td><p class="text-muted">майбітні)</p></td>
+  </tr>
+</table>
 <div align="center">
   {% for round in show_all_rounds %}
     <div class="btn-group" role="toolbar" aria-label="Toolbar with button groups" >
@@ -16,11 +24,15 @@
         </div>
       {% elif round.round_number < active_round %}
         <div class="btn-group mr-2" role="group">
-          <button type="button" class="btn btn-success" style="width:100px" disabled>{{ round.round_number}}</button>
+          <button type="button" class="btn btn-success" style="width:100px" disabled>{{ round.round_number }}</button>
+        </div>
+      {% elif round.round_number == 0 %}
+        <div class="btn-group mr-2" role="group">
+          <button type="button" class="btn btn-outline-secondary" style="width:100px" disabled>Немає раундів</button>
         </div>
       {% else %}
         <div class="btn-group mr-2" role="group">
-          <button type="button" class="btn btn-outline-secondary" style="width:100px">{{ round.round_number }}</button>
+          <button type="button" class="btn btn-outline-secondary" style="width:100px" disabled>{{ round.round_number }}</button>
         </div>
       {% endif %}
     </div>

@@ -1,15 +1,13 @@
 # Import all necessary moduls:
 # 1) from Selenium package.
-# from selenium import webdriver
-from selenium.webdriver import Chrome, ChromeOptions
+from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait, Select
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 
 # 2) from Django package.
 from django.db.models import Sum
-# from django.contrib.auth.models import User
 
 # 3) from Other packages.
 from bs4 import BeautifulSoup
@@ -32,18 +30,6 @@ from .send_emails_support import (
 # Logic for looking scores of every match on active round, used Selenium.
 def looking_for_scores_of_matches_in_round():
 
-    # ##! HEROKU (cloud server) options !##
-    # # Setup options for "Google Chrome" by Heroku server.
-    # options = webdriver.ChromeOptions()
-    # options.add_argument('--headless')
-    # options.add_argument("--no-sandbox")
-    # options.add_argument("disable-dev-shm-usage")
-
-    # # Select webdriver path and open browser.
-    # webdriver_path = Path(Path.cwd(), "chromedriver")
-    # wd = webdriver.Chrome(
-    #     chrome_options=options, executable_path=webdriver_path)
-
     ##! PC (local server) options !##
     # Setup options for "Google Chrome" by local server.
     options = Options()
@@ -54,14 +40,13 @@ def looking_for_scores_of_matches_in_round():
     webdriver_path = Path(Path.cwd(), "chromedriver")
     wd = Chrome(options=options, executable_path=webdriver_path)
 
-    ##! Спільна частина !##
     # Link to the form which must be filled.
     page_link = "https://www.flashscore.com/football/"
 
     wd.get(page_link)
     wait = WebDriverWait(wd, 10)
 
-    #
+    # Start to scrap data from website.
     finished_match_list = []
     eurocups_playing_days = ["Tuesday", "Wednesday", "Thursday", "1", "2", "2"]
     for day in eurocups_playing_days:
@@ -87,36 +72,21 @@ def looking_for_scores_of_matches_in_round():
 
         date_str = (str(current_year)+"-" +
                     splited_on_date_month[1]+"-"+splited_on_date_month[0])
-        # date_tuple = (current_year,
-        #               int(splited_on_date_month[1]), int(splited_on_date_month[0]))
-        # year_date_time_from_calendar = datetime(*date_tuple)
-        # year_date_time_from_calendar = (
-        #     year_date_time_from_calendar.year,
-        #     year_date_time_from_calendar.month,
-        #     year_date_time_from_calendar.day
-        # )
-        # date_str = "2022-06-26"
-        # print(type(date_str))
         year_date_time_from_calendar = datetime.strptime(
             date_str, "%Y-%m-%d").date()
-        #
+
+        # Get "all matches" from soup.
         raw_list_of_matches = WebDriverWait(wd, 90).until(
             EC.visibility_of_all_elements_located(
                 (By.CLASS_NAME, "event__match--twoLine"))
         )
-
         matches_in_round = ListOfMatches.objects.filter(
             forecast_availability="yes")
+
         current_round = matches_in_round[0].round_number
 
-        #
+        # Compare home&visitor teams name with teams from soup.
         for match in matches_in_round:
-
-            # if match.match_date == year_date_time_from_calendar:
-            #     print(match.match_date, year_date_time_from_calendar)
-            # elif match.match_date != year_date_time_from_calendar:
-            #     print("fffffff")
-
             db_home_team = match.home_team
             db_visitor_team = match.visitor_team
 
@@ -133,13 +103,27 @@ def looking_for_scores_of_matches_in_round():
                         ".event__stage")[0].text
                 except IndexError:
                     match_status = "Неправильний статус матча на сайті"
-                    # print(home_team_name[0].text,
-                    #       visitor_team_name[0].text, match_status)
 
-                #
-                if home_team_name[0].text == db_home_team and visitor_team_name[0].text != db_visitor_team and match.match_date == year_date_time_from_calendar:
-                    print(db_home_team, db_visitor_team, "1")
-                    print(match.match_date, year_date_time_from_calendar)
+                # Prevent uncorrect scripts start, when one team play in
+                # other game in closest time from our match.
+                if (home_team_name[0].text == db_home_team and
+                        visitor_team_name[0].text != db_visitor_team and
+                        match.match_date == year_date_time_from_calendar):
+
+                    finished_match_list.append("no")
+                    match_data = {
+                        "match_status": match_status,
+                        "teams_together": (
+                            home_team_name[0].text +
+                            " " +
+                            visitor_team_name[0].text
+                        )
+                    }
+                    send_match_error_message_to_admin(match_data)
+                elif (home_team_name[0].text != db_home_team and
+                      visitor_team_name[0].text == db_visitor_team and
+                      match.match_date == year_date_time_from_calendar):
+
                     finished_match_list.append("no")
                     match_data = {
                         "match_status": match_status,
@@ -151,24 +135,14 @@ def looking_for_scores_of_matches_in_round():
                     }
                     send_match_error_message_to_admin(match_data)
 
-                elif home_team_name[0].text != db_home_team and visitor_team_name[0].text == db_visitor_team and match.match_date == year_date_time_from_calendar:
-                    print(db_home_team, db_visitor_team, "2")
-                    print(match.match_date, year_date_time_from_calendar)
-                    finished_match_list.append("no")
-                    match_data = {
-                        "match_status": match_status,
-                        "teams_together": (
-                            home_team_name[0].text +
-                            " " +
-                            visitor_team_name[0].text
-                        )
-                    }
-                    send_match_error_message_to_admin(match_data)
+                # Laucn deep compare script, check names of teams and
+                # date of current match.
+                elif (home_team_name[0].text == db_home_team and
+                      visitor_team_name[0].text == db_visitor_team and
+                      match.match_date == year_date_time_from_calendar):
 
-                elif home_team_name[0].text == db_home_team and visitor_team_name[0].text == db_visitor_team and match.match_date == year_date_time_from_calendar:
                     visitor_team_name = raw_matches_soup.select(
                         ".event__participant--away")
-                    # print("visitor_team_name", visitor_team_name[0].text)
                     home_team_score = raw_matches_soup.select(
                         ".event__score--home")
                     visitor_team_score = raw_matches_soup.select(
@@ -177,7 +151,7 @@ def looking_for_scores_of_matches_in_round():
                     if (home_team_name[0].text == db_home_team and
                             visitor_team_name[0].text == db_visitor_team):
 
-                        #
+                        # Check is digints
                         home_team_score_isdigit_check = (
                             home_team_score[0].text.isdigit()
                         )
@@ -185,14 +159,10 @@ def looking_for_scores_of_matches_in_round():
                             visitor_team_score[0].text.isdigit()
                         )
 
+                        # Check is score of match are digits.
                         if (not home_team_score_isdigit_check or
                                 not visitor_team_score_isdigit_check):
                             finished_match_list.append("no")
-                            print(
-                                home_team_name[0].text,
-                                visitor_team_name[0].text,
-                                "--- SEND EMAIL TO ADMIN ---"
-                            )
 
                             match_data = {
                                 "match_status": match_status,
@@ -211,36 +181,30 @@ def looking_for_scores_of_matches_in_round():
                             match.home_team_result = home_team_score[0].text
                             match.visitor_team_result = visitor_team_score[0].text
                             match.save()
-                            print(
-                                "OK ------",
-                                db_home_team, " ",
-                                home_team_score[0].text,
-                                " - ", " ",
-                                visitor_team_score[0].text,
-                                db_visitor_team
-                            )
-    print(finished_match_list)
+
     # Checkig is it ok with all matches in round (found all results).
     if "no" in finished_match_list:
-
         match_data = {
             "round_number": current_round,
         }
         send_round_error_message_to_admin(match_data)
+
+    # Start proccess of calculation User points by forecasts.
     else:
-        # Start proccess of calculation User points by forecasts.
         func_calculate_points_by_user_forecasts()
 
 
 # Calculating points based on User forecast on each match.
 def func_calculate_points_by_user_forecasts():
+    # Make nessesary sets.
     input_matches_in_round = ListOfMatches.objects.filter(
-        forecast_availability="yes")
+        forecast_availability="yes").filter(
+            home_team_result__isnull=False,
+            visitor_team_result__isnull=False
+    )
     input_round_number = input_matches_in_round[0].round_number
-
     all_forecasts = ListOfUsersMatchForecast.objects.filter(
         round_number=input_round_number)
-
     list_of_user_hwo_did_forecast = all_forecasts.values("user_id").distinct()
 
     # Calculate points proccess (from User point of view).
@@ -249,52 +213,57 @@ def func_calculate_points_by_user_forecasts():
             user_id=user["user_id"], round_number=input_round_number)
 
         for forecast in forecasts_by_user:
-
             results = input_matches_in_round.filter(
                 match_id=forecast.match_id_id)
 
-            home_team_score = results[0].home_team_result
-            visitor_team_score = results[0].visitor_team_result
+            # Prevent start calculation proccess if DataBase doesnt
+            # have scores of match.
+            if results:
+                home_team_score = results[0].home_team_result
+                visitor_team_score = results[0].visitor_team_result
 
-            # Two way of calculation of points by "User" forecasts.
-            # If user has "ordinary" type of forecasts.
-            user_type_of_forecast = forecasts_by_user.values(
-                "forecast_type").distinct()[0]["forecast_type"]
-            if user_type_of_forecast == "ordinary":
+                # Two way of calculation of points by "User" forecasts.
+                # If user has "ordinary" type of forecasts.
+                user_type_of_forecast = forecasts_by_user.values(
+                    "forecast_type").distinct()[0]["forecast_type"]
+                if user_type_of_forecast == "ordinary":
 
-                # For the precision user forecast - 2 points.
-                if (home_team_score == forecast.home_team_forecast and
-                        visitor_team_score == forecast.visitor_team_forecast):
-                    forecast.user_points = "2"
-                    forecast.save()
-                # For the positive user forecast (draw/win_home/win_visitor) - 1 point.
-                elif ((home_team_score == visitor_team_score and
-                        forecast.home_team_forecast == forecast.visitor_team_forecast) or
-                        (home_team_score > visitor_team_score and
-                         forecast.home_team_forecast > forecast.visitor_team_forecast) or
-                        (home_team_score < visitor_team_score and
-                         forecast.home_team_forecast < forecast.visitor_team_forecast)):
-                    forecast.user_points = "1"
-                    forecast.save()
-                # For bad user forecast (guessed nothing)
-                else:
-                    forecast.user_points = "0"
-                    forecast.save()
+                    # For the precision user forecast - 2 points.
+                    if (home_team_score == forecast.home_team_forecast and
+                            visitor_team_score == forecast.visitor_team_forecast):
+                        forecast.user_points = "2"
+                        forecast.save()
 
-            # Or if user has "express" type of forecasts.
-            elif user_type_of_forecast == "express":
-                # For the precision user forecast - 2 points.
-                if ((home_team_score == visitor_team_score and
-                        forecast.home_team_forecast == forecast.visitor_team_forecast) or
-                        (home_team_score > visitor_team_score and
-                         forecast.home_team_forecast > forecast.visitor_team_forecast) or
-                        (home_team_score < visitor_team_score and
-                         forecast.home_team_forecast < forecast.visitor_team_forecast)):
-                    forecast.user_points = "2"
-                    forecast.save()
-                else:
-                    forecasts_by_user.update(user_points=0)
-                    break
+                    # For the positive user forecast (draw/win_home/win_visitor) - 1 point.
+                    elif ((home_team_score == visitor_team_score and
+                            forecast.home_team_forecast == forecast.visitor_team_forecast) or
+                            (home_team_score > visitor_team_score and
+                             forecast.home_team_forecast > forecast.visitor_team_forecast) or
+                            (home_team_score < visitor_team_score and
+                             forecast.home_team_forecast < forecast.visitor_team_forecast)):
+                        forecast.user_points = "1"
+                        forecast.save()
+
+                    # For bad user forecast (guessed nothing)
+                    else:
+                        forecast.user_points = "0"
+                        forecast.save()
+
+                # Or if user has "express" type of forecasts.
+                elif user_type_of_forecast == "express":
+                    # For the precision user forecast - 2 points.
+                    if ((home_team_score == visitor_team_score and
+                            forecast.home_team_forecast == forecast.visitor_team_forecast) or
+                            (home_team_score > visitor_team_score and
+                             forecast.home_team_forecast > forecast.visitor_team_forecast) or
+                            (home_team_score < visitor_team_score and
+                             forecast.home_team_forecast < forecast.visitor_team_forecast)):
+                        forecast.user_points = "2"
+                        forecast.save()
+
+                    else:
+                        forecasts_by_user.update(user_points=0)
+                        break
 
     # Updating whole statistic information & based on it ranked:
     # 1) about "User" inside "Fintable".
@@ -326,6 +295,10 @@ def reset_db_values_to_default():
     # By "user_points" attribute of "ListOfUsersMatchForecast".
     all_forecasts_by_users = ListOfUsersMatchForecast.objects.all()
     all_forecasts_by_users.update(user_points=None)
+
+    # By "team_position" attribute of "AllTeams".
+    all_teams_statistics = AllTeams.objects.all()
+    all_teams_statistics.update(team_position=0)
 
     # By "user_points" of "FinalTable".
     all_users_statistic = FinalTable.objects.all()
@@ -381,18 +354,19 @@ def update_user_statistic_in_fintab(input_round_number):
 
         # Check are express forecasts successful or not.
         express_forecast_points = all_forecasts_by_user.filter(
-            round_number=input_round_number, forecast_type="express").aggregate(Sum("user_points"))
-        # print("user", user, express_forecast_points)
+            round_number=input_round_number,
+            forecast_type="express"
+        ).aggregate(Sum("user_points"))
+
         if express_forecast_points["user_points__sum"] is None:
-            # print("is None")
             user.user_predicted_express += 0
             user.user_not_predicted_express += 0
+
         elif express_forecast_points["user_points__sum"] > 0:
-            # print(">0")
             user.user_predicted_express += 1
+
         # else:
         elif express_forecast_points["user_points__sum"] == 0:
-            # print(type(express_forecast_points["user_points__sum"]))
             user.user_not_predicted_express += 1
 
         user.save()
@@ -454,6 +428,7 @@ def sort_fintable():
             users_with_equal_points = users_statistics.filter(
                 user_points=points_by_first_db_row)
 
+            # When more that one user has equal points quantity.
             if len(users_with_equal_points) > 1:
                 predicted_match_score_by_first_db_row = (
                     users_with_equal_points[0].user_predicted_match_score)
@@ -461,10 +436,7 @@ def sort_fintable():
                     users_with_equal_points.filter(user_predicted_match_score=(
                         predicted_match_score_by_first_db_row)))
 
-                # users_with_equal_predicted_match_score.update(
-                #     user_position=rank)
-                # rank = rank + len(users_with_equal_predicted_match_score)
-
+                # When more that one user has equal predicted match scores.
                 if len(users_with_equal_predicted_match_score) > 1:
                     user_average_point_per_match_by_first_db_row = (
                         users_with_equal_predicted_match_score[0].user_average_point_per_match)
@@ -473,6 +445,7 @@ def sort_fintable():
                             user_average_point_per_match=(
                                 user_average_point_per_match_by_first_db_row)))
 
+                    # When more that one user has equal average points per match.
                     if len(users_with_equal_user_average_point_per_match) > 1:
                         users_with_equal_predicted_match_score.update(
                             user_position=rank)
@@ -483,9 +456,8 @@ def sort_fintable():
                             users_with_equal_user_average_point_per_match[0].user_id_id)
                         users_with_equal_predicted_match_score.exclude(
                             user_id_id=exclude_user).update(user_position=(rank+1))
-                    # rank = rank + len(users_with_equal_predicted_match_score)
-                    # list_position += len(users_with_equal_predicted_match_score)
 
+                # Wen only one user has this predicted match scores.
                 else:
                     users_with_equal_user_average_point_per_match.update(
                         user_position=rank)
@@ -493,14 +465,11 @@ def sort_fintable():
                 rank = rank + len(users_with_equal_predicted_match_score)
                 list_position += len(users_with_equal_predicted_match_score)
 
+            # Wen only one user has this points quantity.
             else:
                 users_with_equal_points.update(user_position=rank)
                 rank = rank + len(users_with_equal_points)
                 list_position += len(users_with_equal_points)
-
-            # users_with_equal_points.update(user_position=rank)
-            # rank += 1
-            # list_position += len(users_with_equal_points)
 
         else:
             sorted_flag = True

@@ -7,18 +7,14 @@ from django.contrib import messages
 from .forms import (ActivateDisableRound, CalculateUserPointsForm,
                     LookingMatchesScoreForm)
 from .admin_side_support import (
-    # looking_for_scores_of_matches_in_round,
     open_round_for_users_forecast,
     reset_db_values_to_default
 )
 from admin_side.tasks import points_calculation_manual, looking_for_scores_manual
-from user_side.models import ListOfMatches  # , ListOfUsersMatchForecast
-# from .celery_tasks_support import logic_to_start_score_checking
-from admin_side.send_emails_support import send_reminder_to_user
+from user_side.models import ListOfMatches
+
 
 # Create additional (not connected to model) page for Django admin view.
-
-
 def my_custom_view(request):
     if request.user.is_superuser:
 
@@ -30,8 +26,7 @@ def my_custom_view(request):
 
         # Manual activating of the Points calculation script by User forecasts.
         elif request.method == "POST" and "calculate_points" in request.POST:
-            send_reminder_to_user({"user_name": "user1"})
-            # points_calculation_manual.delay()
+            points_calculation_manual.delay()
             return redirect("../custommodel")
 
         # Manual activating of the Points
@@ -67,10 +62,10 @@ def my_custom_view(request):
 
             return render(request, "admin/custom-page.html", context)
 
+    # Blocking not authorize access.
     else:
         popup_message = (
             "Сторінка 'DummyModelAdmin' доступна тільки для "
             "зареєстрованих користувачів.")
         messages.info(request, popup_message)
-
         return redirect("/admin")

@@ -2,7 +2,6 @@
 # 1) from Django package.
 from django.contrib import admin
 from django.db import models
-# from django.shortcuts import render, redirect
 from django.urls import path
 
 # 2) Local import.
@@ -20,14 +19,8 @@ class CustomModel(models.Model):
 # Setup empty model "CustomModel", without any fields.
 class CustomModelAdmin(admin.ModelAdmin):
     model = CustomModel
-    # is_superuser = models.BooleanField(default=False)
 
-    # def has_perm(self, perm, obj=None):
-    #     return self.is_admin
-
-    # def has_module_perms(self, app_label):
-    #     return self.is_admin
-
+    # Get access for url.
     def get_urls(self):
         view_name = '{}_{}_changelist'.format(
             self.model._meta.app_label, self.model._meta.model_name)
@@ -37,8 +30,6 @@ class CustomModelAdmin(admin.ModelAdmin):
 
     def get_app_list(self, request):
         app_list = super().get_app_list(request)
-        # reorder the app list as you like
-        print(app_list)
         return app_list
 
 

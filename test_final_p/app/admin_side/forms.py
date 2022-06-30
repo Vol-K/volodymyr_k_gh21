@@ -24,19 +24,7 @@ class ActivateDisableRound(forms.Form):
             self.fields["rounds_list"].queryset = (
                 ListOfMatches.objects.all().
                 values_list('round_number', flat=True).distinct()
-                # values("round_number").distinct()
             )
-    # class Meta:
-    #     model = models.FeatureModel
-    #     fields = ['role', 'feature']
-    # for ii in rounds_list:
-    #     print(ii)
-    # # Create a field.
-    # if rounds_list_request:
-    #     self.fields["rounds_list"].queryset = rounds_list_request
-    # else:
-    #     self.fields["rounds_list"].queryset = (
-    #         ListOfMatches.objects.none())
 
 
 # Form to manual launch process of looking the scores of matches

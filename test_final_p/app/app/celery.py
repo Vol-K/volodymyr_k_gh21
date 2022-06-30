@@ -23,12 +23,11 @@ app.conf.beat_schedule = {
     # Executes every minutes
     'daily-check-for-match_datetime': {
         'task': 'admin_side.tasks.task_every_day_check_match_score',
-        'schedule': crontab(minute='*/5'),
-        # 'schedule': crontab(minute=53, hour=0),
+        'schedule': crontab(hour=1, minute=15),
     },
     "hourly-check-if-user-made-forecast": {
         "task": "admin_side.tasks.task_every_hour_done_forecasts_check",
-        "schedule": crontab(minute="*/5"),
+        "schedule": crontab(hour="*", minute=10),
     },
 }
 app.autodiscover_tasks()

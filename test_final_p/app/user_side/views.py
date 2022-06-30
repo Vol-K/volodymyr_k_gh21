@@ -1,12 +1,7 @@
 # Import all necessary moduls:
 # 1) from Django package.
-# from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.shortcuts import render, redirect
-# from django.contrib.auth.hashers import check_password
-# from django.http import HttpResponse
-
-# from datetime import datetime, timedelta
 
 # 2) Local import.
 from .models import (AllTeams, ListOfMatches,
@@ -47,9 +42,6 @@ def make_forecast(request):
         # of all data (checking, validating, writhing/show error message).
         if request.method == "POST":
             form = MakeForecastForm(request.POST, request=request)
-
-            # form_errors = form.errors.as_data()
-            # print(form_errors)
 
             if form.is_valid():
                 form_data = form.cleaned_data
@@ -187,7 +179,10 @@ def make_forecast(request):
         else:
             form = MakeForecastForm(request=request)
             predicted_matches = ListOfUsersMatchForecast.objects.filter(
-                user_id=request.user.id)
+                user_id=request.user.id).order_by(
+                    "-round_number",
+                    "match_in_round"
+            )
             online_users = quantity_of_online_users(request)
             context = {"form": form,
                        "username": request.user.username,
@@ -297,7 +292,8 @@ def change_forecast(request):
 
                 else:
                     popup_message = (
-                        "Вибачте, операція доступна тільки до початку матча / експреса матчів.")
+                        "Вибачте, операція доступна тільки до початку матча "
+                        "/ експреса матчів.")
                     messages.info(request, popup_message, extra_tags="general")
 
             else:
@@ -314,26 +310,60 @@ def change_forecast(request):
 
             if form.is_valid():
 
-                #! Окрема лоігка для 'експресів' треба.
                 # Checking for action availability (time block).
                 # Checking which round are active now.
                 round_details = ListOfMatches.objects.filter(
-                    forecast_availability="yes").values("round_number").distinct()
+                    forecast_availability="yes").values(
+                        "round_number"
+                ).distinct()
 
-                user_forecasts_in_corrent_round = ListOfUsersMatchForecast.objects.filter(
-                    user_id=request.user.id,
-                    round_number=round_details[0]["round_number"]
+                user_forecasts_in_corrent_round = (
+                    ListOfUsersMatchForecast.objects.filter(
+                        user_id=request.user.id,
+                        round_number=round_details[0]["round_number"]
+                    )
                 )
-                user_forecasts_in_corrent_round.delete()
 
-                popup_message = (
-                    "Ви щойно видалили всі прогнози в даному турі")
-                messages.info(request, popup_message, extra_tags="general")
+                # Prevent to change express forecast when first match
+                # from express was started
+                if (user_forecasts_in_corrent_round[0].forecast_type == "ordinary"):
+                    user_forecasts_in_corrent_round.delete()
+
+                    popup_message = (
+                        "Ви щойно видалили всі прогнози в даному турі")
+                    messages.info(request, popup_message, extra_tags="general")
+
+                elif (user_forecasts_in_corrent_round[0].forecast_type == "express"):
+                    # Getting forecast and match details.
+                    forecast_details = ListOfUsersMatchForecast.objects.filter(
+                        user_id=request.user.id,
+                        teams_together=user_forecasts_in_corrent_round[0].teams_together
+                    )
+                    match_details = ListOfMatches.objects.filter(
+                        match_id=forecast_details[0].match_id_id)
+
+                    check_date_time_forecast = func_check_time_of_user_forecast(
+                        match_details[0],
+                        forecast_details[0],
+                    )
+
+                    if check_date_time_forecast[0]:
+                        forecast_details.delete()
+                        popup_message = (
+                            "Ви щойно видалили прогноз на матч "
+                            f"'{match_details[0]['teams_together']}'.")
+                        messages.info(request, popup_message,
+                                      extra_tags="general")
+
+                    else:
+                        popup_message = (
+                            "Вибачте, операція доступна тільки до початку матча "
+                            "/ експреса матчів.")
+                        messages.info(request, popup_message,
+                                      extra_tags="general")
 
             #
             else:
-                # form_errors = form.errors.as_data()
-                # print(form_errors)
                 popup_message = (
                     "Вибачте, внесено некоректну інформацію, "
                     "спробуйте ще раз.")
@@ -378,7 +408,14 @@ def fintable(request):
             "round_number", "forecast_availability").distinct()
         active_round = show_all_rounds.filter(
             forecast_availability="yes")
-        active_round = active_round[0]["round_number"]
+
+        try:
+            active_round = active_round[0]["round_number"]
+        except IndexError:
+            show_all_rounds = [{"round_number": 0,
+                               "forecast_availability": "no"}]
+            active_round = 0
+
         online_users = quantity_of_online_users(request)
         context = {"fintable": list(fintable_info),
                    "username": request.user.username,
@@ -465,9 +502,6 @@ def user_account(request):
                 messages.info(request, popup_message, extra_tags="general")
 
                 return redirect("../account.html")
-
-        # elif request.method == "POST" and "change_reminder" in request.POST:
-        #     pass
 
         # Generate 'Form' for first user visit to the page.
         else:

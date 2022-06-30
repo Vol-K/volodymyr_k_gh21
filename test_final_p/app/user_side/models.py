@@ -2,11 +2,7 @@
 # 1) from Django package.
 from django.db import models
 from django.db.models.deletion import CASCADE
-from django.contrib.auth.models import AbstractUser  # , User,
-# from django.core.validators import MaxValueValidator
-
-# 2) from Other packages.
-# from requests import options
+from django.contrib.auth.models import AbstractUser
 
 # 2) Local import.
 from app.app_support import custom_choices
@@ -30,7 +26,6 @@ class AllTeams(models.Model):
     team_points = models.PositiveIntegerField(
         default=0,
         blank=True,
-        # validators=[MaxValueValidator(120)]
     )
     team_position = models.PositiveIntegerField(default=0, blank=True)
 
@@ -89,10 +84,7 @@ class ListOfUsersMatchForecast(models.Model):
     forecast_id = models.BigAutoField(
         auto_created=True, primary_key=True, serialize=False,
         verbose_name="Forecast ID")
-    # match_id = models.PositiveIntegerField()
     match_id = models.ForeignKey(ListOfMatches, on_delete=models.CASCADE)
-    # user_id = models.ForeignKey(
-    #     User, on_delete=models.DO_NOTHING, related_name="user_forecasts")
     user_id = models.ForeignKey(
         CustomUser, on_delete=models.DO_NOTHING, related_name="user_forecasts")
     teams_together = models.CharField(max_length=41, default="")
@@ -101,7 +93,7 @@ class ListOfUsersMatchForecast(models.Model):
     round_number = models.PositiveIntegerField(default=1)
     forecast_time = models.DateTimeField(auto_now_add=True)
     user_points = models.PositiveIntegerField(null=True, blank=True)
-    forecast_type = models.CharField(max_length=7)
+    forecast_type = models.CharField(max_length=9)
     match_in_round = models.PositiveIntegerField(default=1)
 
     def __str__(self):
@@ -118,11 +110,9 @@ class FinalTable(models.Model):
     # Prepare empty "choices" instanse for the further update.
     user_team_choices = ()
 
-    # user_id = models.ForeignKey(
-    #     User, on_delete=models.DO_NOTHING, related_name="user_fintable")
     user_id = models.ForeignKey(
         CustomUser, on_delete=models.DO_NOTHING, related_name="user_fintable")
-    user_name = models.CharField(max_length=25)  # !НА  винос
+    user_name = models.CharField(max_length=25)
     user_position = models.PositiveIntegerField(default=0, blank=True)
     user_points = models.PositiveIntegerField(default=0)
     user_potential_points = models.PositiveIntegerField(default=0)
@@ -133,15 +123,12 @@ class FinalTable(models.Model):
     user_predicted_express = models.PositiveIntegerField(default=0)
     user_not_predicted_express = models.PositiveIntegerField(default=0)
     user_achive_guru_turu = models.PositiveIntegerField(default=0)
-    # user_team_name = models.CharField(max_length=25, blank=True)
     user_team_name = models.CharField(
         max_length=225, blank=True, choices=user_team_choices)
 
     # Create a dynamic "choices" dropdaown list (based on "AllTeams" model).
     def __init__(self, *args, **kwargs):
         super(FinalTable, self).__init__(*args, **kwargs)
-        # xx = self._meta.get_fields()
-        # xx = self._meta.get_field("user_team_name").__dict__
         self._meta.get_field(
             "user_team_name").choices = custom_choices()
 

@@ -2,12 +2,10 @@
 # 1) from Django package.
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
-# from django.contrib.auth.models import User
-
 
 # User email validation.
 def validate_user_emal(email_to_validate):
-    validator = EmailValidator(allowlist=["gmail.com", "ukr.net"])
+    validator = EmailValidator(allowlist=["gmail.com", "ukr.net", "meta.ua"])
     try:
         validator(email_to_validate)
         return True
@@ -21,7 +19,6 @@ def initialize_new_user_in_fintab(user_data):
     from user_side.models import FinalTable, CustomUser
 
     # Create a User instance.
-    # new_user_instance = User.objects.filter(id=user_data["user_id"])
     new_user_instance = CustomUser.objects.filter(id=user_data["user_id"])
 
     # Initialize a model
@@ -41,7 +38,6 @@ def initialize_new_user_in_fintab(user_data):
     user_in_fintab.user_not_predicted_express = 0
     user_in_fintab.user_achive_guru_turu = 0
     user_in_fintab.user_team_name = ""
-    # user_in_fintab.user_team_name = AllTeams.objects.none()
     user_in_fintab.save()
 
 
@@ -50,7 +46,6 @@ def add_user_to_all_tables(user_data):
     # Func nessesary import (to prevent circular imports)
     from user_side.models import CustomUser
 
-    # new_user = User.objects.create_user(user_data["user_login"],
     new_user = CustomUser.objects.create_user(user_data["user_login"],
                                               user_data["user_email"],
                                               user_data["user_pass"])
