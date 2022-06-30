@@ -13,7 +13,6 @@ from celery.schedules import crontab
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'app.settings')
-# django.setup()
 
 app = Celery("app", brocker="pyamqp://guest@localhost/")
 app.config_from_object("django.conf:settings", namespace="CELERY")
