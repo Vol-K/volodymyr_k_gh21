@@ -154,7 +154,6 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 25 * 60
@@ -174,7 +173,7 @@ CELERY_RESULT_SERIALIZER = "json"
 # Email related options.
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "k0zar1uga@gmail.com"
+EMAIL_HOST_USER = "**"
 #! ТРЕБА ЗАХОВАТЬ ДЛЯ GITHUB
-EMAIL_HOST_PASSWORD = "xjngclnrotbslxhd"
+EMAIL_HOST_PASSWORD = "**"
 EMAIL_PORT = 587

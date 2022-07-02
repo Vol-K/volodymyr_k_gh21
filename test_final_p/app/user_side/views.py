@@ -443,7 +443,6 @@ def forecast_by_other(request):
         # Get all forecasts and excluded forecasts by user who send request.
         forecasts_list = ListOfUsersMatchForecast.objects.exclude(
             user_id=request.user.id)
-        # forecasts_list = ListOfUsersMatchForecast.objects.all()
         online_users = quantity_of_online_users(request)
         context = {"username": request.user.username,
                    "match_forecasts": forecasts_list,
@@ -500,7 +499,6 @@ def user_account(request):
                 popup_message = (
                     "Ви щойно змінили налаштування надсилання нагадувань")
                 messages.info(request, popup_message, extra_tags="general")
-
                 return redirect("../account.html")
 
         # Generate 'Form' for first user visit to the page.
@@ -532,7 +530,6 @@ def club_rules(request):
 
         online_users = quantity_of_online_users(request)
         context = {"online_users": online_users}
-
         return render(request, "user_side/club-rules.html", context)
 
     # Blocking access to the page for not authorized user.

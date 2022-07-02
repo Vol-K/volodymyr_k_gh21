@@ -52,7 +52,6 @@ def my_custom_view(request):
                 "round_number", "forecast_availability").distinct()
 
             context = {
-                # "app_list": "ccc",
                 "form": form,
                 "rounds_and_forecast_availability":
                 rounds_and_forecast_availability,

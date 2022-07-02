@@ -107,7 +107,6 @@ def quantity_of_online_users(request):
     else:
         request.session[
             "online_users"] = quantity_online_users
-        # Modified session.
         request.session.modified = True
 
     return quantity_online_users

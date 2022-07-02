@@ -46,12 +46,12 @@ def done_forecasts_check():
                         "match": match.teams_together
                     }
                     send_reminder_to_user(output_data)
-                    print(match)
-                    print(user)
-                    print("send_reminder")
+                    # print(match)
+                    # print(user)
+                    # print("send_reminder")
 
 
-#
+# Script for searching match scores for every matche in active round.
 def logic_to_start_score_checking():
     # Checking current date & time.
     current_date_time = datetime.now().replace(microsecond=0)
@@ -72,12 +72,13 @@ def logic_to_start_score_checking():
 
         # Statemet to start script or no.
         score_exist_list = []
-        if current_date_time_timestamp < round_latest_match_date_time_timestamp:
-            print("no time for looking_for_scores_of_matches_in_round")
-            pass
+        # if current_date_time_timestamp < round_latest_match_date_time_timestamp:
+        #     print("no time for looking_for_scores_of_matches_in_round")
+        #     pass
 
-        elif current_date_time_timestamp > round_latest_match_date_time_timestamp:
-            print("start -- looking_for_scores_of_matches_in_round")
+        if current_date_time_timestamp > round_latest_match_date_time_timestamp:
+            # elif current_date_time_timestamp > round_latest_match_date_time_timestamp:
+            # print("start -- looking_for_scores_of_matches_in_round")
             for match in all_matches:
                 # if match.home_team_result:
                 if (match.home_team_result is not None and

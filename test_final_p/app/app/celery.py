@@ -21,13 +21,11 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 app.conf.beat_schedule = {
     'daily-check-for-match_datetime': {
         'task': 'admin_side.tasks.task_every_day_check_match_score',
-        'schedule': crontab(minute='*/3'),
-        # 'schedule': crontab(hour=1, minute=15),
+        'schedule': crontab(hour=1, minute=15),
     },
     "hourly-check-if-user-made-forecast": {
         "task": "admin_side.tasks.task_every_hour_done_forecasts_check",
-        'schedule': crontab(minute='*/3'),
-        # "schedule": crontab(hour="*", minute=10),
+        "schedule": crontab(hour="*", minute=10),
     },
 }
 app.autodiscover_tasks()

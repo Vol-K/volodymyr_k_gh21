@@ -32,12 +32,6 @@
     <h1 class="text-muted" align="center"><b>Клубу любителів прогнозів</b></h1>
     <br>
     <p style="font-size: 20px">Ваша коротка статистика</p>
-    <!-- <p>Поточне місце - {{ user_statistics.user_position }}</p>
-    <p>Набрані очки - {{ user_statistics.user_points }}</p>
-    <p>чи вагравав гуру туру - {{ user_statistics.user_achive_guru_turu }}</p>
-    <p>
-      середній бал за матч - {{ user_statistics.user_average_point_per_match }}
-    </p> -->
     <div class="card-deck d-flex justify-content-center">
       {% if user_statistics.user_position == 1 %}
         <div class="card border-success" style="max-width: 18rem;">
@@ -57,9 +51,7 @@
       <div class="card" style="max-width: 18rem;">
         <div class="card-header bg-transparent" style="font-size: 20px"><b>Набрані очки</b></div>
         <div class="card-body">
-          <!-- <h5 class="card-title">Набрані очки</h5> -->
           <p class="card-text" style="font-size: 40px">{{ user_statistics.user_points }}</p>
-          <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
         </div>
       </div>
     </div>
@@ -68,15 +60,12 @@
       <div class="card" style="max-width: 18rem;">
         <div class="card-header bg-transparent" style="font-size: 20px"><b>Досягнення "Гуру Туру"</b></div>
         <div class="card-body">
-          <!-- <h5 class="card-title">Success card title</h5> -->
           <p class="card-text" style="font-size: 40px">{{ user_statistics.user_achive_guru_turu }}</p>
         </div>
       </div>
       <div class="card" style="max-width: 18rem;">
         <div class="card-header bg-transparent" style="font-size: 20px"><b>Cередній бал за матч</b></div>
         <div class="card-body">
-          <!-- <h5 class="card-title">Cередній бал за матч</h5> -->
-          <!-- <h5 class="card-title">Success card title</h5> -->
           <p class="card-text" style="font-size: 40px">{{ user_statistics.user_average_point_per_match }}</p>
         </div>
       </div>

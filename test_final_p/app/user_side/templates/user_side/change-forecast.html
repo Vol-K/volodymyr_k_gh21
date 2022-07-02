@@ -51,22 +51,9 @@
     <tbody align="center">
       <div class="input-group mb-3">
         <tr>
-          <!-- <td>
-            <select autocomplete="off" autofocus class="custom-select" name="razom" placeholder="Company`s tiker" type="text" min="1" required>
-            <option selected disabled value="">...</option>
-              {% for element in forecasted_matches %}
-                <option>{{ element.teams_together }}</option>
-              {% endfor %}
-            </select> -->
-            <td>{{ form.teams_together }}</td>
-          <!-- <td>
-            <input autocomplete="off" autofocus class="form-control" name="home" type="number" min="0" style="width:60px"> -->
-            <td>{{ form.team_home_user_forecast }}</td>
-          <!-- <td>
-            <input autocomplete="off" autofocus class="form-control" name="visitor" type="number" min="0" style="width:60px"> -->
-            <td>{{ form.team_visitor_user_forecast }}</td>
-          <!--<td>
-            <input type="checkbox" id="delete" name="delete" value="yes"><label for="delete">Видалити один матч</label></td>-->
+          <td>{{ form.teams_together }}</td>
+          <td>{{ form.team_home_user_forecast }}</td>
+          <td>{{ form.team_visitor_user_forecast }}</td>
           <td>  
             {% if form.change_forecast.label == "change_forecast" %}
               <button 
@@ -91,8 +78,6 @@
               <a/>
             {% endif %}
           </td>
-          <!-- <td><button class="btn btn-primary" type="submit" id="button-addon2" value="change">Змінити прогноз</button></td>
-          <td><a href="/user/make-forecast.html"><button class="btn btn-warning" name="delete" type="submit" value="delete" id="delete">Видалити матч</button></a></td> -->
         </tr>
       </div>
     </tbody>
@@ -105,8 +90,6 @@
     <tbody>
       <tr valign="middle">
         {% if delete_form.delete_all.label == "delete_all" %}
-        <!--<td style="width:60px"><
-          input type="checkbox" id="del_all" name="del_all" value="yes"><label for="delete"></td>-->
           <td>
             <a href="user/make-forecast.html">
               <button 

@@ -20,13 +20,12 @@
     data-show-multi-sort="true"
     data-sort-priority='[{"sortName": "tur","sortOrder":"desc"},{"sortName":"user_name","sortOrder":"desc"}]'
     data-page-list="[12, 25, 50, 100, 200, 400, All]"
-    data-page-size="12"> <!-- кількість елементів на сторінці за замовчуванням -->
+    data-page-size="12">
 
     <thead 
       style="font-size:16px" 
       align="center">
       <tr>
-        <!--<th data-field="mtch_round">Матч в турі</th>-->
         <th class="align-middle" data-field="tur" data-sortable="true" class="align-middle">Номер <br>тура</th>
         <th class="align-middle" data-field="user_name" data-sortable="true" class="align-middle">Учасник</th>
         <th class="align-middle" data-field="teams" data-sortable="true">Матч</th>
@@ -45,8 +44,7 @@
           <td data-field="user_name">{{ element.user_id }}</td>
           <td data-field="teams">{{ element.teams_together }}</td>
           
-          <!-- Блок для приховування прогнозів на останні тури -->
-          {% if element.round_numder > 17 %}
+          {% if element.round_numder > 9 %}
             <td data-field="home">??</td>
             <td data-field="guest">??</td>
             <td data-field="bal">??</td>
@@ -54,7 +52,6 @@
             <td data-field="home">{{ element.home_team_forecast }}</td>
             <td data-field="guest">{{ element.visitor_team_forecast }}</td>
 
-            <!-- Блок для підсвічування вгаданих результатів -->
             {% if element.user_points == 2 %} 
               <td data-field="bal" style="background-color: #5b9bd5"><b>{{ element.user_points }}</b></td>
             {% elif element.user_points == 1 %} 

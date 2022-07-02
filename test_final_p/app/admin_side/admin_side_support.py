@@ -30,7 +30,6 @@ from .send_emails_support import (
 # Logic for looking scores of every match on active round, used Selenium.
 def looking_for_scores_of_matches_in_round():
 
-    ##! PC (local server) options !##
     # Setup options for "Google Chrome" by local server.
     options = Options()
     options.add_argument("--headless")
@@ -120,6 +119,7 @@ def looking_for_scores_of_matches_in_round():
                         )
                     }
                     send_match_error_message_to_admin(match_data)
+
                 elif (home_team_name[0].text != db_home_team and
                       visitor_team_name[0].text == db_visitor_team and
                       match.match_date == year_date_time_from_calendar):
@@ -366,11 +366,8 @@ def update_user_statistic_in_fintab(input_round_number):
         if express_forecast_points["user_points__sum"] is None:
             user.user_predicted_express += 0
             user.user_not_predicted_express += 0
-
         elif express_forecast_points["user_points__sum"] > 0:
             user.user_predicted_express += 1
-
-        # else:
         elif express_forecast_points["user_points__sum"] == 0:
             user.user_not_predicted_express += 1
 
@@ -393,7 +390,8 @@ def update_userteam_statistic_in_allteams():
         team.save()
 
 
-# Ranked represented teams(groups) of Users by "points" & save ranks in DataBase.
+# Ranked represented teams(groups) of Users by "points" &
+# save ranks in DataBase.
 def sort_allteams():
     all_represented_teams = AllTeams.objects.all().order_by("-team_points")
 
@@ -411,6 +409,7 @@ def sort_allteams():
             rank += 1
             list_position += len(teams_with_equal_points)
 
+        # End sorting.
         else:
             sorted_flag = True
 
@@ -480,5 +479,6 @@ def sort_fintable():
                 rank = rank + len(users_with_equal_points)
                 list_position += len(users_with_equal_points)
 
+        # End sorting.
         else:
             sorted_flag = True

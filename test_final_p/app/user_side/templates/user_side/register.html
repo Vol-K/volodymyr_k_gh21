@@ -64,27 +64,4 @@
     </p>
   </div>
   <button class="btn btn-primary" type="submit" id="register_new_user" onclick="myFun()">Зареєструватися</button>
-  
-<!-- поп пооводу функції '/check' -->
-<!-- https://www.reddit.com/r/cs50/comments/amlwzy/pset_8_finance_struggling_with_check/ -->
-<!--
-<script>
-    var username = document.querySelector('input.username');
-    var register = document.querySelector('form');
-    register.onsubmit = function(success) {
-        $.get('/check?username=' + username, function() {
-            if (success == true) {
-                register.submit();
-            }
-
-            else {
-                alert('Sorry this Username was occupied before');
-                document.getElement('form').addEventListener("submit", function(event){
-                event.preventDefault();
-                    });
-            }
-        });
-    };
-</script>
--->
 {% endblock %}
