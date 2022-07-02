@@ -15,6 +15,11 @@ class LogInForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
+    def __init__(self, *args, **kwargs):
+        super(LogInForm, self).__init__(*args, **kwargs)
+        self.fields['password'].widget.attrs['autocomplete'] = 'off'
+        self.fields['password'].widget = forms.HiddenInput()
+
 
 # 'Registration of the new user' form.
 class RegisterForm(UserCreationForm):

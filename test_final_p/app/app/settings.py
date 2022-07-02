@@ -157,7 +157,7 @@ MESSAGE_TAGS = {
 # SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_COOKIE_AGE = 5 * 60
+SESSION_COOKIE_AGE = 25 * 60
 
 # Redis related options.
 REDIS_HOST = "127.0.0.1"
@@ -176,5 +176,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = "k0zar1uga@gmail.com"
 #! ТРЕБА ЗАХОВАТЬ ДЛЯ GITHUB
-EMAIL_HOST_PASSWORD = "zwjcpdutmoavtjgc"
+EMAIL_HOST_PASSWORD = "xjngclnrotbslxhd"
 EMAIL_PORT = 587

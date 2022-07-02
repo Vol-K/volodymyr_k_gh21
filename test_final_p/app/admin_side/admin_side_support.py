@@ -181,6 +181,9 @@ def looking_for_scores_of_matches_in_round():
                             match.home_team_result = home_team_score[0].text
                             match.visitor_team_result = visitor_team_score[0].text
                             match.save()
+                            print(match)
+                            print(home_team_score[0].text)
+                            print(visitor_team_score[0].text)
 
     # Checkig is it ok with all matches in round (found all results).
     if "no" in finished_match_list:
@@ -188,10 +191,12 @@ def looking_for_scores_of_matches_in_round():
             "round_number": current_round,
         }
         send_round_error_message_to_admin(match_data)
+        print("send_round_error_message_to_admin")
 
     # Start proccess of calculation User points by forecasts.
     else:
         func_calculate_points_by_user_forecasts()
+        print("calculate_points")
 
 
 # Calculating points based on User forecast on each match.
@@ -298,7 +303,7 @@ def reset_db_values_to_default():
 
     # By "team_position" attribute of "AllTeams".
     all_teams_statistics = AllTeams.objects.all()
-    all_teams_statistics.update(team_position=0)
+    all_teams_statistics.update(team_position=0, team_points=0)
 
     # By "user_points" of "FinalTable".
     all_users_statistic = FinalTable.objects.all()
@@ -380,7 +385,11 @@ def update_userteam_statistic_in_allteams():
     for team in all_represented_teams:
         points_by_all_team_memders = users_statistics.filter(
             user_team_name=team).aggregate(Sum("user_points"))
-        team.team_points = points_by_all_team_memders["user_points__sum"]
+        if not points_by_all_team_memders["user_points__sum"]:
+            print("none")
+            team.team_points = 0
+        else:
+            team.team_points = points_by_all_team_memders["user_points__sum"]
         team.save()
 
 

@@ -14,7 +14,7 @@ def send_match_error_message_to_admin(input_data):
     send_mail(
         f"Виникли проблеми з матчем '{input_data['teams_together']}',",
         f"знайдений статус матча '{input_data['match_status']}'",
-        "**",
+        "karbivnychyi.volodymyr@gmail.com",
         [admin_email],
         fail_silently=False
     )
@@ -33,7 +33,7 @@ def send_reminder_to_user(input_data):
             "будь-ласка не забудьте зробити прогноз. "
             "Перейдіть за почиланням - http://127.0.0.1:8000/"
         ),
-        from_email="**",
+        from_email="karbivnychyi.volodymyr@gmail.com",
         recipient_list=[user_email, ],
         fail_silently=False,
     )
@@ -48,7 +48,7 @@ def send_round_error_message_to_admin(input_data):
             "Вам як адмінісратору потрібно перевірити проблемні матчі в турі"
             ", і потім запустити скрипт для обрахунку балів вручну."
         ),
-        from_email="**",
+        from_email="karbivnychyi.volodymyr@gmail.com",
         recipient_list=[admin_email, ],
         fail_silently=False,
     )
